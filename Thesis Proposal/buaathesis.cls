@@ -42,7 +42,7 @@ The LaTeX template for thesis of BUAA]
 %%%%%%%%%% font %%%%%%%%%%
 % 数学相关和字体设置
 
-\RequirePackage{amsmath,amssymb,amsfonts,mathrsfs,bm}
+\RequirePackage{amsmath,amssymb,amsfonts,bm}
 \RequirePackage[amsmath,thmmarks,hyperref]{ntheorem}
 \RequirePackage{txfonts}
 
