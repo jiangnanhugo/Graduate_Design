@@ -51,35 +51,40 @@
 \begin{frame}{题目来源}
   论文题目《神经网络语言模型的性能优化研究》为自拟课题。
   \pause
-  \begin{alertblock}{LSB隐写术（LSB Steganography）}
+  \begin{alertblock}{语言模型（Language Model）}
     \begin{itemize}
-      \item 最早接触隐写术的概念在《密码学》课堂上
-      \item 因为感兴趣曾经使用Wolfram Mathematica实现了基本的隐写程序，并写入了博客
+      \item 语言模型可以对一段文本的概率进行估计，对信息检索、机器翻译、语音识别等任务有着重要的作用
+      \item 形式化讲，统计语言模型的作用是为一个长度为m的字符串确定一个概率分布$P(w_1;w_2; \cdots ;w_m)$，表示其存在的可能性
     \end{itemize}
   \end{alertblock}
   \pause
-  \begin{block}<3->{支持向量机（SVM）}
+  \begin{block}<3->{神经网络}
     \begin{itemize}
-      \item 机器学习是现在非常流行的研究方向，可以在很多领域实现优化
-      \item 完成过SVM相关的实战
+      \item 人工神经网络是一个能够学习，能够总结归纳的系统，也就是说它能够通过已知数据的实验运用来学习和归纳总结。
+      \item 与之不同的基于符号系统下的学习方法，它们也具有推理功能，只是它们是建立在逻辑演算法的基础上，也就是说它们之所以能够推理，基础是需要有一个推理演算法则的集合。
     \end{itemize}
   \end{block}
-  \pause
-  所以在毕设中尝试完成应用SVM针对LSB图像隐写进行优化。
 \end{frame}
 
 \section{国内外研究现状及发展动态}
 \begin{frame}{语言模型}
 
 {\large
-隐写是指把一个文件、消息、图像或者视频隐藏到另一个文件、消息、图像或者视频的行为。与密码学不同的是，隐写术旨在隐藏消息或其他形式的信息本身的\alert{存在}，不引起发送方和接收方以外的人的怀疑而完成信息的交流，而密码学则用于隐藏这些信息的\alert{内容}，使得非发送方或接收方即使截获消息也无法得到所交流的信息的真实内容。
-必须满足条件:
-\pause
-\begin{itemize}
-  \item	保密性
-  \item 可获得性
-  \item 完整性
-\end{itemize}
+语言模型可以对一段文本的概率进行估计，对信息检索、机器翻译、语音识别等任务有着重要的作用。
+形式化讲，统计语言模型的作用是为一个长度为m 的字符串确定一个概率分布$P(w_1;w_2;\cdots;w_m)$，表示其存在的可能性，其中$w_1$ 到$w_m$ 依次表示这段文
+本中的各个词。一般在实际求解过程中，通常采用下式计算其概率值：
+\begin{equation}
+\label{equ:lm}
+\begin{split}
+P(w_1;w_2; \cdots;w_m) &= P(w_1) P(w_2|w_1) P(w_3|w_1;w_2)\cdots P(w_i | w_1;w_2;\cdots;w_{i-1}) \\
+&\cdots P(w_m | w_1;w_2;\cdots;w_{m-1})
+\end{split}
+\end{equation}
+在实践中，如果文本的长度较长，公式\ref{equ:lm}右部$\cdots P(w_m | w_1;w_2;\cdots;w_{m-1}) $ 的估算会非常困难。因此，研究者们提出使用一个简化模型：n 元模型（n-gram model）。在n 元模型中估算条件概率时，距离大于等于n 的上文词会被忽略，也就是对上述条件概率做了以下近似：
+\begin{equation}
+\label{equ:approx}
+P(w_i | w_1;w_2;\cdots;w_{i-1})  \approx P(w_i | w_{i-(n-1)};\cdots;w_{i-1})
+\end{equation}
 }
 \end{frame}
 
