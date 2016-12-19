@@ -4,7 +4,7 @@
 \RequirePackage{fontspec} %[cm-default]选项主要用来解决使用数学环境时数学符号不能正常显示的问题
 \RequirePackage[AutoFakeBold=true]{xeCJK}
 
-\defaultfontfeatures{Path = ../fonts/, Mapping=tex-text}
+
 
 \usepackage{indentfirst} %首行缩进
 \setlength{\parindent}{2em}
@@ -18,11 +18,10 @@
 % 中文断行
 \XeTeXlinebreaklocale "zh"
 \XeTeXlinebreakskip = 0pt plus 1pt minus 0.1pt
-%将系统字体名映射为逻辑字体名称，主要是为了维护的方便
-\setCJKfamilyfont{zhsong}{AdobeSongStd-Light.otf}
-\setCJKfamilyfont{zhhei}{AdobeHeitiStd-Regular.otf}
-\setCJKfamilyfont{zhfs}{AdobeFangsongStd-Regular.otf}
-\setCJKfamilyfont{zhkai}{AdobeKaitiStd-Regular.otf}
+\setCJKfamilyfont{zhsong}{SimSun}
+\setCJKfamilyfont{zhhei}{SimHei}
+\setCJKfamilyfont{zhfs}{Fangsong}
+\setCJKfamilyfont{zhkai}{KaiTi}
 
 \newcommand*{\songti}{\CJKfamily{zhsong}} % 宋体
 \newcommand*{\heiti}{\CJKfamily{zhhei}}   % 黑体

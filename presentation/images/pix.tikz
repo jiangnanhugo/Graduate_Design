@@ -1,0 +1,16 @@
+{\footnotesize
+\draw (0,0) rectangle node{\only<8,12->{消息长度$l$}} (5,1);
+{\color<13>{alertTextColor}\draw(5,0) rectangle node{\only<9,12->{起始坐标$\left(x_0,y_0\right)$}}  (10,1);}
+\draw<-10> (10,0) rectangle (13,1);
+\filldraw<11->[fill=gray,fill opacity=0.3](10,0) rectangle node[opacity=1]{$\cdots$}(13,1);
+\draw<10,11->[dashed] (13,0) rectangle node{\only<10,12->{秘密消息}} (23,1);
+\draw<-9> (13,0) rectangle (23,1);
+\draw<-10>(23,0) rectangle (26,1) ;
+\filldraw<11->[fill=gray,fill opacity=0.3](23,0) rectangle node[opacity=1]{$\cdots$}(26,1) ;
+\draw<8,12-> [decorate,decoration={brace,amplitude=5pt,mirror}]
+(0,0) -- (5,0) node [black,midway,above,sloped,yshift=-14pt]{前$l_1$位};
+\draw<9,12-> [decorate,decoration={brace,amplitude=5pt,mirror}] (5,0) -- (10,0) node [black,midway,above,sloped,yshift=-14pt]{接下来$l_2$位};
+{\color<13>{alertTextColor}\filldraw<10,12->(13,0) circle (2pt) node[below]{$\left(x_0,y_0\right)$};}
+\draw<10,12-> [decorate,decoration={brace,amplitude=5pt,mirror}] (13,0) -- (23,0) node [black,midway,above,sloped,yshift=-14pt]{$l \times 8$位};
+\draw [decorate,decoration={brace,amplitude=5pt},yshift=5pt] (0,1) -- (26,1) node [black,midway,above,sloped,yshift=8pt]{$m \times n$位二进制数据};
+}

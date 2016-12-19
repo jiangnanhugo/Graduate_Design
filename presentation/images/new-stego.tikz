@@ -1,0 +1,29 @@
+
+ \path(5,11) node(A) {\bf{发送方}};
+ \path(25,11) node(B) {\bf{接收方}};
+
+{\footnotesize
+\path<2->  (0,0) node(F) [label=below:SVM分类器]{\includegraphics[scale=.09]{icons/function-mathematical-symbol}};
+ \path  (0,3) node(M1) [label=below:秘密消息]{\includegraphics[scale=.08]{icons/email}};
+ \path  (0,6) node(C) [label=below:载体] {\includegraphics[scale=.04]{icons/landscape-image}};
+ \path  (30,3) node(M2) [label=below:秘密消息]{\includegraphics[scale=.08]{icons/email}};
+ \path  (10,3) node(S1) [label=below:伪装图像] {\includegraphics[scale=.04]{icons/landscape-image}};
+ \path  (20,3) node(S2) [label=below:伪装图像] {\includegraphics[scale=.04]{icons/landscape-image}};
+  \path<3-> (15,8) node(X) [label=above:{约定的$\left(l_1,l_2\right)$}]{\includegraphics[scale=.4]{icons/map}};
+ \draw (3.5,2.1) rectangle node(P1)[align=center] {嵌入消息\\（隐写）} (6.5,3.9);
+ \draw (23.5,2.1) rectangle node(P2)[align=center] {提取消息\\（恢复）} (26.5,3.9);
+ \draw (13.4,2.5) rectangle node(CH1) {公共信道}
+ (16.6,3.5);
+  \draw[->,thick] (C) -- (3.4,3.5);
+  \draw<2->[->,thick] (F) -- (3.4,2.5);
+  \draw[->,thick] (M1) -- (3.4,3);
+  \draw[->,thick] (6.6,3) -- (S1);
+  \draw[->,thick] (S1)--(13.3,3);
+  \draw[->,thick] (16.7,3)--(S2);
+  \draw[->,thick] (S2) -- (23.4,3);
+  \draw[->,thick] (26.6,3) -- (M2);
+  \draw<3->[->,thick] (X) -- (5,4);
+  \draw<3->[->,thick] (X) -- (25,4);
+  \draw[line width=2,dashed,dash pattern=on 6pt off 4pt,color=gray] (-2,-2) rectangle  (12,10);
+  \draw[line width=2,dashed,dash pattern=on 6pt off 4pt,color=gray] (18,-2) rectangle  (32,10);
+}
