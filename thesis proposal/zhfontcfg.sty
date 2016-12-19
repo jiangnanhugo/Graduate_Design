@@ -9,8 +9,6 @@
 \usepackage{indentfirst} %首行缩进
 \setlength{\parindent}{2em}
 
-%中文化\today命令
-\renewcommand{\today}{\number\year 年\number\month 月\number\day 日}
 
 %行间距
 \renewcommand{\baselinestretch}{1.5}
@@ -43,6 +41,10 @@
 \newcommand{\liuhao}{\fontsize{7.5pt}{\baselineskip}\selectfont}
 
 %设置文档正文字体为宋体
-\setCJKmainfont{AdobeSongStd-Light.otf}
-\setCJKsansfont{AdobeHeitiStd-Regular.otf}
-\setCJKmonofont{AdobeFangsongStd-Regular.otf}
+\setCJKmainfont[
+BoldFont=SimHei,
+ItalicFont=KaiTi,
+SmallCapsFont=SimHei
+]{SimSun}
+\setCJKsansfont{SimHei}
+\setCJKmonofont{Fangsong}
