@@ -4,7 +4,7 @@
 
 \schoolname{北京航空航天大学计算机学院}
 \title{学位论文开题报告}
-\papertitle{神经网络语言模型的性能优化研究}
+\papertitle{基于神经网络的语言模型的性能优化研究}
 \specialty{计算机科学与技术}
 \studentnumber{SY1506330}
 \researcharea{自然语言处理}
@@ -56,15 +56,31 @@ P(w_i | w_1;w_2;\cdots;w_{i-1})  \approx P(w_i | w_{i-(n-1)};\cdots;w_{i-1})
 \subsection{上下文信息的建模策略}
 上下文信息建模策略主要的思路包括: 传统前向传递神经网络(Feed Forward Neural Network, FFNN)、循环神经网络(Recurrent Neural Network,RNN)建模方案。 以下我们一一探讨。
 
-Xu 等人在2000 年首次尝试使用神经网络求解二元语言模型[124]。2001年，Bengio 等人正式提出神经网络语言模型（Neural Network Language Model ，NNLM）[6, 7]。该模型在学习语言模型的同时，也得到了词向量。NNLM 同样也是对n 元语言模型进行建模，估算$P(w_i | w_{i-(n-1)}; \cdots ;w_{i-1})$的值。但与传统方法不同的是，NNLM 不通过计数的方法对n 元条件概率进行估计，而是直接通过一个神经网络结构，对其进行建模求解。图\ref{fig:ffnn} 展示了NNLM 的基本结构。
-
+神经网络对参数进行高度共享，因此对低频词具有天然的平滑能力。神经网络语言模型(Neural Network Language Model, NNLM) 的最早由Bengio等人在2001年提出\cite{DBLP:conf/nips/BengioDV00}, 近年来一些学者开始展开这方面的研究，并取得一系列成果，如\cite{DBLP:conf/acl/BaroniDK14,DBLP:journals/sigkdd/BellK07,DBLP:journals/pami/BengioCV13,DBLP:journals/tnn/BengioSF94}, 但总体而言, 对NNLM的研究还处在起步阶段。
+具体而言，NNLM通过一个多层感知网络(MultiLayer Perceptron, MLP)来计算 \ref{equ:approx} 式中概率。
 \begin{figure}
   \centering
-  \includegraphics[width=0.8\linewidth]{./figures/ffnn.png}
-  \caption{神经网络语言模型（NNLM）模型结构图}\label{fig:ffnn}
+  \includegraphics[width=0.7\linewidth]{./figures/nplm.png}
+  \caption{前馈神经网络语言模型}\label{fig:nplm}
 \end{figure}
 
-Mikolov等人提出的循环神经网络语言模型(Recurrent Neural Network based Language Model，RNNLM)则直接对$P(w_i | w_1;w_2;\cdots;w_{i-1}) $ 进行建模，而不使用公式\ref{equ:approx}对其进行简化[72, 74]。因此，RNNLM 可以利用所有的上文信息，预测下一个词，其模型结构如图\ref{fig:rnnlm} 所示。
+图 \ref{fig:nplm} 给出一个典型的 NNLM 语言模型。神经网络语言模型采用普通的三层前馈神经网络结构，其中第一层为输入层。Bengio 提出使用各词的词向量作为输入以解决数据稀疏问题，因此输入层为词$w_{i-(n-1)}; \cdots;w_{i-1} $ 的词向量的顺序拼接：
+\begin{equation}\label{equ:we}
+  x = [e(w_{i-(n-1)}; \cdots ; e(w_{i-2}); e_{(w_{i-1})}]
+\end{equation}
+当输入层完成对上文的表示x 之后，模型将其送入剩下两层神经网络，依次得到隐藏层$h$ 和输出层$y$：
+\begin{equation}\label{equ:all_nplm}
+\begin{split}
+h =& tanh(b(1) + Hx) \\
+y =& b(2) +Wx + Uh
+\end{split}
+\end{equation}
+其中 $H \in \mathbb{R}^{|h| \times (n-1)|e|}$ 为输入层到隐藏层的权重矩阵，$U \in \mathbb{R}^{|\mathrm{V}|\times (n-1)|h|}$ 为隐藏层到输出层的权重矩阵，$ |\mathrm{V}|$表示词表的大小，$|e|$ 表示词向量的维度，$|g|$ 为隐藏层的维度。$b(1),b(2)$ 均为模型中的偏置项。矩阵$W \in \mathbb{R}^{|\mathcal{V}|\times (n-1)|e|}$ 表示从输入层到输出层的直连边权重矩阵。由于$W$ 的存在，该模型可能会从非线性的神经网络退化成为线性分类器。Bengio 等人在文中指出，如果使用该直连边，可以减少一半的迭代次数；但如果没有直连边，可以生成性能更好的语言模型。因此在后续工作中，很少有使用输入层到输出层直连边的工作，下文也直接忽略这一项。如果不考虑$W$ 矩阵，整个模型计算量最大的操作，就是从隐藏层到输出层的矩阵运算$Uh$，后续的模型均有对这一操作的优化
+
+
+
+Mikolov等人提出的循环神经网络语言模型(Recurrent Neural Network based Language Model，RNNLM)则直接对$P(w_i | w_1;w_2;\cdots;w_{i-1}) $ 进行建模，而不使用公式 \ref{equ:approx}对其进行简化\cite{mikolov2012statistical,DBLP:conf/interspeech/MikolovKBCK10} 。因此，RNNLM 可以利用所有的上文信息，预测下一个词，其模型结构如图 \ref{fig:rnnlm} 所示。
+
 \begin{figure}
   \centering
   \includegraphics[width=0.85\linewidth]{./figures/rnnlm.png}
@@ -76,7 +92,10 @@ RNNLM 的核心在于其隐藏层的算法:
 \label{equ:rnn}
 h(i) =\phi(e(w_i) +Wh(i -1))
 \end{equation}
-其中，$\phi$非线性激活函数。但与NNLM 不同，RNNLM 并不采用n 元近似，而是使用迭代的方式直接对所有上文进行建模。在公式\ref{equ:rnn} 中，h(i) 表示文本中第$i$ 个词$w_i$ 所对应的隐藏层，该隐藏层由当前词的词向量$e(wi)$ 以及上一个词对应的隐藏层$h(i -1)$ 结合得到。
+其中，$\phi$非线性激活函数。但与NNLM 不同，RNNLM 并不采用n 元近似，而是使用迭代的方式直接对所有上文进行建模。在公式\ref{equ:rnn} 中，h(i) 表示文本中第$i$ 个词$w_i$ 所对应的隐藏层，该隐藏层由当前词的词向量$e(w_i)$ 以及上一个词对应的隐藏层$h(i -1)$ 结合得到。
+
+隐藏层的初始状态为$h(0)$，随着模型逐个读入语料中的词$w_1;w_2; \cdots $, 隐藏层不断地更新为$h(1);h(2); \cdots$ 。根据公式\ref{equ:rnn}，每一个隐藏层包含了当前词的信息以及上一个隐藏层的信息。通过这种迭代推进的方式，每个隐藏层实际上包含了此前所有上文的信息，相比NNLM 只能采用上文n 元短语作为近似，RNNLM 包含了更丰富的上文信息，也有潜力达到更好的效果。RNNLM 的输出层计算方法与NNLM 的输出层一致。
+
 
 \subsection{多元分类模型}
 传统的多元分类模型(Softmax):
@@ -97,27 +116,35 @@ Mikolov曾提出使用基于二叉树的层级softmax模型来加速的训练方
 
 \section{论文的研究内容及拟采取的技术方案}
 \subsection{对上下文信息建模策略}
-依照上章节的分析，本章节主要介绍我们实验中所要涉及的模型，主要分为： 长短记忆网络(Long shrot-term memory, LSTM)和门限记忆节点(Gated Recurrent Unit,GRU)。
-
-LSTM的计算公式定于如下：
+依照上章节的分析，本章节主要介绍我们实验中所要涉及的模型，主要是各种循环神经网络的变种 \cite{DBLP:conf/icml/JozefowiczZS15}: 普通循环神经网络节点、长短记忆网络(Long shrot-term memory, LSTM) \cite{DBLP:journals/taslp/SundermeyerNS15} 和门限记忆节点(Gated Recurrent Unit, GRU) \cite{DBLP:conf/nips/ChungKDGCB15}。 LSTM的计算公式定于如下 \cite{DBLP:journals/neco/HochreiterS97}：
 \begin{itemize}
-\item 输入门:控制输入的信息流:
+\item 输入门:输入门：控制当前输入 $x_t$ 和前一步输出 $h_{t−1}$ 进入新的 cell 的信息量：
 $$i_t=\sigma(W^i x_t+U^i h_{t-1}+b^i)$$
-\item  遗忘门：控制信息遗忘的速度：
+\item  忘记门：决定是否清楚或者保持单一部分的状态
 $$f_t=\sigma(W^f x_t+U^f h_{t-1}+b^f)$$
-\item  信息更新值:
+\item  变换输出和前一状态到最新状态
 $$g_t=\phi(W^g x_t+U^g h_{t-1}+b^g)$$
-\item  输出门:
-$$o_t=\sigma(W_o x_t+U^o h^{t-1}+b^o)$$
-\item  中间状态更新：
-$$s_t=g_t\cdot i_t+s_{t-1}\cdot f_t$$
-\item  隐藏层的输出值:
-$$h_t=s_t\cdot \phi(o_t)$$
+\item  输出门: 计算 cell 的输出
+$$o_t=\sigma(W^o x_t+U^o h^{t-1}+b^o)$$
+\item  cell 状态更新步骤：计算下一个时间戳的状态使用经过门处理的前一状态和输入：
+$$s_t=g_t\odot i_t+s_{t-1}\odot f_t$$
+\item  最终 LSTM 的输出：使用一个对当前状态的 tanh 变换进行重变换：
+$$h_t=s_t\odot \phi(o_t)$$
 \end{itemize}
-其中$\cdot$ 代表"element-wise matrix multiplication"(对应元素相乘)，$\phi(x)=\tanh(x),\sigma(x)=sigmoid(x)$
-$$\phi(x)=\frac{e^x-e^{-x}}{e^x+e^{-x}},\sigma(x)=\frac{1}{1+e^{-x}}$$
+其中$\odot$ 代表对应元素相乘(Element-wise Matrix Multiplication),$\phi(x), \sigma(x)$ 的定义：
 
-GRU和lstm的计算公式很相似，具体定义如下：
+\begin{equation}\label{equ:tanh}
+  \phi(x)=\frac{e^x-e^{-x}}{e^x+e^{-x}},\sigma(x)=\frac{1}{1+e^{-x}}
+\end{equation}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.9\linewidth]{./figures/lstm_memorycell.png}
+  \caption{LSTM 模型}\label{fig:lstm}
+\end{figure}
+
+
+GRU 可以看成是 LSTM 的变种，GRU 把 LSTM中的 forget gate 和 input gate 用 update gate 来替代。 把 cell state 和隐状态 $h_t$ 进行合并，在计算当前时刻新信息的方法和 LSTM 有所不同。 下图是GRU更新 $h_t$ 的过程\cite{DBLP:journals/corr/Pezeshki15}, 具体定义如下：
 \begin{itemize}
 \item 更新门$z_t$: 定义保存多少以前的信息。
 
@@ -127,12 +154,20 @@ GRU和lstm的计算公式很相似，具体定义如下：
 
 \[r_t = \sigma(W^r x_t  + U^r h_{t-1}  )\]
 
-\item 节点内部更新值$\tilde h_t $:
+\item 节点内部更新值$\tilde h_t $: 其次是计算候选隐藏层(candidate hidden layer) $\tilde h_t$，这个候选隐藏层 和LSTM中的$\tilde c_t$是类似，可以看成是当前时刻的新信息，其中$r_t$用来控制需要 保留多少之前的记忆，如果$r_t$为0，那么$\tilde h_t$只包含当前词的信息：
  \[\tilde h_t  = \tanh (W^h x_t  + U^h(h_{t-1} \odot r_t) )\]
 
-\item 隐藏层输出值$h_t$:
+\item 隐藏层输出值$h_t$: 最后$z_t$控制需要从前一时刻的隐藏层$h_{t−1}$中遗忘多少信息，需要加入多少当前 时刻的隐藏层信息$\tilde h_t$，最后得到htht，直接得到最后输出的隐藏层信息， 这里与LSTM的区别是GRU中没有 output gate：
 \[h_t = (1-z_t)\odot \tilde h_t  + z_t \odot h_{t-1}\]
 \end{itemize}
+如果reset gate接近0，那么之前的隐藏层信息就会丢弃，允许模型丢弃一些和未来无关 的信息；update gate控制当前时刻的隐藏层输出$h_t$需要保留多少之前的隐藏层信息， 若$z_t$接近1相当于我们之前把之前的隐藏层信息拷贝到当前时刻，可以学习长距离依赖。 一般来说那些具有短距离依赖的单元reset gate比较活跃（如果$r_t$为1，而$z_t$为$0$ 那么相当于变成了一个标准的RNN，能处理短距离依赖），具有长距离依赖的单元update gate比较活跃。
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.6\linewidth]{./figures/gru.png}
+  \caption{GRU模型示意图}\label{fig:gru}
+\end{figure}
+
 
 \subsection{对多元分类模型的建模}
 大词表问题，主要是对softmax如何建模的问题。在本课题中，我们探讨cHSM和tHSM两种不同的方案所带来的影响和优劣。
@@ -141,47 +176,23 @@ GRU和lstm的计算公式很相似，具体定义如下：
 
 \section{关键技术或技术路线}
 
-1) 数学背景和理论背景。 尽管本实验题目定义范围比较小，但是我们也需要很好的数学理论知识，包括：矩阵论,概率论。还有，我们还需要极强的阅读外文文献知识和编码实现能力，都是不可或缺的基本要求。矩阵在许多学科领域中都有应用，在很多时候，除了需要知道矩阵的理论性质以外，还需要计算矩阵的数值。为了矩阵的计算能够足够精确与快捷，数值线性代数中专门有研究矩阵的数值计算方法[40]。与其它的数值计算一样，矩阵的数值计算注重的主要也是算法的复杂度和数值稳定性。矩阵的数值计算可以使用直接计算，也可以用迭代算法，例如在计算方块矩阵的特征值时，可以从一个非零向量$x_0$开始，通过特定迭代方法得到一个逼近某个特征向量的向量序列[41]。而概率论，作为统计学的数学基础，概率论对诸多涉及大量数据定量分析的人类活动极为重要[3]，概率论的方法同样适用于其他方面，例如是对只知道系统部分状态的复杂系统的描述——统计力学，而二十世纪物理学的重大发现是以量子力学所描述的原子尺度上物理现象的概率本质[4]。
+1) 数学背景和理论背景。 尽管本实验题目定义范围比较小，但是我们也需要很好的数学理论知识，包括：矩阵论,概率论。还有，我们还需要极强的阅读外文文献知识和编码实现能力，都是不可或缺的基本要求。
 
-2) 基于theano框架的建模方案。因为基于 python 的深度学习库比较完善，适合建模。 本实验拟采用 theano 的建模语言，来帮助我们快速建模和调参。Theano是在BSD许可证下发布的一个开源项目，是由LISA集团（现MILA）在加拿大魁北克的蒙特利尔大学（Yoshua Bengio主场）开发。它是用一个希腊数学家的名字命名的。Python的核心Theano是一个数学表达式的编译器。它知道如何获取你的结构，并使之成为一个使用numpy、高效本地库的非常高效的代码，如BLAS和本地代码（C++），在CPU或GPU上尽可能快地运行。它巧妙的采用一系列代码优化从硬件中攫取尽可能多的性能。如果你对代码中的数学优化的基本事实感兴趣，看看这个有趣的名单。Theano表达式的实际语法是象征性的，可以推送给初学者用于一般软件开发。具体来说，表达式是在抽象的意义上定义，编译和后期是用来进行计算。它是为深度学习中处理大型神经网络算法所需的计算而专门设计的。它是这类库的首创之一（发展始于2007年），被认为是深度学习研究和开发的行业标准。
+2) 基于theano框架的建模方案。因为基于 python 的深度学习库比较完善，适合建模。 本实验拟采用 theano 的建模语言，来帮助我们快速建模和调参。Theano是在BSD许可证下发布的一个开源项目，是由LISA集团（现MILA）在加拿大魁北克的蒙特利尔大学（Yoshua Bengio领导的实验室）开发。它是用一个希腊数学家的名字命名的。Python的核心Theano是一个数学表达式的编译器。它知道如何获取你的结构，并使之成为一个使用numpy、高效本地库的非常高效的代码，如BLAS和本地代码（C++），在CPU或GPU上尽可能快地运行。它巧妙的采用一系列代码优化从硬件中攫取尽可能多的性能。如果你对代码中的数学优化的基本事实感兴趣，看看这个有趣的名单。Theano表达式的实际语法是象征性的，可以推送给初学者用于一般软件开发。具体来说，表达式是在抽象的意义上定义，编译和后期是用来进行计算。它是为深度学习中处理大型神经网络算法所需的计算而专门设计的。它是这类库的首创之一（发展始于2007年），被认为是深度学习研究和开发的行业标准。
 
 3) 同时本实验也需要对linux的bash脚本有一定的熟悉，以方便将模型的数据结果正确的统计和运行模型的开发环境配置。
 
 4) 试验结果图表统计和绘制.本实验的结果需要精良的语言来控制，而R语言的ggplot2框架就很适合我们的试验结果图表的绘制工作。
 
-5) 基于GPU的cuda的模型优化也是我们需要考虑的问题之一。 CUDA（Compute Unified Device Architecture，统一计算架构[1]）是由NVIDIA所推出的一種整合技術，是該公司对于GPGPU的正式名稱。透过这个技术，使用者可利用NVIDIA的GeForce 8以後的GPU和較新的Quadro GPU进行计算。亦是首次可以利用GPU作為C-编译器的开发环境。NVIDIA行銷的時候[2]，往往將编译器与架构混合推廣，造成混乱。实际上，CUDA可以相容OpenCL或者自家的C-编译器。无论是CUDA C-語言或是OpenCL，指令最終都會被驱动程序轉換成PTX代码，交由显示核心計算。
-
-在GPUs（GPGPU）上使用圖形APIs进行传统通用計算，CUDA技术有下列几個优点：
-\begin{itemize}
-  \item 分散读取——代码可以从内存的任意位址读取
-  \item 统一虚拟内存（CUDA 6）
-  \item 共用内存——CUDA公开一個快速的共用存储区域（每个处理器48K），使之在多个进程之間共用。其作为一個用戶管理的快取内存，比使用纹理查找可以得到更大的有效频宽。
-  \item 与GPU之間更快的下载与回读
-  \item 全面支持整型位与操作，包括整型纹理查找
-\end{itemize}
-
-
-
-限制
-\begin{itemize}
-  \item CUDA不支持完整的C语言标准。它在C++编译器上運行主機代码時，會使一些在C中合法（但在C++中不合法）的代碼無法編譯。
-  \item 不支持紋理渲染（CUDA 3.2及以後版本通過在CUDA陣列中引入“表面寫操作”——底層的不透明数据结构——來进行处理）
-  \item 受系统主线的频宽和延遲的影響，主機與設備記憶體之間資料複製可能會導致性能下降（通過過GPU的DMA引擎處理，非同步記憶體傳輸可在一定範圍內緩解此現象）
-  \item 当執行緒總數為數千時，执行程序按至少32個一組來運行才能獲得最佳效果。如果每組中的32個進程使用相同的執行路徑，則程式分支不會顯著影響效果；在處理本質上不同的任務時，SIMD執行模型將成為一個瓶頸（如在光線追蹤演算法中遍歷一個空間分割的資料結構）
-  \item 与OpenCL不同，只有NVIDIA的GPUs支援CUDA技術
-  \item 由于编译器需要使用优化技术來利用有限的资源，即使合法的C/C++有時候也會被標記並中止编译
-  \item CUDA（計算能力1.x）使用一個不包含回槊、函数指標的C語言子集，外加一些簡單的扩展。而單個進程必須運行在多個不相交的記憶體空間上，這與其它C語言運行環境不同。
-  \item CUDA（計算能力2.x）允许C++类功能的子集，如成員函數可以不是虛擬的（這個限制將在以後的某個版本中移除）[参见《CUDA C程式設計指南3.1》－附錄D.6]
-  \item 双精度浮点（CUDA计算能力1.3及以上）与IEEE754標準有所差異：倒数、除法、平方根僅支持舍入到最近的偶數。单精度中不支持反常值（denormal）及sNaN（signaling NaN）；只支持两种IEEE舍入模式（舍位与舍入到最近的偶数），這些在每条指令的基楚上指定，而非控制字码；除法/平方根的精度比单精度略低。
-\end{itemize}
+5) 基于GPU的cuda的模型优化也是我们需要考虑的问题之一。CUDA技术有下列几个优点：1) 分散读取，代码可以从内存的任意位址读取; 2)共用内存，CUDA公开一個快速的共用存储区域（每个处理器48K），使之在多个进程共用。同时他的缺点可以归纳为： 1) CUDA不支持完整的C语言标准。它在C++编译器上运行代码时，会使一些在C中合法（但在C++中不合法）的代码无法编译; 2) 双精度浮点与IEEE754标准有所差异：倒数、除法、平方根僅支持舍入到最近的偶数。单精度中不支持反常值（denormal）及sNaN（signaling NaN）；只支持两种IEEE舍入模式（舍位与舍入到最近的偶数），这些在每条指令的基础上指定，而非控制字码；除法/平方根的精度比单精度略低。
 
 \section{论文研究计划}
 \begin{itemize}
   \item 2016年12月 $\sim$ 2017年1月: 整理资料，学习研究语言模型的领域知识;
-  \item 2017年2月$\sim$ 2017年4月: 研究学习深度学习模型的知识, 特别是循环神经网络的建模过程;
-  \item 2017年5月$\sim$2017年7月: 调研并实现解决大词表问题的主要手段, 并实现基本代码框架;
-  \item 2015年8月$\sim$2015年10月: 实验验证与完善;
-  \item 2015年11月$\sim$2015年12月:资料整理和论文撰写.
+  \item 2017年2月 $\sim$ 2017年4月: 研究学习深度学习模型的知识, 特别是循环神经网络的建模过程;
+  \item 2017年5月 $\sim$ 2017年7月: 调研并实现解决大词表问题的主要手段, 并实现基本代码框架;
+  \item 2017年8月 $\sim$ 2017年10月: 实验验证与完善;
+  \item 2017年11月 $\sim$ 2018年3月:资料整理和论文撰写.
 \end{itemize}
 
 \newpage
