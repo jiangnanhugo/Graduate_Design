@@ -3,6 +3,7 @@
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{ctexart}}
 \ProcessOptions
 \LoadClass[zihao=-4,a4paper,fancyhdr,hyperref,fontset=windows,scheme=chinese]{ctexart}
+\RequirePackage[sort&compress,longnamesfirst,square,super]{natbib}
 %\RequirePackage{fontspec} %[cm-default]选项主要用来解决使用数学环境时数学符号不能正常显示的问题
 \RequirePackage{amsmath}
 \RequirePackage{amssymb}
@@ -62,9 +63,9 @@
 section={
     name={,.},
     number=\arabic{section},
-    format={\noindent\bfseries},
-    nameformat={\zihao{-3}},
-    titleformat={\songti\zihao{-3}}
+    %format={\noindent\bfseries},
+    %nameformat={\zihao{-3}},
+    titleformat+=\raggedright%{\songti\zihao{-3}}
     },
 subsection={
     name={,},
@@ -142,8 +143,16 @@ subsection={
 \newcommand{\researcharea}[1]{\gdef\@researcharea{#1}}
 
 %\bibliographystyle{unsrt}
-\bibliographystyle{buaathesis}
+%\bibliographystyle{buaathesis}
+\newcommand\buaathesisbib[1]{%
+  \setcitestyle{numbers, round, comma, aysep={}, yysep={,}, notesep={,}}
+  \setlength{\bibsep}{0.5ex}
+  \setlength{\bibhang}{2em}
+  \renewcommand{\bibfont}{\songti\zihao{5}}
 
+  \bibliographystyle{buaathesis}
+  \bibliography{#1}
+}
 
 % 页眉页脚
 \setlength{\headheight}{15pt}

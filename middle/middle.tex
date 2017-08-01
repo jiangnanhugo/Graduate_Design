@@ -3,14 +3,14 @@
 
 
 \schoolname{北京航空航天大学计算机学院}
-\title{硕士学位论文开题报告}
+\title{硕士学位论文中期检查报告}
 \papertitle{基于神经网络的语言模型的性能优化研究}
 \specialty{计算机科学与技术}
 \studentnumber{SY1506330}
 \researcharea{自然语言处理}
 \advisor{荣文戈}
 \author{姜~~楠}
-\date{2016 年 12 月 20 日}
+\date{2017 年 8 月 20 日}
 
 \begin{document}
 
@@ -18,22 +18,26 @@
 
 \tableofcontents
 \newpage
+\begin{table}
+\center{\zihao{2}\songti\textbf{基于神经网络的语言模型的性能优化研究}}
+\end{table}
 
-
-\section{论文选题的背景与意义}
+\section{论文工作计划}
+\subsection{论文研究目标}
 近年来，随着Web2.0 的兴起，互联网上的数据急剧膨胀。根据国际数据公司（IDC）的统计和预测，2011 年全球网络数据量已经达到1.8ZB，到2020 年，全球数据总量预计还将增长50 倍。大量无标注数据的出现，也让研究人员开始考虑，如何利用算法从这些大规模无标注的文本数据中自动挖掘规律，得到有用的信息。2006年, Hinton 提出的深度学习\cite{hinton2006reducing}，为解决这一问题带来了新的思路。在之后的发展中，基于神经网络的表示学习技术开始在各个领域崭露头角。尤其在图像和语音领域的多个任务上，基于表示学习的方法在性能上均超过了传统方法。
 
 近年来，深度学习逐渐在自然语言处理中得到应用. 研究者提出用神经网络(Neural Network, NN) 来训练语言模型并进行了相关探索\cite{DBLP:conf/nips/BengioDV00}. 其中，基于循环神经网络的语言模型建模方法引起了研究者极大的兴趣[3]. 网络通过学习能够将当前词的历史信息存储起来，以词的整个上下文作为依据，来预测下一个词出现的概率，克服了n-gram 语言模型无法利用语句中长距离上下文信息的缺点. 另外，在模型训练的过程中，由于词的历史信息被映射到低维连续空间，语义相似的词被聚类，在语料中出现次数较少的词仍然能够得到很好的训练，不再需要额外的数据平滑技术. 迄今为止，采用(Recurrent Neural Network, RNN)训练的语言模型在模型困惑度(Perplexity, PPL)和识别系统的识别率上都取得了最好的效果[4]. RNN 建模方法虽然表现出极大的优越性，却以牺牲计算复杂度为代价. 若训练大规模的文本语料，则需要花费很长的时间，制约了RNN 语言模型训练效率. 为克服这一不足，文献[5] 提出了多种优化策略来降低网络的计算复杂度，如缩短模型训练周期、减少训练数据集的规模、降低训练词典的大小、减少隐含层的节点数等，这些方法都在一定程度上降低了网络的运算量，提高了模型的训练效率，但同时也牺牲了较多的模型性能. 另外，在网络结构层面上，文献\cite{DBLP:journals/coling/BrownPdLM92} 研究了一种基于分类的循环神经网络(Class-based RNN) 结构，网络的输出层被分解为两部分，增加的一部分称为分类层，从结构上降低了整个网络的计算复杂度，使得模型训练效率有了一定的提升且模型性能没有大的变化. 然而，在大词汇量连续语音识别系统中，采用此结构训练大规模语料语言模型仍需要花费大量时间. 因此，模型训练效率有待进一步优化.
 
+\subsection{论文主要研究内容}
 因此探讨研究语言模型的大词表问题，是目前理论应用到实际过程中必须要克服的问题。我们当然可以通过配置高性能服务器来暂时延缓该问题的后果，但是一旦应用到大数据集上，即使是目前最好的CPU或者GPU，仍然需要三五天时间才能训练完善。应此，在保证原有模型的准确率的目的下，如何提高模型的训练速度是我们主要讨论的内容。为此我们讨论了三个不同的方向：一种是通过采样技术(Importance Sampling)来减少必要的训练时间;一种是通过基于分类的多元分类(class-based hierarchical softmax, cHSM)来加速模型; 最后一种是采用基于树模型的多层二元分类模型(tree-based hierarchical softmax, tHSM).
 
 同时，我们还需要针对CPU 和GPU设备分别进行探讨。因为传统的线性运算模型在流行的GPU并行运算方案中并不适用，所欲需要结合不同的运算设备分别讨论可行的方案。
 
-\section{国内外研究现状及发展动态}
+\section{已经完成的工作}
 基于神经网络的分布表示一般称为词向量、词嵌入（word embedding）或分布式表示（distributed representation）[116]。神经网络词向量表示技术通过神经网络技术对上下文，以及上下文与目标词之间的关系进行建模。由于神经网络较为灵活，这类方法的最大优势在于可以表示复杂的上下文。在前面基于矩阵的分布表示方法中，最常用的上下文是词。如果使用包含词序信息的n-gram 作为上下文，当n 增加时，n-gram 的总数会呈指数级增长，此时会遇到维数灾难问题。而神经网络在表示n-gram 时，可以通过一些组合方式对n 个词进行组合，参数个数仅以线性速度增长。有了这一优势,神经网络模型可以对更复杂的上下文进行建模，在词向量中包含更丰富的语义信息。神经网络模型主要包括： 传统前向传递神经网络(Feed Forward Neural Network, FFNN)、循环神经网络(Recurrent Neural Network,RNN)建模方案。
 
 另外针对大词表问题，主要可以分为以下两种策略：基于类别的多元分类模型(class-based hierarchical softmax, cHSM)和基于二叉树的二元分类模型(class-based hierarchical softmax, tHSM)，我们分别在下面详细讨论和介绍。
-\subsection{语言模型简介}
+\subsection{完成的工作内容一}
 语言模型可以对一段文本的概率进行估计，对信息检索、机器翻译、语音识别等任务有着重要的作用。
 形式化讲，统计语言模型的作用是为一个长度为m 的字符串确定一个概率分布$P(w_1;w_2;\cdots;w_m)$，表示其存在的可能性，其中$w_1$ 到$w_m$ 依次表示这段文
 本中的各个词。一般在实际求解过程中，通常采用下式计算其概率值：
@@ -53,7 +57,7 @@ P(w_i | w_1;w_2;\cdots;w_{i-1})  \approx P(w_i | w_{i-(n-1)};\cdots;w_{i-1})
 
 当n = 2 时又称二元模型（bigram model），将n 代入公式\ref{equ:approx} 中，右部为P$(w_i|w_{i-1})$。常用的还有n = 3 时的三元模型（trigram model），使用$P(w_i |w_{i-2};w_{i-1})$ 作为近似。这些方法均可以保留一定的词序信息。
 
-\subsection{上下文信息的建模策略}
+\subsection{完成的工作内容二}
 上下文信息建模策略主要的思路包括: 传统前向传递神经网络(Feed Forward Neural Network, FFNN)、循环神经网络(Recurrent Neural Network,RNN)建模方案。 以下我们一一探讨。
 
 神经网络对参数进行高度共享，因此对低频词具有天然的平滑能力。神经网络语言模型(Neural Network Language Model, NNLM) 的最早由Bengio等人在2001年提出\cite{DBLP:conf/nips/BengioDV00}, 近年来一些学者开始展开这方面的研究，并取得一系列成果，如\cite{DBLP:conf/acl/BaroniDK14,DBLP:journals/sigkdd/BellK07,DBLP:journals/pami/BengioCV13,DBLP:journals/tnn/BengioSF94}, 但总体而言, 对NNLM的研究还处在起步阶段。
@@ -97,7 +101,7 @@ h(i) =\phi(e(w_i) +Wh(i -1))
 隐藏层的初始状态为$h(0)$，随着模型逐个读入语料中的词$w_1;w_2; \cdots $, 隐藏层不断地更新为$h(1);h(2); \cdots$ 。根据公式\ref{equ:rnn}，每一个隐藏层包含了当前词的信息以及上一个隐藏层的信息。通过这种迭代推进的方式，每个隐藏层实际上包含了此前所有上文的信息，相比NNLM 只能采用上文n 元短语作为近似，RNNLM 包含了更丰富的上文信息，也有潜力达到更好的效果。RNNLM 的输出层计算方法与NNLM 的输出层一致。
 
 
-\subsection{多元分类模型}
+\section{关键技术或难点}
 传统的多元分类模型(Softmax):
 \begin{equation}\label{equ:softmax}
   \hat y_i=\frac{\exp(o_i)}{\sum_j \exp(o_j)}
@@ -114,8 +118,7 @@ h(i) =\phi(e(w_i) +Wh(i -1))
 Mikolov曾提出使用基于二叉树的层级softmax模型来加速的训练方案，加速比能达到理论的最大速度，但是当时提出的背景是基于CPU构建的，如今越来越多的算法随着应用领域的推广，需要在并行度更高的GPU上进行计算，因此基于GPU进行建模的tHSM尚未被研究提及，需要后人研讨。
 
 
-\section{论文的研究内容及拟采取的技术方案}
-\subsection{对上下文信息建模策略}
+\subsection{关键技术或难点一}
 依照上章节的分析，本章节主要介绍我们实验中所要涉及的模型，主要是各种循环神经网络的变种 \cite{DBLP:conf/icml/JozefowiczZS15}: 普通循环神经网络节点、长短记忆网络(Long shrot-term memory, LSTM) \cite{DBLP:journals/taslp/SundermeyerNS15} 和门限记忆节点(Gated Recurrent Unit, GRU) \cite{DBLP:conf/nips/ChungKDGCB15}。 LSTM的计算公式定于如下 \cite{DBLP:journals/neco/HochreiterS97}：
 \begin{itemize}
 \item 输入门:输入门：控制当前输入 $x_t$ 和前一步输出 $h_{t−1}$ 进入新的 cell 的信息量：
@@ -169,12 +172,16 @@ GRU 可以看成是 LSTM 的变种，GRU 把 LSTM中的 forget gate 和 input ga
 \end{figure}
 
 
-\subsection{对多元分类模型的建模}
+\subsection{关键技术或难点二}
 大词表问题，主要是对softmax如何建模的问题。在本课题中，我们探讨cHSM和tHSM两种不同的方案所带来的影响和优劣。
-\subsection{单词聚类的策略}
+\section{下一阶段工作计划}
 当我们使用多层分类模型的时候，我们就需要将单词按照模型的架构进行划分。其中对于cHSM模型，我们有以下策略可以使用：1) 基于词频划分类别 2) 基于2-gram 的布朗聚类(brown clustering) 进行划分.3)按照word-embedding 的词向量信息进行聚类。另外，我们还需要注意的是，各个类别可以包含不同的数量的单词，也可以包含数量相同的单词。对于后者，我们考虑的划分模型就是基于交换算法(Exchange Algorithm), 以此来保证获得近似的最优解。
 
-\section{关键技术或技术路线}
+\subsection{存在的问题}
+\subsection{尚未完成的工作}
+\subsection{解决问题的技术思路或措施}
+\subsection{下一阶段计划}
+
 
 1) 数学背景和理论背景。 尽管本实验题目定义范围比较小，但是我们也需要很好的数学理论知识，包括：矩阵论,概率论。还有，我们还需要极强的阅读外文文献知识和编码实现能力，都是不可或缺的基本要求。
 
@@ -197,6 +204,6 @@ GRU 可以看成是 LSTM 的变种，GRU 把 LSTM中的 forget gate 和 input ga
 
 \newpage
 \addcontentsline{toc}{section}{主要参考文献}
-\bibliography{bibs}
+\buaathesisbib{bibs}
 
 \end{document}
