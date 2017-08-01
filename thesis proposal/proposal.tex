@@ -1,16 +1,16 @@
-\documentclass[12pt,a4paper]{article}
+\documentclass[twoside]{buaathesis}
 
-\usepackage{buaa_paper}
+
 
 \schoolname{北京航空航天大学计算机学院}
-\title{学位论文开题报告}
+\title{硕士学位论文开题报告}
 \papertitle{基于神经网络的语言模型的性能优化研究}
 \specialty{计算机科学与技术}
 \studentnumber{SY1506330}
 \researcharea{自然语言处理}
-\advisor{荣文戈~~副教授}
+\advisor{荣文戈}
 \author{姜~~楠}
-\date{2016 年 12 月 20 号}
+\date{2016 年 12 月 20 日}
 
 \begin{document}
 
@@ -71,7 +71,7 @@ P(w_i | w_1;w_2;\cdots;w_{i-1})  \approx P(w_i | w_{i-(n-1)};\cdots;w_{i-1})
 当输入层完成对上文的表示x 之后，模型将其送入剩下两层神经网络，依次得到隐藏层$h$ 和输出层$y$：
 \begin{equation}\label{equ:all_nplm}
 \begin{split}
-h =& tanh(b(1) + Hx) \\
+h =& \tanh(b(1) + Hx) \\
 y =& b(2) +Wx + Uh
 \end{split}
 \end{equation}
