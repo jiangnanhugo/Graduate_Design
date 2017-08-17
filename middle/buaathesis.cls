@@ -19,8 +19,8 @@
 \renewcommand{\baselinestretch}{1.5}
 
 %% 中文断行
-%\XeTeXlinebreaklocale "zh"
-%\XeTeXlinebreakskip = 0pt plus 1pt minus 0.1pt
+\XeTeXlinebreaklocale "zh"
+\XeTeXlinebreakskip = 0pt plus 1pt minus 0.1pt
 
 
 \renewcommand{\contentsname}{\heiti\zihao{-2}\bfseries 目\qquad 录}
@@ -87,7 +87,7 @@ subsection={
   linkcolor=blue]{hyperref}
 
 % 页边距
-\usepackage[top=1in,bottom=1in,left=1.25in,right=1.25in]{geometry}
+\usepackage[top=1in,bottom=1in,left=1.2in,right=1.2in]{geometry}
 
 % 论文题目
 \gdef\@papertitle{火焰仿真}
@@ -169,30 +169,31 @@ subsection={
 % 标题页
 \renewcommand{\maketitle}{\begin{titlepage}
 \thispagestyle{empty}
+\linespread{1.3}
 \begin{center}
 \end{center}
 \begin{center}
 \vskip 50bp
-\centerline{\bfseries\xiaoerhao{\kaishu\@schoolname}}
-\vskip 60bp
+\centerline{\bfseries\xiaoerhao{\@schoolname}}
+\vskip 45bp
 \centerline{\bfseries\heiti\yihao{\@title}}
-\vskip 100bp
+\vskip 80bp
 \end{center}
 
 
 \sanhao
 \begin{center}
-\begin{tabular}{c p{240bp}}
-  {{\bfseries \kaishu\@papertitle@label}}& \kaishu\@papertitle\\ %\cline{2-2}
-   \bfseries \kaishu\xiaosanhao{\@specialty@label}& \kaishu\@specialty\\ %\cline{2-2}
-   \bfseries \kaishu\xiaosanhao{\@researcharea@label}& \kaishu\@researcharea\\ %\cline{2-2}
-   \bfseries \kaishu\xiaosanhao{\@author@label}& \kaishu\@author\\ %\cline{2-2}
-   \bfseries \kaishu\xiaosanhao{\@studentnumber@label}& \kaishu\@studentnumber\\ %\cline{2-2}
-   \bfseries \kaishu\xiaosanhao{\@advisor@label}& \kaishu\@advisor\\ %\cline{2-2}
+\begin{tabular}{c p{290bp}}
+  {{\bfseries \kaishu\@papertitle@label}}& \@papertitle\\ %\cline{2-2}
+   \bfseries \kaishu\xiaosanhao{\@specialty@label}& \@specialty\\ %\cline{2-2}
+   \bfseries \kaishu\xiaosanhao{\@researcharea@label}& \@researcharea\\ %\cline{2-2}
+   \bfseries \kaishu \xiaosanhao{\@author@label}& \@author\\ %\cline{2-2}
+   \bfseries \kaishu\xiaosanhao{\@studentnumber@label}& \@studentnumber\\ %\cline{2-2}
+   \bfseries \kaishu\xiaosanhao{\@advisor@label}& \@advisor\\ %\cline{2-2}
 \end{tabular}
 \end{center}
 
-\vskip 40bp
+\vskip 80bp
 \centerline{\heiti\sanhao{\@schoolname}}
 \centerline{\heiti\xiaosanhao{\@date}}
 \end{titlepage}
