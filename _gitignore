@@ -1,0 +1,10 @@
+*.docx
+*.ppt
+*.doc
+*.aux
+*.bbl
+*.blg
+*.out
+*.synctex
+*.toc
+*.log
