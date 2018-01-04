@@ -1,240 +1,1257 @@
-﻿This file was created with JabRef 2.1 beta 2.
-Encoding: GB2312
+﻿%%% ====================================================================
+%%%  BibTeX-file{
+%%%     author          = "Gerry Murray",
+%%%     version         = "1.2",
+%%%     date            = "2 April 2012",
+%%%     filename        = "acmsmall-sample-bibfile.bib",
+%%%     address         = "ACM, NY",
+%%%     email           = "murray at hq.acm.org",
+%%%     codetable       = "ISO/ASCII",
+%%%     keywords        = "ACM Reference Format, bibliography, citation, references",
+%%%     supported       = "yes",
+%%%     docstring       = "This BibTeX database file contains 'bibdata' entries
+%%%                        that 'match' the examples provided in the Specifications Document
+%%%                        AND, also, 'legacy'-type bibs. It should assist authors in
+%%%                        choosing the 'correct' at-bibtype and necessary bib-fields
+%%%                        so as to obtain the appropriate ACM Reference Format output.
+%%%			   It also contains many 'Standard Abbreviations'. "
+%%%  }
+%%% ====================================================================
 
-@book{kottwitz2011latex,
-  title={LaTeX Beginner's Guide},
-  author={Kottwitz, S.},
-  isbn={9781847199867},
-  url={http://books.google.com.hk/books?id=rB1Cb62dVnUC},
-  year={2011},
-  publisher={Packt Publishing}
+% Journals
+
+% First the Full Name is given, then the abbreviation used in the AMS Math
+% Reviews, with an indication if it could not be found there.
+% Note the 2nd overwrites the 1st, so swap them if you want the full name.
+
+ %{AMS}
+ @String{AMSTrans = "American Mathematical Society Translations" }
+ @String{AMSTrans = "Amer. Math. Soc. Transl." }
+ @String{BullAMS = "Bulletin of the American Mathematical Society" }
+ @String{BullAMS = "Bull. Amer. Math. Soc." }
+ @String{ProcAMS = "Proceedings of the American Mathematical Society" }
+ @String{ProcAMS = "Proc. Amer. Math. Soc." }
+ @String{TransAMS = "Transactions of the American Mathematical Society" }
+ @String{TransAMS = "Trans. Amer. Math. Soc." }
+
+ %ACM
+ @String{CACM = "Communications of the {ACM}" }
+ @String{CACM = "Commun. {ACM}" }
+ @String{CompServ = "Comput. Surveys" }
+ @String{JACM = "J. ACM" }
+ @String{ACMMathSoft = "{ACM} Transactions on Mathematical Software" }
+ @String{ACMMathSoft = "{ACM} Trans. Math. Software" }
+ @String{SIGNUM = "{ACM} {SIGNUM} Newsletter" }
+ @String{SIGNUM = "{ACM} {SIGNUM} Newslett." }
+
+ @String{AmerSocio = "American Journal of Sociology" }
+ @String{AmerStatAssoc = "Journal of the American Statistical Association" }
+ @String{AmerStatAssoc = "J. Amer. Statist. Assoc." }
+ @String{ApplMathComp = "Applied Mathematics and Computation" }
+ @String{ApplMathComp = "Appl. Math. Comput." }
+ @String{AmerMathMonthly = "American Mathematical Monthly" }
+ @String{AmerMathMonthly = "Amer. Math. Monthly" }
+ @String{BIT = "{BIT}" }
+ @String{BritStatPsych = "British Journal of Mathematical and Statistical
+          Psychology" }
+ @String{BritStatPsych = "Brit. J. Math. Statist. Psych." }
+ @String{CanMathBull = "Canadian Mathematical Bulletin" }
+ @String{CanMathBull = "Canad. Math. Bull." }
+ @String{CompApplMath = "Journal of Computational and Applied Mathematics" }
+ @String{CompApplMath = "J. Comput. Appl. Math." }
+ @String{CompPhys = "Journal of Computational Physics" }
+ @String{CompPhys = "J. Comput. Phys." }
+ @String{CompStruct = "Computers and Structures" }
+ @String{CompStruct = "Comput. \& Structures" }
+ @String{CompJour = "The Computer Journal" }
+ @String{CompJour = "Comput. J." }
+ @String{CompSysSci = "Journal of Computer and System Sciences" }
+ @String{CompSysSci = "J. Comput. System Sci." }
+ @String{Computing = "Computing" }
+ @String{ContempMath = "Contemporary Mathematics" }
+ @String{ContempMath = "Contemp. Math." }
+ @String{Crelle = "Crelle's Journal" }
+ @String{GiornaleMath = "Giornale di Mathematiche" }
+ @String{GiornaleMath = "Giorn. Mat." } % didn't find in AMS MR., ibid.
+
+ %IEEE
+ @String{Computer = "{IEEE} Computer" }
+ @String{IEEETransComp = "{IEEE} Transactions on Computers" }
+ @String{IEEETransComp = "{IEEE} Trans. Comput." }
+ @String{IEEETransAC = "{IEEE} Transactions on Automatic Control" }
+ @String{IEEETransAC = "{IEEE} Trans. Automat. Control" }
+ @String{IEEESpec = "{IEEE} Spectrum" } % didn't find in AMS MR
+ @String{ProcIEEE = "Proceedings of the {IEEE}" }
+ @String{ProcIEEE = "Proc. {IEEE}" } % didn't find in AMS MR
+ @String{IEEETransAeroElec = "{IEEE} Transactions on Aerospace and Electronic
+     Systems" }
+ @String{IEEETransAeroElec = "{IEEE} Trans. Aerospace Electron. Systems" }
+
+ @String{IMANumerAna = "{IMA} Journal of Numerical Analysis" }
+ @String{IMANumerAna = "{IMA} J. Numer. Anal." }
+ @String{InfProcLet = "Information Processing Letters" }
+ @String{InfProcLet = "Inform. Process. Lett." }
+ @String{InstMathApp = "Journal of the Institute of Mathematics and
+     its Applications" }
+ @String{InstMathApp = "J. Inst. Math. Appl." }
+ @String{IntControl = "International Journal of Control" }
+ @String{IntControl = "Internat. J. Control" }
+ @String{IntNumerEng = "International Journal for Numerical Methods in
+     Engineering" }
+ @String{IntNumerEng = "Internat. J. Numer. Methods Engrg." }
+ @String{IntSuper = "International Journal of Supercomputing Applications" }
+ @String{IntSuper = "Internat. J. Supercomputing Applic." } % didn't find
+%% in AMS MR
+ @String{Kibernetika = "Kibernetika" }
+ @String{JResNatBurStand = "Journal of Research of the National Bureau
+     of Standards" }
+ @String{JResNatBurStand = "J. Res. Nat. Bur. Standards" }
+ @String{LinAlgApp = "Linear Algebra and its Applications" }
+ @String{LinAlgApp = "Linear Algebra Appl." }
+ @String{MathAnaAppl = "Journal of Mathematical Analysis and Applications" }
+ @String{MathAnaAppl = "J. Math. Anal. Appl." }
+ @String{MathAnnalen = "Mathematische Annalen" }
+ @String{MathAnnalen = "Math. Ann." }
+ @String{MathPhys = "Journal of Mathematical Physics" }
+ @String{MathPhys = "J. Math. Phys." }
+ @String{MathComp = "Mathematics of Computation" }
+ @String{MathComp = "Math. Comp." }
+ @String{MathScand = "Mathematica Scandinavica" }
+ @String{MathScand = "Math. Scand." }
+ @String{TablesAidsComp = "Mathematical Tables and Other Aids to Computation" }
+ @String{TablesAidsComp = "Math. Tables Aids Comput." }
+ @String{NumerMath = "Numerische Mathematik" }
+ @String{NumerMath = "Numer. Math." }
+ @String{PacificMath = "Pacific Journal of Mathematics" }
+ @String{PacificMath = "Pacific J. Math." }
+ @String{ParDistComp = "Journal of Parallel and Distributed Computing" }
+ @String{ParDistComp = "J. Parallel and Distrib. Comput." } % didn't find
+%% in AMS MR
+ @String{ParComputing = "Parallel Computing" }
+ @String{ParComputing = "Parallel Comput." }
+ @String{PhilMag = "Philosophical Magazine" }
+ @String{PhilMag = "Philos. Mag." }
+ @String{ProcNAS = "Proceedings of the National Academy of Sciences
+                    of the USA" }
+ @String{ProcNAS = "Proc. Nat. Acad. Sci. U. S. A." }
+ @String{Psychometrika = "Psychometrika" }
+ @String{QuartMath = "Quarterly Journal of Mathematics, Oxford, Series (2)" }
+ @String{QuartMath = "Quart. J. Math. Oxford Ser. (2)" }
+ @String{QuartApplMath = "Quarterly of Applied Mathematics" }
+ @String{QuartApplMath = "Quart. Appl. Math." }
+ @String{RevueInstStat = "Review of the International Statisical Institute" }
+ @String{RevueInstStat = "Rev. Inst. Internat. Statist." }
+
+ %SIAM
+ @String{JSIAM = "Journal of the Society for Industrial and Applied
+     Mathematics" }
+ @String{JSIAM = "J. Soc. Indust. Appl. Math." }
+ @String{JSIAMB = "Journal of the Society for Industrial and Applied
+     Mathematics, Series B, Numerical Analysis" }
+ @String{JSIAMB = "J. Soc. Indust. Appl. Math. Ser. B Numer. Anal." }
+ @String{SIAMAlgMeth = "{SIAM} Journal on Algebraic and Discrete Methods" }
+ @String{SIAMAlgMeth = "{SIAM} J. Algebraic Discrete Methods" }
+ @String{SIAMAppMath = "{SIAM} Journal on Applied Mathematics" }
+ @String{SIAMAppMath = "{SIAM} J. Appl. Math." }
+ @String{SIAMComp = "{SIAM} Journal on Computing" }
+ @String{SIAMComp = "{SIAM} J. Comput." }
+ @String{SIAMMatrix = "{SIAM} Journal on Matrix Analysis and Applications" }
+ @String{SIAMMatrix = "{SIAM} J. Matrix Anal. Appl." }
+ @String{SIAMNumAnal = "{SIAM} Journal on Numerical Analysis" }
+ @String{SIAMNumAnal = "{SIAM} J. Numer. Anal." }
+ @String{SIAMReview = "{SIAM} Review" }
+ @String{SIAMReview = "{SIAM} Rev." }
+ @String{SIAMSciStat = "{SIAM} Journal on Scientific and Statistical
+     Computing" }
+ @String{SIAMSciStat = "{SIAM} J. Sci. Statist. Comput." }
+
+ @String{SoftPracExp = "Software Practice and Experience" }
+ @String{SoftPracExp = "Software Prac. Experience" } % didn't find in AMS MR
+ @String{StatScience = "Statistical Science" }
+ @String{StatScience = "Statist. Sci." }
+ @String{Techno = "Technometrics" }
+ @String{USSRCompMathPhys = "{USSR} Computational Mathematics and Mathematical
+     Physics" }
+ @String{USSRCompMathPhys = "{U. S. S. R.} Comput. Math. and Math. Phys." }
+ @String{VLSICompSys = "Journal of {VLSI} and Computer Systems" }
+ @String{VLSICompSys = "J. {VLSI} Comput. Syst." }
+ @String{ZAngewMathMech = "Zeitschrift fur Angewandte Mathematik und
+     Mechanik" }
+ @String{ZAngewMathMech = "Z. Angew. Math. Mech." }
+ @String{ZAngewMathPhys = "Zeitschrift fur Angewandte Mathematik und Physik" }
+ @String{ZAngewMathPhys = "Z. Angew. Math. Phys." }
+
+% Publishers % ================================================= |
+
+ @String{Academic = "Academic Press" }
+ @String{ACMPress = "{ACM} Press" }
+ @String{AdamHilger = "Adam Hilger" }
+ @String{AddisonWesley = "Addison-Wesley" }
+ @String{AllynBacon = "Allyn and Bacon" }
+ @String{AMS = "American Mathematical Society" }
+ @String{Birkhauser = "Birkha{\"u}ser" }
+ @String{CambridgePress = "Cambridge University Press" }
+ @String{Chelsea = "Chelsea" }
+ @String{ClaredonPress = "Claredon Press" }
+ @String{DoverPub = "Dover Publications" }
+ @String{Eyolles = "Eyolles" }
+ @String{HoltRinehartWinston = "Holt, Rinehart and Winston" }
+ @String{Interscience = "Interscience" }
+ @String{JohnsHopkinsPress = "The Johns Hopkins University Press" }
+ @String{JohnWileySons = "John Wiley and Sons" }
+ @String{Macmillan = "Macmillan" }
+ @String{MathWorks = "The Math Works Inc." }
+ @String{McGrawHill = "McGraw-Hill" }
+ @String{NatBurStd = "National Bureau of Standards" }
+ @String{NorthHolland = "North-Holland" }
+ @String{OxfordPress = "Oxford University Press" }  %address Oxford or London?
+ @String{PergamonPress = "Pergamon Press" }
+ @String{PlenumPress = "Plenum Press" }
+ @String{PrenticeHall = "Prentice-Hall" }
+ @String{SIAMPub = "{SIAM} Publications" }
+ @String{Springer = "Springer-Verlag" }
+ @String{TexasPress = "University of Texas Press" }
+ @String{VanNostrand = "Van Nostrand" }
+ @String{WHFreeman = "W. H. Freeman and Co." }
+
+%Entries
+@article{minka2003algorithms,
+  title={Algorithms for maximum-likelihood logistic regression},
+  author={Minka, Thomas P},
+  year={2003}
+}
+@inproceedings{DBLP:conf/acl/FuGQCWL14,
+  author    = {Ruiji Fu and
+               Jiang Guo and
+               Bing Qin and
+               Wanxiang Che and
+               Haifeng Wang and
+               Ting Liu},
+  title     = {Learning Semantic Hierarchies via Word Embeddings},
+  booktitle = {Proc. of {ACL}},
+  pages     = {1199--1209},
+  year      = {2014},
+  timestamp = {Mon, 28 Jul 2014 19:09:09 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/conf/acl/FuGQCWL14},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
 }
 
-@ARTICLE{idlemem,
-  author = {A. Acharya and S. Setia},
-  title = {Availability and Utility of Idle Memory in Workstation Clusters},
-  journal = {ACM SIGMETRICS Performance Evaluation Review},
-  year = {1999}
+@inproceedings{DBLP:conf/interspeech/ChenWR15,
+  author    = {Yun{-}Nung Chen and
+               William Yang Wang and
+               Alexander I. Rudnicky},
+  title     = {Learning semantic hierarchy with distributed representations for unsupervised
+               spoken language understanding},
+  booktitle = {Proc. of {Interspeech}},
+  pages     = {1869--1873},
+  year      = {2015},
+  timestamp = {Mon, 04 Jan 2016 19:12:52 +0100},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/conf/interspeech/ChenWR15},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
 }
-%期刊文章
-
-@TECHREPORT{sigsegv,
-  author = {E. A. Anderson and J. M. Neefe},
-  title = {An Exploration of Network RAM},
-  institution = {UC Berkley},
-  year = {1994},
-  number = {CSD-98-1000},
-  month = dec
+@inproceedings{DBLP:conf/interspeech/ChenWLGW14,
+  author    = {Xie Chen and
+               Yongqiang Wang and
+               Xunying Liu and
+               Mark J. F. Gales and
+               Philip C. Woodland},
+  title     = {Efficient GPU-based training of recurrent neural network language
+               models using spliced sentence bunch},
+  booktitle = {Proc. of {Interspeech}},
+  pages     = {641--645},
+  year      = {2014},
+  timestamp = {Wed, 18 Feb 2015 08:38:47 +0100},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/conf/interspeech/ChenWLGW14},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
 }
-%技术报告？
-
-@ARTICLE{Myrinet,
-  author = {N.J. Boden and D. Cohen and R.E. Felderman and A.E. Kulawik and C.
-	L. Seitz and J.N. Seizovic and W. Su},
-  title = {Myrinet: A Gigabit-per-Second Local Area Network},
-  journal = {IEEE Micro},
-  year = {1995},
-  volume = {15},
-  pages = {29--36},
-  number = {1}
+@inproceedings{DBLP:journals/iclr/JiVSAD15,
+  author    = {Shihao Ji and
+               S. V. N. Vishwanathan and
+               Nadathur Satish and
+               Michael J. Anderson and
+               Pradeep Dubey},
+  title     = {BlackOut: Speeding up Recurrent Neural Network Language Models With
+               Very Large Vocabularies},
+  booktitle = {Proc. of {ICLR}},
+  pages     = {1--14},
+  year      = {2016},
+  timestamp = {Tue, 01 Dec 2015 19:22:34 +0100},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/corr/JiVSAD15},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
 }
-%期刊文章
-
-@BOOK{ulk3rd,
-  title = {Understanding the Linux Kernel},
-  publisher = {O'{\MakeUppercase{R}}eilly},
-  year = {2005},
-  author = {Daniel P. Bovet and Marco Cesati},
-  edition = {3rd},
-  booktitle = {Understanding the Linux Kernel},
-  isbn = {0-596-00565-2}
-}
-%书籍
-
-@BOOK{ldd3rd,
-  title = {Linux Device Drivers},
-  publisher = {O'{\MakeUppercase{R}}eilly},
-  year = {2005},
-  author = {Jonathan Corbet and Alessandro Rubini and Greg Kroah-Hartman},
-  edition = {3rd},
-  booktitle = {Linux Device Drivers}
-}
-%书籍
-
-@ARTICLE{GMM,
-  author = {M. J. Feeley and W. E. Morgan and F. H. Pighin and A. R. Karlin and
-	H. M. Levy and C. A. Thekkath},
-  title = {Implementing Global Memory Management in a Workstation Cluster},
-  journal = {ACM SIGOPS Operating Systems Review},
-  year = {1995},
-  pages = {201--212}
-}
-%期刊文章
-
-@ARTICLE{nrd,
-  author = {M. D. Flouris and E. P. Markatos},
-  title = {The Network RamDisk: Using Remote Memory on Heterogeneous NOWs},
-  journal = {Cluster Computing},
-  year = {1999},
-  volume = {2},
-  pages = {281--293},
-  number = {4}
-}
-%期刊文章
-
-@INPROCEEDINGS{1992GMM,
-  author = {M. J. Frankling and M. J. Carey and M. Livny},
-  title = {Globla memory management in client-server DBMS architectures},
-  booktitle = {Proceeding of the 18th VLDB Conference},
-  year = {1992},
-  month = aug
-}
-%会议论文？
-
-@INPROCEEDINGS{iSCSIIOprof,
-  author = {Jizhong Han and Dan Zhou and Xubin He and Jinzhu Gao},
-  title = {I/{\MakeUppercase{O}} Profiling for Distributed IP Storage Systems},
-  booktitle = {Proceeding of The Second International Conference on Embedded Software
-	and Systems},
-  year = {2005},
-  month = dec
+@incollection{DBLP:conf/nips/MnihH08,
+  title     = {A Scalable Hierarchical Distributed Language Model},
+  author    = {Mnih, Andriy and Hinton, Geoffrey E},
+  booktitle = {Proc. of {NIPS}},
+  pages     = {1081--1088},
+  year      = {2009}
 }
 
-@INPROCEEDINGS{icache1,
-  author = {X. He and Q. Yang and M. Zhang},
-  title = {A Caching Strategy to Improve iSCSI Performance},
-  booktitle = {Proceeding of Local Computer Networks},
-  year = {2002}
+
+@inproceedings{DBLP:conf/icml/MnihT12,
+  author    = {Andriy Mnih and
+               Yee Whye Teh},
+  title     = {A fast and simple algorithm for training neural probabilistic language
+               models},
+  booktitle = {Proc. of {ICML}},
+  year      = {2012},
+  timestamp = {Wed, 13 Jul 2016 14:59:05 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/conf/icml/MnihT12},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
 }
 
-@MASTERSTHESIS{NFS,
-  author = {M. R. Hines and M. Lewandowski and K. Gopalan},
-  title = {Anemone: Adaptive Network Memory Engine},
-  school = {Florida State University},
-  year = {2003}
+@article{DBLP:journals/corr/Al-RfouAAa16,
+  author    = {Rami Al{-}Rfou and
+               Guillaume Alain and
+               Amjad Almahairi and
+               et al.},
+  title     = {Theano: {A} Python framework for fast computation of mathematical
+               expressions},
+  journal   = {CoRR},
+  volume    = {abs/1605.02688},
+  year      = {2016},
+  timestamp = {Wed, 01 Jun 2016 15:51:08 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/corr/Al-RfouAAa16},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
 }
-%硕士论文
-
-@INPROCEEDINGS{memserver,
-  author = {L. Iftode and K. Li and K. Petersen},
-  title = {Memory Servers for Multicomputers},
-  booktitle = {Proceeding of the IEEE Spring COMPCON 93},
-  year = {1993},
-  pages = {538-547},
-  month = feb
+@article{DBLP:journals/coling/MarcusSM94,
+  author    = {Mitchell P. Marcus and
+               Beatrice Santorini and
+               Mary Ann Marcinkiewicz},
+  title     = {Building a Large Annotated Corpus of English: The Penn Treebank},
+  journal   = {Proc. of {COLING}},
+  volume    = {19},
+  number    = {2},
+  pages     = {313--330},
+  year      = {1993},
+  timestamp = {Tue, 06 Dec 2005 15:19:37 +0100},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/coling/MarcusSM94},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
 }
-
-@INPROCEEDINGS{dodo,
-  author = {S. Koussih and A. Acharyam, S. Setia},
-  title = {Dodo:A User-level System for Exploiting Idle Memory in Workstation
-	Clusters},
-  booktitle = {Proceeding of the Eighth IEEE International Symposium on High Performance
-	Distributed Computing},
-  year = {1999}
+@inproceedings{DBLP:conf/interspeech/PaulB92,
+  author    = {Douglas B. Paul and
+               Janet M. Baker},
+  title     = {The design for the wall street journal-based {CSR} corpus},
+  booktitle = {Proc. of {Interspeech}},
+  year      = {1992},
+  timestamp = {Fri, 08 Apr 2011 11:13:47 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/conf/interspeech/PaulB92},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
 }
-
-@ARTICLE{HPBD,
-  author = {S. Liang and R. Notonha and D. K. Panda},
-  title = {Swapping to Remote Memory over InfiniBand: An Approach using a High
-	Performance Network Block Device},
-  journal = {IEEE Cluster Computing},
-  year = {2005},
-  month = sep
+@article{DBLP:journals/corr/JozefowiczVSSW16,
+  author    = {Rafal J{\'{o}}zefowicz and
+               Oriol Vinyals and
+               Mike Schuster and
+               Noam Shazeer and
+               Yonghui Wu},
+  title     = {Exploring the Limits of Language Modeling},
+  journal   = {CoRR},
+  volume    = {abs/1602.02410},
+  year      = {2016},
+  timestamp = {Tue, 01 Mar 2016 17:47:25 +0100},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/corr/JozefowiczVSSW16},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
 }
-%期刊文章
-
-@BOOK{lkd2nd,
-  title = {Linux Kernel Development},
-  publisher = {Sams Publishing},
-  year = {2005},
-  author = {Robert Love},
-  edition = {2nd},
-  booktitle = {Linux Kernel Development},
-  isbn = {0-672-32720-1}
-}
-%书籍
-
-@INPROCEEDINGS{rrmp,
-  author = {E. P. Markatos and G. Dramitions},
-  title = {Implementation of a Reliable Remote Memory Pager},
-  booktitle = {Proceeding of the 1996 Usenix Technical Conference},
-  year = {1996}
-}
-
-@OTHER{stream,
-  author = {John McCalpin},
-  etype = {CP},
-  howpublished = {http://www.streambench.org},
-  title = {Streambenchmark},
-  url = {http://www.streambench.org}
-}
-%其他
-
-@INPROCEEDINGS{Nswap,
-  author = {T. Newhall and S. Finney and K. Ganchevm and M. Spiegel},
-  title = {Nswap:A Network Swapping Module for Linux Clusters},
-  booktitle = {Proceeding of Euro-Par'03 International Conference on Parallel and
-	Distributed Computing},
-  year = {2003},
-  address = {Klagenfurt, Austria},
-  month = aug
+@article{zhou2016softplus,
+  title     = {Softplus Regressions and Convex Polytopes},
+  author    = {Zhou, Mingyuan},
+  journal   = {CoRR},
+  volume    = {abs/1608.06383},
+  year      = {2016}
 }
 
-@INPROCEEDINGS{manager,
-  author = {J. Oleszkiewicz and L. Xiao and Y. Liu},
-  title = {Parallel Network RAM: Effectively Utilizing Global Cluster memory
-	for Large Data-Intensive Parallel Programs},
-  booktitle = {Proceeding of International Conference on Parallel Proceeding},
-  year = {2004},
-  pages = {577-592}
+@incollection{DBLP:conf/nips/MikolovSCCD13,
+    title     = {Distributed Representations of Words and Phrases and their Compositionality},
+    author    = {Mikolov, Tomas and Sutskever, Ilya and Chen, Kai and Corrado, Greg S and Dean, Jeff},
+    booktitle = {Proc. of {NIPS}},
+    pages     = {3111--3119},
+    year      = {2013}
 }
 
-@ARTICLE{Quadrics,
-  author = {Fabrizio Petrini and Eitan Frachtenberg and Adolfy Hoisie and Salvador
-	Coll},
-  title = {Performance Evaluation of the Quadrics Interconnection Network},
-  journal = {Journal of Cluster Computing},
-  year = {2003},
-  volume = {6},
-  pages = {125--142},
-  number = {2},
-  month = apr
+@article{DBLP:journals/corr/BrebissonV16a,
+  author    = {Alexandre de Br{\'{e}}bisson and
+               Pascal Vincent},
+  title     = {The Z-loss: a shift and scale invariant classification loss belonging
+               to the Spherical Family},
+  journal   = {CoRR},
+  volume    = {abs/1604.08859},
+  year      = {2016},
+  timestamp = {Wed, 07 Jun 2017 14:42:51 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/corr/BrebissonV16a},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
 }
-%期刊文章
+@ARTICLE{brebisson-vincent-2016-zloss,
+    author = {de Br{\'{e}}bisson, Alexandre and
+              Vincent, Pascal},
+     title = {The {Z}-loss: a shift and scale invariant classification loss belonging to the Spherical Family},
+   journal = {CoRR},
+    volume = {abs/1604.08859},
+      year = {2016}
+}
+@article{DBLP:journals/jmlr/GutmannH12,
+  author    = {Michael Gutmann and
+               Aapo Hyv\"{a}rinen},
+  title     = {Noise-Contrastive Estimation of Unnormalized Statistical Models, with
+               Applications to Natural Image Statistics},
+  journal   = {Journal of Machine Learning Research},
+  volume    = {13},
+  pages     = {307--361},
+  year      = {2012},
+  timestamp = {Thu, 03 May 2012 15:44:52 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/jmlr/GutmannH12},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+@inproceedings{DBLP:conf/interspeech/MikolovKBCK10,
+  author    = {Tomas Mikolov and
+               Martin Karafi{\'{a}}t and
+               Luk{\'{a}}s Burget and
+               Jan Cernock{\'{y}} and
+               Sanjeev Khudanpur},
+  title     = {Recurrent neural network based language model},
+  booktitle = {{INTERSPEECH} 2010, 11th Annual Conference of the International Speech
+               Communication Association, Makuhari, Chiba, Japan, September 26-30,
+               2010},
+  pages     = {1045--1048},
+  year      = {2010},
+  url       = {http://www.isca-speech.org/archive/interspeech_2010/i10_1045.html},
+  timestamp = {Thu, 24 Aug 2017 11:26:53 +0200},
+  biburl    = {http://dblp.org/rec/bib/conf/interspeech/MikolovKBCK10},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+@article{mikolov2012statistical,
+  title={Statistical language models based on neural networks},
+  author={Mikolov, Tom{\'a}{\v{s}}},
+  journal={Presentation at Google, Mountain View, 2nd April},
+  year={2012}
+}
+@article{DBLP:journals/taslp/SundermeyerNS15,
+  author    = {Martin Sundermeyer and
+               Hermann Ney and
+               Ralf Schl{\"{u}}ter},
+  title     = {From Feedforward to Recurrent {LSTM} Neural Networks for Language
+               Modeling},
+  journal   = {{IEEE/ACM} Trans. Audio, Speech {\&} Language Processing},
+  volume    = {23},
+  number    = {3},
+  pages     = {517--529},
+  year      = {2015},
+  url       = {https://doi.org/10.1109/TASLP.2015.2400218},
+  doi       = {10.1109/TASLP.2015.2400218},
+  timestamp = {Sun, 28 May 2017 01:00:00 +0200},
+  biburl    = {http://dblp.org/rec/bib/journals/taslp/SundermeyerNS15},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+@article{DBLP:journals/jmlr/BengioDVJ03,
+  author    = {Yoshua Bengio and
+               R{\'{e}}jean Ducharme and
+               Pascal Vincent and
+               Christian Janvin},
+  title     = {A Neural Probabilistic Language Model},
+  journal   = {J Mach Learn Res},
+  volume    = {3},
+  pages     = {1137--1155},
+  year      = {2003},
+  timestamp = {Thu, 05 Feb 2004 13:43:02 +0100},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/jmlr/BengioDVJ03},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+@inproceedings{DBLP:conf/aaai/KimJSR16,
+  author    = {Yoon Kim and
+               Yacine Jernite and
+               David Sontag and
+               Alexander M. Rush},
+  title     = {Character-Aware Neural Language Models},
+  booktitle = {Proc. of {AAAI}},
+  pages     = {2741--2749},
+  year      = {2016},
+  timestamp = {Thu, 21 Apr 2016 19:28:00 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/conf/aaai/KimJSR16},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+@inproceedings{DBLP:conf/acl/ChenGA16,
+  author    = {Wenlin Chen and
+               David Grangier and
+               Michael Auli},
+  title     = {Strategies for Training Large Vocabulary Neural Language Models},
+  booktitle = {Proc. of {ACL}},
+  pages     = {1975--1985},
+  year      = {2016},
+  timestamp = {Mon, 15 Aug 2016 20:10:51 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/conf/acl/ChenGA16},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+@article{DBLP:journals/taslp/WangW16,
+  author    = {ZhongQiu Wang and
+               DeLiang Wang},
+  title     = {A Joint Training Framework for Robust Automatic Speech Recognition},
+  journal   = {{IEEE/ACM} Transactions on Audio, Speech {\&} Language Processing},
+  volume    = {24},
+  number    = {4},
+  pages     = {796--806},
+  year      = {2016},
+  timestamp = {Wed, 30 Mar 2016 18:10:48 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/taslp/WangW16},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+@inproceedings{DBLP:conf/aistats/MorinB05,
+  author    = {Frederic Morin and
+               Yoshua Bengio},
+  title     = {Hierarchical Probabilistic Neural Network Language Model},
+  booktitle = {Proc. of {AISTATS}},
+  year      = {2005},
+  timestamp = {Wed, 06 May 2015 20:37:32 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/conf/aistats/MorinB05},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
 
-@INPROCEEDINGS{NBD,
-  author = {Sun, H. Tang and M. Chen and J. Fan},
-  title = {A Scalable Dynamic Network Memory Service System},
-  booktitle = {Proceeding of High-Performance Computing in Asia-Pacific Region},
-  year = {2005}
+@inproceedings{DBLP:journals/corr/GraveJCGJ16,
+  author    = {Edouard Grave and
+               Armand Joulin and
+               Moustapha Ciss{\'{e}} and
+               David Grangier and
+               Herv{\'{e}} J{\'{e}}gou},
+  title     = {Efficient softmax approximation for GPUs},
+  booktitle = {Proc. of {ICML}},
+  pages     = {1234--1245},
+  year      = {2017},
+  timestamp = {Mon, 03 Oct 2016 17:51:10 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/corr/GraveJCGJ16},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+@article{DBLP:journals/ijufks/Hochreiter98,
+  author    = {Sepp Hochreiter},
+  title     = {The Vanishing Gradient Problem During Learning Recurrent Neural Nets
+               and Problem Solutions},
+  journal   = {International Journal of Uncertainty, Fuzziness and Knowledge-Based
+               Systems},
+  volume    = {6},
+  number    = {2},
+  pages     = {107--116},
+  year      = {1998},
+  timestamp = {Tue, 02 Mar 2004 13:41:41 +0100},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/ijufks/Hochreiter98},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
 }
 
-@INPROCEEDINGS{VMA,
-  author = {T. S. Trevisan and V. S. Costal and L. Whately and C. L. Amorim},
-  title = {Distributed Shared Memory in Kernel Mode},
-  booktitle = {Proceeding of Computer Architecture and High Performance Computing},
-  year = {2002}
+@article{DBLP:journals/corr/abs-1301-3781,
+  author    = {Tomas Mikolov and
+               Kai Chen and
+               Greg Corrado and
+               Jeffrey Dean},
+  title     = {Efficient Estimation of Word Representations in Vector Space},
+  journal   = {CoRR},
+  volume    = {abs/1301.3781},
+  year      = {2013},
+  timestamp = {Thu, 07 May 2015 20:02:01 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/corr/abs-1301-3781},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+@article{DBLP:journals/coling/BrownPdLM92,
+  author    = {Peter F. Brown and
+               Vincent J. Della Pietra and
+               Peter V. de Souza and
+               Jennifer C. Lai and
+               Robert L. Mercer},
+  title     = {Class-Based n-gram Models of Natural Language},
+  journal   = {Computational Linguistics},
+  volume    = {18},
+  number    = {4},
+  pages     = {467--479},
+  year      = {1992},
+  timestamp = {Thu, 21 Dec 2006 11:12:22 +0100},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/coling/BrownPdLM92},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+@inproceedings{DBLP:conf/ranlp/DerczynskiCB15,
+  author    = {Leon Derczynski and
+               Sean Chester and
+               Kenneth S. B{\o}gh},
+  title     = {Tune Your Brown Clustering, Please},
+  booktitle = {Proc.of  {RANLP}},
+  pages     = {110--117},
+  year      = {2015},
+  timestamp = {Sat, 23 Jan 2016 14:43:33 +0100},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/conf/ranlp/DerczynskiCB15},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+@incollection{DBLP:conf/nips/VincentBB15,
+  title     = {Efficient Exact Gradient Update for training Deep Networks with Very Large Sparse Targets},
+  author    = {Vincent, Pascal and de Br\'{e}bisson, Alexandre and Bouthillier, Xavier},
+  booktitle = {Proc. of {NIPS}},
+  pages     = {1108--1116},
+  year      = {2015}
 }
 
-@ARTICLE{bigmem,
-  author = {L. Xiao and S. Chen and X. Zhang},
-  title = {Adaptive Memory Allocations in Clusters to Handle Unexpctedly Large
-	Data-Intensive Jobs},
-  journal = {IEEE Transactions on Parallel and Distributed Systems},
-  year = {2004},
-  volume = {15},
-  pages = {577-592},
-  number = {6},
-  month = jun
+@inproceedings{DBLP:conf/naacl/BaltescuB15,
+  author    = {Paul Baltescu and
+               Phil Blunsom},
+  title     = {Pragmatic Neural Language Modelling in Machine Translation},
+  booktitle = {Proc. of {NAACL}-{HLT}},
+  pages     = {820--829},
+  year      = {2015},
+  timestamp = {Sat, 11 Jul 2015 19:35:08 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/conf/naacl/BaltescuB15},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
 }
-%期刊文章
 
-@OTHER{IB,
-  etype = {OL},
-  howpublished = {http://www.infinibandta.org/spec},
-  key = {ITA},
-  organization = {InfiniBand Trade Association},
-  title = {The InfiniBand Architecture},
-  url = {http://www.infinibandta.org/spec}
+@incollection{DBLP:conf/nips/MnihK13,
+title = {Learning word embeddings efficiently with noise-contrastive estimation},
+author = {Mnih, Andriy and Kavukcuoglu, Koray},
+booktitle = {Proc. {NIPS}},
+pages = {2265--2273},
+year = {2013}
 }
-%其他
+
+@article{DBLP:journals/corr/ChungGCB14,
+  author    = {Junyoung Chung and
+               {\c{C}}aglar G{\"{u}}l{\c{c}}ehre and
+               KyungHyun Cho and
+               Yoshua Bengio},
+  title     = {Empirical Evaluation of Gated Recurrent Neural Networks on Sequence
+               Modeling},
+  journal   = {CoRR},
+  volume    = {abs/1412.3555},
+  year      = {2014},
+  timestamp = {Thu, 01 Jan 2015 19:51:08 +0100},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/corr/ChungGCB14},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+@inproceedings{DBLP:journals/corr/MerityXBS16,
+  author    = {Stephen Merity and
+               Caiming Xiong and
+               James Bradbury and
+               Richard Socher},
+  title     = {Pointer Sentinel Mixture Models},
+  booktitle = {Proc. of {ICLR}},
+  year      = {2017},
+  timestamp = {Wed, 07 Jun 2017 14:42:14 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/corr/MerityXBS16},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+@phdthesis{liang2005semi,
+  title={Semi-supervised learning for natural language},
+  author={Liang, Percy},
+  year={2005},
+  school={MIT}
+}
+
+@inproceedings{DBLP:conf/acl/ParadaDSR11,
+  author    = {Carolina Parada and
+               Mark Dredze and
+               Abhinav Sethy and
+               Ariya Rastrow},
+  title     = {Learning Sub-Word Units for Open Vocabulary Speech Recognition},
+  booktitle = {Proc. of {ACL}},
+  pages     = {712--721},
+  year      = {2011},
+  timestamp = {Fri, 02 Dec 2011 14:17:37 +0100},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/conf/acl/ParadaDSR11},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+
+@inproceedings{DBLP:conf/acl/SennrichHB16a,
+  author    = {Rico Sennrich and
+               Barry Haddow and
+               Alexandra Birch},
+  title     = {Neural Machine Translation of Rare Words with Subword Units},
+  booktitle = {Proc. of {ACL}},
+  year      = {2016},
+  timestamp = {Mon, 15 Aug 2016 20:10:51 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/conf/acl/SennrichHB16a},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+@inproceedings{DBLP:conf/eacl/Clark03,
+  author    = {Alexander Clark},
+  title     = {Combining Distributional and Morphological Information for Part of
+               Speech Induction},
+  booktitle = {Proc. of {EACL}},
+  pages     = {59--66},
+  year      = {2003},
+  timestamp = {Mon, 19 Dec 2016 12:00:29 +0100},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/conf/eacl/Clark03},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+@inproceedings{DBLP:conf/icassp/Tucker0P94,
+  author    = {Roger C. F. Tucker and
+               Michael J. Carey and
+               Eluned S. Parris},
+  title     = {Automatic language identification using sub-word models},
+  booktitle = {Proc. of {ICASSP}},
+  pages     = {301--304},
+  year      = {1994},
+  timestamp = {Fri, 19 May 2017 01:25:42 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/conf/icassp/Tucker0P94},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+@inproceedings{DBLP:conf/icassp/Goodman01,
+  author    = {Joshua Goodman},
+  title     = {Classes for fast maximum entropy training},
+  booktitle = {Proc. of {ICASSP}},
+  pages     = {561--564},
+  year      = {2001},
+  timestamp = {Tue, 22 Jul 2014 12:42:21 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/conf/icassp/Goodman01},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+@article{Gage:1994:NAD:177910.177914,
+ author = {Gage, Philip},
+ title = {A New Algorithm for Data Compression},
+ journal = {C Users J.},
+ issue_date = {Feb. 1994},
+ volume = {12},
+ number = {2},
+ month = feb,
+ year = {1994},
+ issn = {0898-9788},
+ pages = {23--38},
+ numpages = {16},
+ acmid = {177914},
+ publisher = {R \& D Publications, Inc.},
+ address = {Lawrence, KS, USA},
+}
+@inproceedings{DBLP:conf/nips/DugasBBNG00,
+  author    = {Charles Dugas and
+               Yoshua Bengio and
+               Fran{\c{c}}ois B{\'{e}}lisle and
+               Claude Nadeau and
+               Ren{\'{e}} Garcia},
+  title     = {Incorporating Second-Order Functional Knowledge for Better Option
+               Pricing},
+  booktitle = {Proc. of {NIPS}},
+  pages     = {472--478},
+  year      = {2000},
+  timestamp = {Thu, 11 Dec 2014 17:34:07 +0100},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/conf/nips/DugasBBNG00},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+@book{duda2012pattern,
+  title={Pattern classification},
+  author={Duda, Richard O and Hart, Peter E and Stork, David G},
+  year={2012},
+  publisher={John Wiley \& Sons}
+}
+@article{DBLP:journals/speech/MartinLN98,
+  author    = {Sven C. Martin and
+               J{\"{o}}rg Liermann and
+               Hermann Ney},
+  title     = {Algorithms for bigram and trigram word clustering},
+  journal   = {Speech Communication},
+  volume    = {24},
+  number    = {1},
+  pages     = {19--37},
+  year      = {1998},
+  timestamp = {Sun, 27 Mar 2011 21:37:26 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/speech/MartinLN98},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+@article{DBLP:journals/tnn/ChienK16,
+  author    = {Jen{-}Tzung Chien and
+               Yuan{-}Chu Ku},
+  title     = {Bayesian Recurrent Neural Network for Language Modeling},
+  journal   = {{IEEE} Trans. Neural Netw. Learning Syst.},
+  volume    = {27},
+  number    = {2},
+  pages     = {361--374},
+  year      = {2016},
+  timestamp = {Thu, 15 Jun 2017 21:30:02 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/tnn/ChienK16},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+@ARTICLE{7508408,
+  author={K. Greff and R. K. Srivastava and J. Koutník and B. R. Steunebrink and J. Schmidhuber},
+  journal={IEEE Transactions on Neural Networks and Learning Systems},
+  title={LSTM: A Search Space Odyssey},
+  year={2017},
+  volume={PP},
+  number={99},
+  pages={1-11},
+  ISSN={2162-237X},
+  month={},
+}
+@article{DBLP:journals/taslp/ChenLWGW16,
+  author    = {Xie Chen and
+               Xunying Liu and
+               Yongqiang Wang and
+               Mark J. F. Gales and
+               Philip C. Woodland},
+  title     = {Efficient Training and Evaluation of Recurrent Neural Network Language
+               Models for Automatic Speech Recognition},
+  journal   = {{IEEE/ACM} Trans. Audio, Speech {\&} Language Processing},
+  volume    = {24},
+  number    = {11},
+  pages     = {2146--2157},
+  year      = {2016},
+  timestamp = {Sun, 28 May 2017 13:22:50 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/taslp/ChenLWGW16},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+@article{kleinbaum2010maximum,
+  title={Maximum likelihood techniques: An overview},
+  author={Kleinbaum, David G and Klein, Mitchel},
+  journal={Logistic regression},
+  pages={103--127},
+  year={2010},
+  publisher={Springer}
+}
+===============================================================================
+% dataset
+@inproceedings{DBLP:conf/interspeech/ChelbaMSGBKR14,
+  author    = {Ciprian Chelba and
+               Tomas Mikolov and
+               Mike Schuster and
+               Qi Ge and
+               Thorsten Brants and
+               Phillipp Koehn and
+               Tony Robinson},
+  title     = {One billion word benchmark for measuring progress in statistical language
+               modeling},
+  booktitle = {Proc. of {INTERSPEECH}},
+  pages     = {2635--2639},
+  year      = {2014},
+  timestamp = {Mon, 30 Jan 2017 12:13:12 +0100},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/conf/interspeech/ChelbaMSGBKR14},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+
+===============================================================================
+% neural machine translation
+@inproceedings{bahdanau2014neural,
+	author = {Dzmitry Bahdanau and
+               Kyunghyun Cho and
+               Yoshua Bengio},
+    Title = {Neural machine translation by jointly learning to align and translate},
+	Booktitle = {Proc. of {ICLR}},
+	Date-Added = {2015-10-05 20:27:54 +0000},
+	Date-Modified = {2015-10-08 23:13:02 +0000},
+	Year = {2015}
+}
+
+===============================================================================
+% SAMPLING
+@inproceedings{DBLP:journals/jmlr/GutmannH10,
+  author    = {Michael Gutmann and
+               Aapo Hyv{\"{a}}rinen},
+  title     = {Noise-contrastive estimation: {A} new estimation principle for unnormalized
+               statistical models},
+  booktitle = {Proc. of {AISTATS}},
+  pages     = {297--304},
+  year      = {2010},
+  timestamp = {Thu, 11 Sep 2014 07:28:56 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/jmlr/GutmannH10},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+% alias method
+@article{10.2307/2683739,
+ ISSN = {00031305},
+ abstract = {The alias method of Walker is a clever, new, fast method for generating random variables from an arbitrary, specified discrete distribution. A simple probabilistic proof is given, in terms of mixtures, that the method works for any discrete distribution with a finite number of outcomes. A more efficient version of the table-generating portion of the method is described. Finally, a brief discussion on efficiency of the method is given. We believe that the generality, speed, and simplicity of the method make it attractive for use in generating discrete random variables.},
+ author = {Richard A. Kronmal and Arthur V. Peterson},
+ journal = {The American Statistician},
+ number = {4},
+ pages = {214-218},
+ publisher = {[American Statistical Association, Taylor & Francis, Ltd.]},
+ title = {On the Alias Method for Generating Random Variables from a Discrete Distribution},
+ volume = {33},
+ year = {1979}
+}
+@inproceedings{DBLP:conf/emnlp/VaswaniZFC13,
+  author    = {Ashish Vaswani and
+               Yinggong Zhao and
+               Victoria Fossum and
+               David Chiang},
+  title     = {Decoding with Large-Scale Neural Language Models Improves Translation},
+  booktitle = {Proc. of  {EMNLP}},
+  pages     = {1387--1392},
+  year      = {2013},
+  timestamp = {Fri, 22 Nov 2013 12:57:23 +0100},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/conf/emnlp/VaswaniZFC13},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+
+
+===============================================================================
+%Very Large Target Vocabulary
+@inproceedings{DBLP:conf/acl/JeanCMB15,
+  author    = {S{\'{e}}bastien Jean and
+               KyungHyun Cho and
+               Roland Memisevic and
+               Yoshua Bengio},
+  title     = {On Using Very Large Target Vocabulary for Neural Machine Translation},
+  booktitle = {Proc. of {ACL}},
+  pages     = {1--10},
+  year      = {2015},
+  timestamp = {Sun, 02 Aug 2015 19:26:07 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/conf/acl/JeanCMB15},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+===============================================================================
+% rnn series
+@article{DBLP:journals/cogsci/Elman90,
+  author    = {Jeffrey L. Elman},
+  title     = {Finding Structure in Time},
+  journal   = {Cognitive Science},
+  volume    = {14},
+  number    = {2},
+  pages     = {179--211},
+  year      = {1990},
+  timestamp = {Mon, 05 Jun 2017 20:51:13 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/cogsci/Elman90},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+@article{jordan1997serial,
+  title={Serial order: A parallel distributed processing approach},
+  author={Jordan, Michael I},
+  journal={Advances in psychology},
+  volume={121},
+  pages={471--495},
+  year={1997},
+  publisher={Elsevier}
+}
+
+% shortlist
+@article{DBLP:journals/csl/Schwenk07,
+  author    = {Holger Schwenk},
+  title     = {Continuous space language models},
+  journal   = {Computer Speech {\&} Language},
+  volume    = {21},
+  number    = {3},
+  pages     = {492--518},
+  year      = {2007},
+  timestamp = {Sat, 27 May 2017 14:23:33 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/csl/Schwenk07},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+===============================================================================
+% label bias problem
+@inproceedings{DBLP:conf/icml/LaffertyMP01,
+  author    = {John D. Lafferty and
+               Andrew McCallum and
+               Fernando C. N. Pereira},
+  title     = {Conditional Random Fields: Probabilistic Models for Segmenting and
+               Labeling Sequence Data},
+  booktitle = {Proc. of {ICML}},
+  pages     = {282--289},
+  year      = {2001},
+  timestamp = {Wed, 27 Nov 2002 10:53:35 +0100},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/conf/icml/LaffertyMP01},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+===============================================================================
+% natural language generation
+@article{DBLP:journals/corr/GattK17,
+  author    = {Albert Gatt and
+               Emiel Krahmer},
+  title     = {Survey of the State of the Art in Natural Language Generation: Core
+               tasks, applications and evaluation},
+  journal   = {CoRR},
+  volume    = {abs/1703.09902},
+  year      = {2017},
+  timestamp = {Wed, 07 Jun 2017 14:41:53 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/corr/GattK17},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+===============================================================================
+% tnnls reference
+@article{DBLP:journals/tnn/0013OKA13,
+  author    = {Jun Li and
+               Karim Ouazzane and
+               Hassan B. Kazemian and
+               Muhammad Sajid Afzal},
+  title     = {Neural Network Approaches for Noisy Language Modeling},
+  journal   = {{IEEE} Trans. Neural Netw. Learning Syst.},
+  volume    = {24},
+  number    = {11},
+  pages     = {1773--1784},
+  year      = {2013},
+  timestamp = {Sun, 28 May 2017 13:22:16 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/tnn/0013OKA13},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+===============================================================================
+% importance sampling
+@article{DBLP:journals/tnn/BengioS08,
+  author    = {Yoshua Bengio and
+               Jean{-}S{\'{e}}bastien Senecal},
+  title     = {Adaptive Importance Sampling to Accelerate Training of a Neural Probabilistic
+               Language Model},
+  journal   = {{IEEE} Trans. Neural Networks},
+  volume    = {19},
+  number    = {4},
+  pages     = {713--722},
+  year      = {2008},
+  timestamp = {Sun, 28 May 2017 13:22:17 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/tnn/BengioS08},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+===============================================================================
+% Predictive Exchange Algorithms
+@inproceedings{DBLP:conf/naacl/DehdariTG16,
+  author    = {Jon Dehdari and
+               Liling Tan and
+               Josef van Genabith},
+  title     = {{BIRA:} Improved Predictive Exchange Word Clustering},
+  booktitle = {Proc. {NAACL}-{HLT}},
+  pages     = {1169--1174},
+  year      = {2016},
+  timestamp = {Tue, 13 Sep 2016 20:32:15 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/conf/naacl/DehdariTG16},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+===============================================================================
+% quasi rnn
+@inproceedings{DBLP:journals/corr/BradburyMXS16,
+  author    = {James Bradbury and
+               Stephen Merity and
+               Caiming Xiong and
+               Richard Socher},
+  title     = {Quasi-Recurrent Neural Networks},
+  Booktitle = {Proc. of {ICLR}},
+  year      = {2017},
+  timestamp = {Wed, 07 Jun 2017 14:40:33 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/corr/BradburyMXS16},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+@article{DBLP:journals/corr/AppleyardKB16,
+  author    = {Jeremy Appleyard and
+               Tom{\'{a}}s Kocisk{\'{y}} and
+               Phil Blunsom},
+  title     = {Optimizing Performance of Recurrent Neural Networks on GPUs},
+  journal   = {CoRR},
+  volume    = {abs/1604.01946},
+  year      = {2016},
+  timestamp = {Wed, 07 Jun 2017 14:41:36 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/corr/AppleyardKB16},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+===============================================================================
+% NCE on GPU
+@inproceedings{DBLP:conf/naacl/ZophVMK16,
+  author    = {Barret Zoph and
+               Ashish Vaswani and
+               Jonathan May and
+               Kevin Knight},
+  title     = {Simple, Fast Noise-Contrastive Estimation for Large {RNN} Vocabularies},
+  booktitle = {Proc. of {NAACL}-{HLT}},
+  pages     = {1217--1222},
+  year      = {2016},
+  timestamp = {Tue, 13 Sep 2016 20:32:15 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/conf/naacl/ZophVMK16},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+@book{DBLP:books/sp/mining12,
+  editor    = {Charu C. Aggarwal and
+               ChengXiang Zhai},
+  title     = {Mining Text Data},
+  publisher = {Springer},
+  year      = {2012},
+  isbn      = {978-1-4419-8462-3},
+  timestamp = {Sat, 18 Feb 2012 20:40:52 +0100},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/books/sp/mining12},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+===============================================================================
+% clark clustering
+@article{daks2016unsupervised,
+  title={Unsupervised Authorial Clustering Based on Syntactic Structure},
+  author={Daks, Alon and Clark, Aidan},
+  journal={Proc. of {ACL}},
+  pages={114},
+  year={2016}
+}
+===============================================================================
+% sentence compression
+@article{DBLP:journals/tist/CohnL13,
+  author    = {Trevor Cohn and
+               Mirella Lapata},
+  title     = {An abstractive approach to sentence compression},
+  journal   = {{ACM} {TIST}},
+  volume    = {4},
+  number    = {3},
+  pages     = {41:1--41:35},
+  year      = {2013},
+  url       = {http://doi.acm.org/10.1145/2483669.2483674},
+  doi       = {10.1145/2483669.2483674},
+  timestamp = {Thu, 08 Jun 2017 09:05:30 +0200},
+  biburl    = {http://dblp.org/rec/bib/journals/tist/CohnL13},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+@article{DBLP:journals/tist/LiTWLL16,
+  author    = {Zechao Li and
+               Jinhui Tang and
+               Xueming Wang and
+               Jing Liu and
+               Hanqing Lu},
+  title     = {Multimedia News Summarization in Search},
+  journal   = {{ACM} {TIST}},
+  volume    = {7},
+  number    = {3},
+  pages     = {33:1--33:20},
+  year      = {2016},
+  url       = {http://doi.acm.org/10.1145/2822907},
+  doi       = {10.1145/2822907},
+  timestamp = {Mon, 11 Sep 2017 16:55:20 +0200},
+  biburl    = {http://dblp.org/rec/bib/journals/tist/LiTWLL16},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+@inproceedings{DBLP:conf/icml/JozefowiczZS15,
+  author    = {Rafal J{\'{o}}zefowicz and
+               Wojciech Zaremba and
+               Ilya Sutskever},
+  title     = {An Empirical Exploration of Recurrent Network Architectures},
+  booktitle = {Proceedings of the 32nd International Conference on Machine Learning,
+               {ICML} 2015, Lille, France, 6-11 July 2015},
+  pages     = {2342--2350},
+  year      = {2015},
+  url       = {http://jmlr.org/proceedings/papers/v37/jozefowicz15.html},
+  timestamp = {Tue, 12 Jul 2016 21:51:15 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/conf/icml/JozefowiczZS15},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+@inproceedings{DBLP:conf/nips/ChungKDGCB15,
+  author    = {Junyoung Chung and
+               Kyle Kastner and
+               Laurent Dinh and
+               Kratarth Goel and
+               Aaron C. Courville and
+               Yoshua Bengio},
+  title     = {A Recurrent Latent Variable Model for Sequential Data},
+  booktitle = {Advances in Neural Information Processing Systems 28: Annual Conference
+               on Neural Information Processing Systems 2015, December 7-12, 2015,
+               Montreal, Quebec, Canada},
+  pages     = {2980--2988},
+  year      = {2015},
+  url       = {http://papers.nips.cc/paper/5653-a-recurrent-latent-variable-model-for-sequential-data},
+  timestamp = {Fri, 08 Apr 2016 19:32:52 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/conf/nips/ChungKDGCB15},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+@article{DBLP:journals/tnn/BengioSF94,
+  author    = {Yoshua Bengio and
+               Patrice Y. Simard and
+               Paolo Frasconi},
+  title     = {Learning long-term dependencies with gradient descent is difficult},
+  journal   = {{IEEE} Trans. Neural Networks},
+  volume    = {5},
+  number    = {2},
+  pages     = {157--166},
+  year      = {1994},
+  url       = {http://dx.doi.org/10.1109/72.279181},
+  doi       = {10.1109/72.279181},
+  timestamp = {Wed, 09 Mar 2016 15:40:57 +0100},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/tnn/BengioSF94},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+@inproceedings{DBLP:conf/nips/BengioDV00,
+  author    = {Yoshua Bengio and
+               R{\'{e}}jean Ducharme and
+               Pascal Vincent},
+  title     = {A Neural Probabilistic Language Model},
+  booktitle = {Advances in Neural Information Processing Systems 13, Papers from
+               Neural Information Processing Systems {(NIPS)} 2000, Denver, CO, {USA}},
+  pages     = {932--938},
+  year      = {2000},
+  url       = {http://papers.nips.cc/paper/1839-a-neural-probabilistic-language-model},
+  timestamp = {Thu, 11 Dec 2014 17:34:07 +0100},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/conf/nips/BengioDV00},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+@inproceedings{DBLP:conf/acl/BaroniDK14,
+  author    = {Marco Baroni and
+               Georgiana Dinu and
+               Germ{\'{a}}n Kruszewski},
+  title     = {Don't count, predict! {A} systematic comparison of context-counting
+               vs. context-predicting semantic vectors},
+  booktitle = {Proceedings of the 52nd Annual Meeting of the Association for Computational
+               Linguistics, {ACL} 2014, June 22-27, 2014, Baltimore, MD, USA, Volume
+               1: Long Papers},
+  pages     = {238--247},
+  year      = {2014},
+  url       = {http://aclweb.org/anthology/P/P14/P14-1023.pdf},
+  timestamp = {Mon, 28 Jul 2014 19:09:09 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/conf/acl/BaroniDK14},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+@article{DBLP:journals/sigkdd/BellK07,
+  author    = {Robert M. Bell and
+               Yehuda Koren},
+  title     = {Lessons from the Netflix prize challenge},
+  journal   = {{SIGKDD} Explorations},
+  volume    = {9},
+  number    = {2},
+  pages     = {75--79},
+  year      = {2007},
+  url       = {http://doi.acm.org/10.1145/1345448.1345465},
+  doi       = {10.1145/1345448.1345465},
+  timestamp = {Fri, 18 Apr 2008 14:39:40 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/sigkdd/BellK07},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+@article{DBLP:journals/pami/BengioCV13,
+  author    = {Yoshua Bengio and
+               Aaron C. Courville and
+               Pascal Vincent},
+  title     = {Representation Learning: {A} Review and New Perspectives},
+  journal   = {{IEEE} Trans. Pattern Anal. Mach. Intell.},
+  volume    = {35},
+  number    = {8},
+  pages     = {1798--1828},
+  year      = {2013},
+  url       = {http://dx.doi.org/10.1109/TPAMI.2013.50},
+  doi       = {10.1109/TPAMI.2013.50},
+  timestamp = {Sat, 12 Mar 2016 09:04:00 +0100},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/pami/BengioCV13},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+@article{DBLP:journals/neco/HochreiterS97,
+  author    = {Sepp Hochreiter and
+               J{\"{u}}rgen Schmidhuber},
+  title     = {Long Short-Term Memory},
+  journal   = {Neural Computation},
+  volume    = {9},
+  number    = {8},
+  pages     = {1735--1780},
+  year      = {1997},
+  url       = {http://dx.doi.org/10.1162/neco.1997.9.8.1735},
+  doi       = {10.1162/neco.1997.9.8.1735},
+  timestamp = {Thu, 17 Nov 2011 16:24:23 +0100},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/neco/HochreiterS97},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+@article{hinton2006reducing,
+  title={Reducing the dimensionality of data with neural networks},
+  author={Hinton, Geoffrey E and Salakhutdinov, Ruslan R},
+  journal={Science},
+  volume={313},
+  number={5786},
+  pages={504--507},
+  year={2006},
+  publisher={American Association for the Advancement of Science}
+}
+@inproceedings{DBLP:conf/icassp/MikolovKBCK11,
+  author    = {Tomas Mikolov and
+               Stefan Kombrink and
+               Luk{\'{a}}s Burget and
+               Jan Cernock{\'{y}} and
+               Sanjeev Khudanpur},
+  title     = {Extensions of recurrent neural network language model},
+  booktitle = {Proceedings of the {IEEE} International Conference on Acoustics, Speech,
+               and Signal Processing, {ICASSP} 2011, May 22-27, 2011, Prague Congress
+               Center, Prague, Czech Republic},
+  pages     = {5528--5531},
+  year      = {2011},
+  url       = {http://dx.doi.org/10.1109/ICASSP.2011.5947611},
+  doi       = {10.1109/ICASSP.2011.5947611},
+  timestamp = {Thu, 09 Apr 2015 14:27:22 +0200},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/conf/icassp/MikolovKBCK11},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+@article{DBLP:journals/corr/Pezeshki15,
+  author    = {Mohammad Pezeshki},
+  title     = {Sequence Modeling using Gated Recurrent Neural Networks},
+  journal   = {CoRR},
+  volume    = {abs/1501.00299},
+  year      = {2015},
+  url       = {http://arxiv.org/abs/1501.00299},
+  timestamp = {Mon, 02 Feb 2015 14:12:25 +0100},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/corr/Pezeshki15},
+  bibsource = {dblp computer science bibliography, http://dblp.org}
+}

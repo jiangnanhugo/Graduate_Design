@@ -32,7 +32,7 @@ The LaTeX template for thesis of BUAA]
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{ctexbook}}
 \ProcessOptions\relax
 % 引用ctexbook及基本设置
-\LoadClass[zihao=-4,a4paper]{ctexbook}[2007/10/19]
+\LoadClass[zihao=-4,a4paper]{ctexbook}
 
 %%%%%%%%%% global package %%%%%%%%%%
 % 全局通用宏包
@@ -254,7 +254,7 @@ The LaTeX template for thesis of BUAA]
 \RequirePackage[sort&compress]{natbib}
 \bibpunct{[}{]}{,}{n}{}{}
 \setlength{\bibsep}{0pt}
-\RequirePackage{hypernat}
+%\RequirePackage{hypernat} nanjiang 12.20.2017
 \newcommand{\upcite}[1]{\textsuperscript{\cite{#1}}}
 
 %%%%%%%%%% table %%%%%%%%%%
