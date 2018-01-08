@@ -42,7 +42,7 @@ The LaTeX template for thesis of BUAA]
 %%%%%%%%%% font %%%%%%%%%%
 % 数学相关和字体设置
 
-\RequirePackage{amsmath,amssymb,amsfonts,bm}
+\RequirePackage{amsmath,amsfonts}
 \RequirePackage[amsmath,thmmarks,hyperref]{ntheorem}
 \RequirePackage{txfonts}
 
@@ -70,22 +70,20 @@ The LaTeX template for thesis of BUAA]
 % 页面边距
 
 \RequirePackage{geometry}
-\newgeometry{
-    top=30mm, bottom=25mm, left=30mm, right=20mm,
-    headsep=5mm,
-}
-\savegeometry{bachelorgeometry}
-\newgeometry{
-    top=25mm, bottom=25mm, left=30mm, right=20mm,
-    headsep=5mm, headheight=10mm, footskip=10mm,
-}
-\savegeometry{mastergeometry}
-
-\ifbuaa@bachelor
-    \loadgeometry{bachelorgeometry}
-\else
-    \loadgeometry{mastergeometry}
-\fi
+%
+%\newgeometry{
+%    top=25mm, bottom=25mm, left=30mm, right=20mm,
+%    headsep=5mm, headheight=10mm, footskip=10mm,
+%}
+%\savegeometry{mastergeometry}
+%\loadgeometry{mastergeometry}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% 页面设置
+%% 设置页面大小
+%% A4纸页边距均25mm
+%% 打印留边平移5mm
+%\geometry{papersize={210mm,297mm}}
+\geometry{top=25mm,bottom=25mm,inner=30mm,outer=20mm}
 
 %%%%%%%%%% space %%%%%%%%%%
 % 其他间距
@@ -141,7 +139,7 @@ The LaTeX template for thesis of BUAA]
 
 %%%%%%%%%% title %%%%%%%%%%
 % 标题
-
+\linespread{1.5}
 % 汉化
 \renewcommand{\contentsname}{目\qquad 录}
 \renewcommand\listfigurename{插\ 图\ 目\ 录}
@@ -150,27 +148,33 @@ The LaTeX template for thesis of BUAA]
 \renewcommand{\figurename}{图}
 \renewcommand{\tablename}{表}
 
-% 格式
-\ctexset{
-    chapter={
-        format={\centering\zihao{3}\heiti},
-        nameformat={},
-        aftername={\quad},
-        titleformat={},
-        beforeskip={-.5\baselineskip},
-        afterskip={\baselineskip},
-    },
-    section={
-        aftername={\quad},
-        beforeskip={.5\baselineskip},
-        afterskip={.5\baselineskip},
-    },
-    subsection={
-        format={\zihao{-4}\heiti},
-        aftername={\quad},
-        beforeskip={.5\baselineskip},
-        afterskip={.5\baselineskip},
-    },
+\ctexset{%
+  chapter={%章标题 : 三号黑体居中 单倍行距 段前/段后0.5行 另起新页
+    format=\zihao{3} \heiti \centering \thispagestyle{fancy},
+    fixskip=true,
+    beforeskip=19.27pt,
+    afterskip=22.48pt,
+    break=\clearpage,
+  },
+  section={%节标题 : 四号黑体居左 单倍行距 段前/段后0.5行
+    format=\zihao{4} \heiti \raggedright,
+    beforeskip=8.43pt,
+    afterskip=11.24pt,
+  },
+  subsection={%条标题 : 小四号黑体居左 单倍行距 段前/段后0.5行
+    format=\zihao{-4} \heiti \raggedright,
+    beforeskip=3.61pt,
+    afterskip=3.61pt,
+  },
+  subsubsection={% 附加4级标题 : 小四号宋体加粗居左
+    format=\zihao{-4} \songti \raggedright \bfseries,
+  },
+  paragraph={% 附加5级标题 : 小四号宋体居左
+    format=\zihao{-4} \songti \raggedright,
+  },
+  subparagraph={% 附加6级标题 : 小四号宋体居左
+    format=\zihao{-4} \songti \raggedright,
+  }
 }
 
 \ifbuaa@bachelor
@@ -406,6 +410,7 @@ The LaTeX template for thesis of BUAA]
 \DeclareCaptionFormat{bachelortable}{\heiti\bf\zihao{5}{#1\textrm{#2}#3}}
 \DeclareCaptionFormat{bachelorlstlisting}{\songti\bf\zihao{5}{#1\textrm{#2}#3}}
 \DeclareCaptionFormat{masterfigure}{\bf\songti\zihao{5}{#1\textrm{#2}#3}}
+\DeclareCaptionFormat{tabfigformat}{\bf\songti\zihao{5}{#1~~#3}}
 \DeclareCaptionFormat{mastertable}{\bf\songti\zihao{5}{#1\textrm{#2}#3}}
 \DeclareCaptionFormat{masterlstlisting}{\bf\songti\zihao{5}{#1\textrm{#2}#3}}
 \ifbuaa@bachelor
@@ -420,8 +425,10 @@ The LaTeX template for thesis of BUAA]
     \@removefromreset{table}{chapter}
     \@removefromreset{figure}{chapter}
     %使图表的标号与章节无关
-    \captionsetup[figure]{format=masterfigure,labelsep=quad}
-    \captionsetup[table]{format=mastertable,labelsep=quad}
+    \captionsetup[figure]{position=bottom, margin=0mm, format=tabfigformat,
+  aboveskip=6pt, belowskip=-15pt, justification=centerlast}
+    \captionsetup[table]{position=top, margin=0mm, format=tabfigformat,
+  aboveskip=0pt, belowskip=0pt, justification=centerlast}
     \captionsetup[lstlisting]{format=masterlstlisting,labelsep=quad}
     \renewcommand{\thefigure}{\arabic{figure}}
     \renewcommand{\thetable}{\arabic{table}}
