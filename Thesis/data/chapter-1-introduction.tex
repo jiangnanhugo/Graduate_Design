@@ -38,14 +38,14 @@ p(w_i | w_1,w_2,\cdots,w_{t-1})  \approx p(w_i | w_{t-(n-1)},\cdots,w_{t-1})
 
 
 \subsection{前馈神经网络语言模型}
-神经网络对参数进行高度共享，因此对低频词具有天然的平滑能力。神经网络语言模型(Neural Probabilistic Language Model, NPLM) 的最早由Bengio等人在2001年提出\upcite{DBLP:conf/nips/BengioDV00}， 近年来一些学者开始展开这方面的研究，并取得一系列成果，如\upcite{DBLP:conf/acl/BaroniDK14,DBLP:journals/sigkdd/BellK07,DBLP:journals/pami/BengioCV13,DBLP:journals/tnn/BengioSF94}。 但总体而言， 对NPLM的研究还处在起步阶段。具体而言，NPLM通过一个多层感知网络(Multi-Layer Perceptron, MLP)来计算公式.~\ref{equ:approx} 中概率。
+由于神经网络对参数进行高度共享，因此对低频词具有天然的平滑能力。这里所指的神经网络语言模型(Neural Probabilistic Language Model, NPLM) ，最早由Bengio等人在2001年提出\upcite{DBLP:conf/nips/BengioDV00}， 近年来一些学者开始展开这方面的研究，并取得一系列成果，如~\cite{DBLP:conf/acl/BaroniDK14,DBLP:journals/sigkdd/BellK07,DBLP:journals/pami/BengioCV13,DBLP:journals/tnn/BengioSF94}~。 但总体而言， 对NPLM的研究还处在起步阶段。具体而言，NPLM通过一个多层感知网络(Multi-Layer Perceptron, MLP)来计算公式.~\ref{equ:approx} 中概率。
 \begin{figure}
   \centering
   \includegraphics[width=0.6\linewidth]{./figures/nplm2.png}
   \caption{前馈神经网络语言模型。}\label{fig:nplm}
 \end{figure}
 
-图.~\ref{fig:nplm} 给出一个典型的 NPLM 语言模型。神经网络语言模型采用普通的三层前馈神经网络结构，其中第一层为输入层。Bengio 提出使用各词的词向量作为输入以解决数据稀疏问题，因此输入层为词$w_{i-(n-1)}, \cdots,w_{i-1} $ 的词向量的顺序拼接：
+图~\ref{fig:nplm} 给出一个典型的 NPLM 语言模型，神经网络语言模型采用普通的三层前馈神经网络结构。其中第一层为输入层，输入的是前$n$个单词；第二层是隐藏层，表征单词的上下文信息，最后一层是输出预测层，预测下一时刻的可能出现的单词概率分布。Bengio 提出使用各词的词向量作为输入以解决数据稀疏问题，因此输入层为词$w_{i-(n-1)}, \cdots,w_{i-1} $ 的词向量的顺序拼接：
 \begin{equation}\label{equ:we}
   x = [e(w_{i-(n-1)}), \cdots , e(w_{i-2}), e{(w_{i-1})}]
 \end{equation}
@@ -56,39 +56,50 @@ h =& \tanh(Hx+b) \\
 y =&Wx + Uh +b'
 \end{split}
 \end{equation}
-其中 $H \in \mathbb{R}^{|h| \times (n-1)|e|}$ 为输入层到隐藏层的权重矩阵，$U \in \mathbb{R}^{|\mathrm{V}|\times (n-1)|h|}$ 为隐藏层到输出层的权重矩阵，$ |\mathrm{V}|$表示词表的大小，$|e|$ 表示词向量的维度，$|h|$ 为隐藏层的维度。$b,b'$ 均为模型中的偏置项。矩阵$W \in \mathbb{R}^{|\mathcal{V}|\times (n-1)|e|}$ 表示从输入层到输出层的直连边权重矩阵。由于$W$ 的存在，该模型可能会从非线性的神经网络退化成为线性分类器。Bengio 等人在文中指出，如果使用该直连边，可以减少一半的迭代次数；但如果没有直连边，可以生成性能更好的语言模型。因此在后续工作中，很少有使用输入层到输出层直连边的工作，下文也直接忽略这一项。如果不考虑$W$ 矩阵，整个模型计算量最大的操作，就是从隐藏层到输出层的矩阵运算$Uh$，后续的模型均有对这一操作的优化。
+其中 $H \in \mathbb{R}^{|h| \times (n-1)|e|}$ 为输入层到隐藏层的权重矩阵，$U \in \mathbb{R}^{|\mathrm{V}|\times (n-1)|h|}$ 为隐藏层到输出层的权重矩阵，$ |\mathrm{V}|$表示词表的大小，$|e|$ 表示词向量的维度，$|h|$ 为隐藏层的维度。$b,b'$ 均为模型中的偏置项。矩阵$W \in \mathbb{R}^{|\mathcal{V}|\times (n-1)|e|}$ 表示从输入层到输出层的直连边权重矩阵。由于直连边 $W$ 的存在，该模型可能会从非线性的神经网络退化成为线性分类器。因此，Bengio 等人在文中指出，如果使用该直连边，可以减少一半的迭代次数；但如果没有直连边，可以生成性能更好的语言模型。因此在后续工作中，很少有使用输入层到输出层直连边的工作，下文也直接忽略这一项。如果不考虑$W$ 矩阵，整个模型计算量最大的操作，就是从隐藏层到输出层的矩阵运算$Uh$，后续的模型均有对这一操作的优化。
 
 \subsection{对数双线性语言模型}
 2007 年，Mnih 和Hinton 在神经网络语言模型（NNLM）的基础上提出了对数双线性语言模型（Log-Bilinear Language Model, LBL）~\upcite{DBLP:conf/icml/MnihH07}。LBL 与NNLM 的区别正如它们的名字所示，LBL 的模型结构是一个对数双线性结构；而NNLM的模型结构为前馈神经网络结构。具体来讲，LBL 模型的代价函数为：
 \begin{equation}
 \label{equ:lbl}
-  E(w_i;w_{i-(n-1):i-1}) = b^{(2)}+ e(wi)^\top b^{(1)}+e(w_i)TH[e(w_{i-(n-1))};\cdots ; e(w_{i-1})
+\begin{split}
+   &\hat r=\sum_{i=1}^{n-1}{U_i e({w_i})}, \\
+   &p(w_n=w|w_{1:n-1})=\frac{\exp(\hat r^\top e(w))}{\sum_j{\exp(\hat r^\top e(w_j))}}
+\end{split}
 \end{equation}
-LBL 模型的代价函数（公式~\ref{equ:lbl}） 与NNLM 的代价函数（公式~\ref{equ:nplm}）主要有两个区别。1) LBL 模型中，没有非线性的激活函数tanh，而由于NNLM 是非线性的神经网络结构，激活函数必不可少；2) LBL 模型中，只有一份词向量e，也就是说，无论一个词是作为上下文，还是作为目标词，使用的是同一份词向量。其中第二点（只有一份词向量），只在原版的LBL 模型中存在，后续的改进工作均不包含这一特点。
+其中 $\hat r$ 代表了上下文信息，$U_i$ 是对应单词的权重向量。然后基于预测表示 $\hat r$ 和词汇表中所有单词 $e(w),w\in \mathcal{V}$ 的表示之间的相似度来计算下一个单词的分布。
+
+LBL 模型的代价函数（公式~\ref{equ:lbl}） 与NNLM 的代价函数（公式~\ref{equ:nplm}）主要有两个区别。1) LBL 模型中，没有非线性的激活函数$\tanh$，而由于NNLM 是非线性的神经网络结构，激活函数必不可少；2) LBL 模型中，只有一份词向量$e$，也就是说，无论一个词是作为上下文，还是作为目标词，使用的是同一份词向量。其中第二点（只有一份词向量），只在原版的LBL 模型中存在，后续的改进工作均不包含这一特点。
 
 后来的几年中，Mnih 等人在LBL 模型的基础上做了一系列改进工作。其中最重要的模型有两个：层次对数双线性语言模型（Hierarchical LBL，HLBL）~\upcite{DBLP:conf/icml/MnihT12} 和基于向量的逆语言模型(inverse vector LBL，ivLBL)~\upcite{DBLP:conf/nips/MnihK13}。
 
 \subsection{循环神经网络语言模型}
-针对循环神经网络语言模型(Recurrent Neural Network based Language Model，RNNLM)则直接对$P(w_t | w_1,w_2,\cdots,w_{t-1}) $ 进行建模，而不使用公式.~\ref{equ:approx} 对其进行简化~\upcite{mikolov2012statistical,DBLP:conf/interspeech/MikolovKBCK10} 。因此，RNNLM 可以利用所有的上文信息，预测下一个词，其模型结构如图.\ref{fig:rnnlm} 所示。
-RNNLM 的核心在于其隐藏层的算法:
+对于循环神经网络语言模型(RNNLM)来说，它则直接对$P(w_t | w_1,w_2,\cdots,w_{t-1}) $ 进行建模，而不使用公式~\ref{equ:approx}~对其进行简化~\upcite{mikolov2012statistical,DBLP:conf/interspeech/MikolovKBCK10} 。因此，RNNLM 可以利用所有的上文信息，预测下一个词，其模型结构如图~\ref{fig:rnnlm}~所示。
+RNNLM 的核心在于其隐藏层的计算公式:
 \begin{equation}
 \label{equ:rnn}
-h_t =\mathtt{RNN}(e(w_t) +Wh_{t -1})
+  h_t \leftarrow  \phi(e(w_t) + U h_{t-1} +b),
 \end{equation}
-其中 $\mathtt{RNN}$ 为非线性激活函数。但与NPLM 不同，RNNLM 并不采用 n 元近似，而是使用迭代的方式直接对所有上文进行建模。在公式.~\ref{equ:rnn} 中，$h_t$ 表示文本中第 $t$ 个词 $w_t$ 所对应的隐藏层，该隐藏层由当前词的词向量 $e(w_t)$ 以及上一个词对应的隐藏层 $h_{t -1}$ 结合得到。
+其中 $\phi$ 为非线性激活函数。与NPLM 不同，RNNLM 并不采用 n 元近似，而是使用迭代的方式直接对所有上文进行建模。在上述公式中，$h_t$ 表示文本中第 $t$ 个词 $w_t$ 所对应的隐藏层，该隐藏层由当前词的词向量 $e(w_t)$ 以及上一个词对应的隐藏层 $h_{t -1}$ 结合得到。
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.68\linewidth]{./figures/rnnlm.png}
-  \caption{循环神经网络语言模型（RNNLM）模型结构图}\label{fig:rnnlm}
+  \includegraphics[width=0.68\linewidth]{./figures/rnnlm.pdf}
+  \caption{循环神经网络语言模型结构图}\label{fig:rnnlm}
 \end{figure}
 
+隐藏层的初始状态为$h_0$，随着模型逐个读入语料中的词$w_1,w_2,\cdots$, 隐藏层不断地更新为$h_1,h_2,\cdots$ 。根据公式~\ref{equ:rnn}~，每一个隐藏层包含了当前词的信息以及上一个隐藏层的信息。通过这种迭代更新的方式，每个隐藏层实际上包含了此前所有上文的信息，相比NPLM 只能采用上文 n 元短语作为近似，RNNLM 包含了更丰富、更长的上文信息，也有更大的潜力达到更好的效果。最后，RNNLM 模型的输出层计算方法与NPLM 的输出层一致。
 
-隐藏层的初始状态为$h_0$，随着模型逐个读入语料中的词$w_1,w_2,\cdots$, 隐藏层不断地更新为$h_1,h_2,\cdots$ 。根据公式.~\ref{equ:rnn}，每一个隐藏层包含了当前词的信息以及上一个隐藏层的信息。通过这种迭代推进的方式，每个隐藏层实际上包含了此前所有上文的信息，相比NPLM 只能采用上文 n 元短语作为近似，RNNLM 包含了更丰富的上文信息，也有潜力达到更好的效果。RNNLM 的输出层计算方法与NPLM 的输出层一致。
 
-\subsubsection{其他网络结构}
-除了介绍的两种经典上下建模方法，最近研究提出来可以使用带有门机制（Gate）的RNN来防止模型的长距离依赖问题，例如长短记忆网络（Long Short-Term Memory, LSTM）， 门限记忆节点（Gated Recurrent Unit, GRU）和其他网络。
+除了介绍的两种经典上下建模方法，最近研究提出来可以使用带有门限机制（Gating）的RNN来防止模型的长距离依赖问题，例如长短记忆网络（Long Short-Term Memory, LSTM）， 门限记忆节点（Gated Recurrent Unit, GRU）和其他网络。
+
+
 \section{论文研究内容}
+在历史文献当中，源词和目标词分别被称为模型的输入和输出。源词通常可以用分布式表示（Distributed Representation）来表示，称为输入词嵌入(Word Embedding)，可以使用基于外部语料库的连续词袋模型（CBoW）或Skipgram模型来训练。而这两个模型来源于语言模型任务，并且为了在特征空间中产生可能的嵌入分布而被大大简化。另外，输出字通常表示为字索引（Indexing）或~$1-K$~编码，并且可以与softmax概率函数直接关联。
+
+在本节中，我们将这个目标词表示扩展到一个分层的形式，使它们适配基于类和基于树的分层概率计算。首先，我们提出了一个在分层结构上建模参数的字编码方案。因此，考虑到GPU上的并行吞吐性能，我们推导出紧凑的代价函数及其梯度。同时，类或树上的单词分布对其性能有很大的影响，应该在训练阶段之前定义，这些动态交换算法在训练过程中改变了单词群或子树结构在这个研究中。我们采用了几个分层聚类和词汇分割策略，用统计，句法和语义知识来初始化其结构，以达到一个稳定和可以预期的性能。而且，在推理过程中，不同于传统的softmax情况，得到最好的候选者自然是可行的，层次推理不能直接用 softmax 方法来实现。我们讨论基于树和基于类的搜索策略的两种不同的推理情况：a）打分：输出给定序列的概率；b）排序   ：在给定的上下文中获取得分最高的一个候选单词。
+\section{论文的组织结构}
+\section{本章小结}
 语言模型的大词表问题是目前理论应用到实际过程中必须要克服的问题，我们当然可以通过配置高性能服务器来暂时延缓该问题的后果。但是一旦应用到大数据集上，即使是目前最好的中央处理器（CPU）或者图形处理器通用计算（GPU），仍然需要一个多月时间才能训练完善。因此，在保证原有模型的准确率和精度的前提下，如何提高模型的训练速度是我们主要讨论和研究的内容。为此我们讨论了两个不同的内容：上下文信息建模效率和精度对比和大词表问题的优化和研究。
 
 针对上下文信息建模手段，目前主要采用的方案有以下几种：
@@ -96,5 +107,3 @@ h_t =\mathtt{RNN}(e(w_t) +Wh_{t -1})
 一种是采用子词(Subword)或者字符级别的词（Character-level）来直接缩小词表大小；一种是通过采样技术(Sampling-based Approximation)来减少必要的训练时间；一种是通过基于分类的多元分类(class-based hierarchical softmax, cHSM)来加速模型和采用基于树模型的多层二元分类模型(tree-based hierarchical softmax, tHSM)。
 
 同时，我们还需要针对CPU 和GPU设备分别进行探讨。因为传统的线性运算模型在流行的GPU并行运算方案中并不适用，所欲需要结合不同的运算设备分别讨论可行的方案。
-
-
