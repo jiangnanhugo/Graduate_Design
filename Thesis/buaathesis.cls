@@ -39,23 +39,27 @@ The LaTeX template for thesis of BUAA]
 
 \RequirePackage{ifthen}
 
+
 %%%%%%%%%% font %%%%%%%%%%
 % 数学相关和字体设置
 
 \RequirePackage{amsmath,amsfonts}
 \RequirePackage[amsmath,thmmarks,hyperref]{ntheorem}
 \RequirePackage{txfonts}
+\RequirePackage{microtype}
 
 % 主要字体为Times New Roman和宋体
 % 模板某些标题需要华文行楷和32号字
-\setmainfont{Times New Roman}
+%\setmainfont{Times New Roman}
 % 不需要设置CJKmainfont，ctex 宏包已经很好的处理了
 % 不仅设置了粗体为黑体，斜体为楷体，还兼容了winfonts和adobefonts
 % 直接设置反而会在只有adobefonts的情况下报错
 % \setCJKmainfont{宋体}
-\setCJKfamilyfont{hwxingkai}{STXingkai}
-\newcommand{\hwxingkai}{\CJKfamily{hwxingkai}}
-\newcommand{\xiaochuhao}{\fontsize{32pt}{\baselineskip}\selectfont}
+%\setCJKfamilyfont{hwxingkai}{STXingkai}
+%\newcommand{\hwxingkai}{\CJKfamily{hwxingkai}}
+%\newcommand{\xiaochuhao}{\fontsize{32pt}{\baselineskip}\selectfont}
+%\RequirePackage[xetex,unicode]{hyperref}
+\RequirePackage[unicode]{hyperref}
 
 %%%%%%%%%% color %%%%%%%%%%
 % 颜色设置
@@ -205,18 +209,18 @@ The LaTeX template for thesis of BUAA]
 \RequirePackage{titletoc}
 \ifbuaa@bachelor
     \titlecontents{chapter}[0pt]{\heiti\zihao{-4}}{\thecontentslabel\ }{}
-        {\hspace{.5em}\titlerule*[4pt]{$\cdot$}\contentspage}
+        {\hspace{.5em}\titlerule*[3pt]{$\cdot$}\contentspage}
     \titlecontents{section}[2em]{\vspace{0.1\baselineskip}\songti\zihao{-4}}{\thecontentslabel\ }{}
-        {\hspace{.5em}\titlerule*[4pt]{$\cdot$}\contentspage}
+        {\hspace{.5em}\titlerule*[3pt]{$\cdot$}\contentspage}
     \titlecontents{subsection}[4em]{\vspace{0.1\baselineskip}\songti\zihao{-4}}{\thecontentslabel\ }{}
-        {\hspace{.5em}\titlerule*[4pt]{$\cdot$}\contentspage}
+        {\hspace{.5em}\titlerule*[3pt]{$\cdot$}\contentspage}
 \else
     \titlecontents{chapter}[0pt]{\vspace{-0.25\baselineskip}\heiti\zihao{4}}{\thecontentslabel\ }{}
-        {\hspace{.5em}\titlerule*[4pt]{$\cdot$}{\zihao{-4}\contentspage}}[\vspace{0.07\baselineskip}]
+        {\hspace{.5em}\titlerule*[3pt]{$\cdot$}{\zihao{-4}\contentspage}}[\vspace{0.07\baselineskip}]
     \titlecontents{section}[2em]{\songti\zihao{-4}}{\thecontentslabel\ }{}
-        {\hspace{.5em}\titlerule*[4pt]{$\cdot$}{\zihao{-4}\contentspage}}[\vspace{0.1\baselineskip}]
+        {\hspace{.5em}\titlerule*[3pt]{$\cdot$}{\zihao{-4}\contentspage}}[\vspace{0.1\baselineskip}]
     \titlecontents{subsection}[4em]{\vspace{-0.2\baselineskip}\heiti\zihao{5}}{\thecontentslabel\ }{}
-        {\hspace{.5em}\titlerule*[4pt]{$\cdot$}{\zihao{-4}\contentspage}}[\vspace{0.1\baselineskip}]
+        {\hspace{.5em}\titlerule*[3pt]{$\cdot$}{\zihao{-4}\contentspage}}[\vspace{0.1\baselineskip}]
 \fi
 
 % 取消图片、表格目录中的章节空格
@@ -236,7 +240,7 @@ The LaTeX template for thesis of BUAA]
 %%%%%%%%%% cross reference %%%%%%%%%%
 % 交叉引用
 
-\RequirePackage[xetex,unicode]{hyperref}
+
 \ifbuaa@color
     \hypersetup{colorlinks}
 \else
@@ -253,12 +257,12 @@ The LaTeX template for thesis of BUAA]
 
 %%%%%%%%%% reference %%%%%%%%%%
 % 参考文献
-
-\bibliographystyle{buaathesis} % 参考文献格式
-\RequirePackage[sort&compress]{natbib}
+\RequirePackage[sort&compress]{natbib}              % BibTex
+\newcommand\bibstyle@super{\bibpunct{[}{]}{,}{s}{,}{\textsuperscript{,}}}
+\newcommand\bibstyle@numbers{\bibpunct{[}{]}{,}{n}{,}{,}}
+\newcommand\bibstyle@authoryear{\bibpunct{(}{)}{;}{a}{,}{,}}
 \bibpunct{[}{]}{,}{n}{}{}
 \setlength{\bibsep}{0pt}
-%\RequirePackage{hypernat} nanjiang 12.20.2017
 \newcommand{\upcite}[1]{\textsuperscript{\cite{#1}}}
 
 %%%%%%%%%% table %%%%%%%%%%

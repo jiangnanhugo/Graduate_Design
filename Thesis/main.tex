@@ -9,7 +9,7 @@
 \begin{document}
 
 % 用户信息
-\include{data/info}
+%\include{data/info}
 
 % 中英封面、提名页、授权书
 %\maketitle
@@ -17,11 +17,20 @@
 \pagestyle{frontmatter}
 % 摘要
 \begin{cabstract}
-最近在自然语言处理中，已经提出了基于神经网络结构的变体，并成功地应用于神经语言模型和神经声学模型。这些神经模型可以通过学习来自大规模语料库的参数来利用知识，而对于真实世界的挑战来说，它们是非常缓慢的，因为它们在训练和推理期间预测来自大词汇量的候选者。作为基于抽样的近似的替代，我们探索历史提出的基于树和基于类的分层softmax方法。在这项研究中，为了减少计算时间，并使其与现代图形处理单元兼容，我们引入了一系列高效和有效的方法，并将我们的贡献归类为：a）首先，我们改进它们的结构组成并引入一个紧凑的基于树和基于类的相应的分层softmax方法的损失函数; b）其次，我们讨论几种基于ngram的句法和语义聚类算法对各种类型层级softmax的影响，因为它们对聚类方法敏感; c）第三，我们讨论了可能的分层softmax变体的推理算法，保证模型可以在不同情况下获取可能的预测结果。最后，我们用标准基准数据集，即WikiText-2，WikiText-103和十亿字数据集对语言建模任务进行了我们的实验。与其他传统的优化方法相比，还实现了几个内在的评估指标的提升：单词错误率和困惑度。
+最近在自然语言处理中，已经提出了基于神经网络结构的变体，并成功地应用于神经语言模型和神经声学模型。这些神经模型可以通过学习来自大规模语料库的参数来利用知识，而对于真实世界的挑战来说，它们是非常缓慢的，因为它们在训练和推理期间预测来自大词汇量的候选者。作为基于抽样的近似的替代，我们探索历史提出的基于树和基于类的分层softmax方法。
+
+
+在本论文研究中，为了减少计算时间，并使其与通用图像计算单元单元（GPGPU）兼容，我们引入了一系列高效和有效的方法，并将我们的贡献归类为：a）首先，我们改进它们的结构组成并引入一个紧凑的基于树和基于类的相应的分层softmax方法的损失函数; b）其次，我们讨论几种基于ngram的句法和语义聚类算法对各种类型层级softmax的影响，因为它们对聚类方法敏感; c）第三，我们讨论了可能的分层softmax变体的推理算法，保证模型可以在不同情况下获取可能的预测结果。
+
+最后，我们用标准基准数据集，即WikiText-2，WikiText-103和十亿字数据集对语言建模任务进行了我们的实验。与其他传统的优化方法相比，还实现了几个内在的评估指标的提升：单词错误率和困惑度。
 \end{cabstract}
 
 \begin{eabstract}
-Recently in natural language processing, variants of neural networks based architecture have been proposed, and successfully applied to neural language models and neural acoustic models. These neural models can leverage knowledge by learning parameters from massive corpora, while they are extremely slow for the real world challenge as they predict candidates from a large vocabulary during training and inference. As an alternative to sampling-based approximation, we explore the historical proposed tree-based and class-based hierarchical softmax methods. In this research, aiming at reducing its computational time as well as making them compatible with modern graphics processing units, we introduce a series of efficient and effective approaches and categorise our contributions as: a) Firstly, we reform their structural composition and introduce a compact tree-based and class-based loss function for the corresponding hierarchical softmax methods; b) Secondly, we discuss the impact of several ngram-based, syntactic and semantic clustering algorithms for the vanilla hierarchical softmax as they are sensitive to clustering methods; c) Thirdly, we discuss possible inference algorithms for the hierarchical softmax variants, assuring the model can fetch presumable predictions under different circumstances. Finally, Our experiments were carried out on language modelling tasks with standard benchmarks datasets, i.e., WikiText-2, WikiText-103 and One Billion Word datasets. Consist improvement with several intrinsic evaluation criterions: word error rate and perplexity, were also achieved over other conventional optimisation methods.
+Recently in natural language processing, variants of neural networks based architecture have been proposed, and successfully applied to neural language models and neural acoustic models. These neural models can leverage knowledge by learning parameters from massive corpora, while they are extremely slow for the real world challenge as they predict candidates from a large vocabulary during training and inference. As an alternative to sampling-based approximation, we explore the historical proposed tree-based and class-based hierarchical softmax methods.
+
+In this research, aiming at reducing its computational time as well as making them compatible with modern graphics processing units, we introduce a series of efficient and effective approaches and categorise our contributions as: a) Firstly, we reform their structural composition and introduce a compact tree-based and class-based loss function for the corresponding hierarchical softmax methods; b) Secondly, we discuss the impact of several ngram-based, syntactic and semantic clustering algorithms for the vanilla hierarchical softmax as they are sensitive to clustering methods; c) Thirdly, we discuss possible inference algorithms for the hierarchical softmax variants, assuring the model can fetch presumable predictions under different circumstances.
+
+Finally, Our experiments were carried out on language modelling tasks with standard benchmarks datasets, i.e., WikiText-2, WikiText-103 and One Billion Word datasets. Consist improvement with several intrinsic evaluation criterions: word error rate and perplexity, were also achieved over other conventional optimisation methods.
 \end{eabstract}
 % 目录、插图目录、表格目录
 %\tableofcontents
@@ -39,38 +48,14 @@ Recently in natural language processing, variants of neural networks based archi
 \include{data/chapter-2-relatedwork}
 \include{data/chapter-3-models}
 \include{data/chapter-4-experiment}
+\include{data/chapter-5-summary}
 
-
-\section{总结和展望}
-Mikolov曾提出使用基于二叉树的层级softmax模型来加速的训练方案，加速比能达到理论的最大速度，但是当时提出的背景是基于CPU构建的，如今越来越多的算法随着应用领域的推广，需要在并行度更高的GPU上进行计算，因此基于GPU进行建模的tHSM尚未被研究提及，需要在本文中研讨。
-\section{下一阶段工作计划}
-当我们使用多层分类模型的时候，我们就需要将单词按照模型的架构进行划分。其中对于cHSM模型，我们有以下策略可以使用：a） 基于词频划分类别； b） 基于Bigram 的布朗聚类(Brown clustering) 进行划分；c）按照word-embedding 的词向量信息进行聚类。另外，我们还需要注意的是，各个类别可以包含不同的数量的单词，也可以包含数量相同的单词。对于后者，我们考虑的划分模型就是基于交换算法（Exchange Algorithm）, 以此来保证获得近似的最优解。
-
-\subsection{存在的问题}
-目前存在的问题主要是两点：模型仍然计算很复杂需要使用更底层语言来加速计算，和目前采用的聚类算法比较费时间。
-
-由于我们选择的建模平台是python平台，好处是可以使用许多现成的已有的框架。并且python语法简单，矩阵计算库numpy和scipy更成熟，便于调试。另一方面，我们采用的建模语言是theano框架，它的底层计算都是调用BLAS计算库，或者直接调用基于GPU的CUDA的CuBLAS计算库。虽然这样做便于在前期模型建立阶段能方便尝试各种设计方案，但是他的计算瓶颈在python解释器对代码的缓慢执行，所以如果能将部分模型组件使用CUDA语言重写。那样的话，我们的模型能接受一定的组合排列的可能性，同时计算速度能得到极大提升。这也是许多目前流行框架发展的方向，有些框架更超前。例如MXNET直接使用C++语言建立深度模型，他的计算效率也是目前已知的框架中最快的。因此，考虑到目前的thenao计算瓶颈，我们想将RNN的框架使用CUDA语言重构，基于CuDNN库开发的样板，帮助我们在他基础上改进。
-
-另一方面，目前采用的聚类算法计算非常费时，尤其是当我们希望进行多层次聚类的时候，我们需要花费数周时间来获得结果。这样的缓慢的计算效果是无法接受的，经过针对代码的调试，我们发现计算瓶颈在算法初始化的时候，计算两两单词之间的距离，它花费了90\%的计算时间。如果能存在有效的初始化算法，而不是挑选尽可能高精度的聚类模型，那么实验进度和试验结果就可以针对多组参数调试。
-\subsection{尚未完成的工作}
-\begin{enumerate}
-\item 大规模实验数据分析验证算法；
-\item 优化模型速度，用底层语言封装模型，以达到最好的效果；
-\item 实验和评价不同聚类算法的效果；
-\item 讨论和研究不同语言模型优化方案的优缺点，以及使用场景。
-\end{enumerate}
-\subsection{解决问题的技术思路或措施}
-\begin{enumerate}
-\item 大规模实验数据分析验证算法：目前已经找到三个标准文本数据集，需要重写数据处理算法，这样保证模型能正常运算和收敛；
-\item 优化模型速度，用底层语言封装模型，以达到最好的效果：学习CUDA语言，并着手构建基于深度学习的模型框架；
-\item 实验和评价不同聚类算法的效果：调研可用的层次聚类算法并进行测试和实验检验；
-\item 讨论和研究不同语言模型优化方案的优缺点，以及使用场景：提出不同的实验评价指标，观察不同模型的结果，并分析其背后的原因。
-\end{enumerate}
 % 参考文献
 \cleardoublepage
 \phantomsection
 \addcontentsline{toc}{chapter}{参考文献}
 \nocite{*}
+\bibliographystyle{GBT7714-2015}
 \bibliography{thesis_reference}
 \cleardoublepage
 
@@ -79,23 +64,6 @@ Mikolov曾提出使用基于二叉树的层级softmax模型来加速的训练方
 
 % 附页标题样式
 \backmatter
+%\include{data/chapter-6-appendix}
 
-% 附页\emph{}
-\chapter{攻读硕士学位期间取得的学术成果}
-% 此处标题及内容请自行更改
-\noindent 发表论文：
-
-\noindent 1. \textbf{Nan Jiang}, Wenge Rong, Min Gao, Yikang Shen and Zhang Xiong. Exploration of Tree-based Hierarchical Softmax for Recurrent Language Models[C]. Proceedings of the Twenty-Sixth International Joint Conference on Artificial Intelligence (IJCAI), 2017, pp. 1951-1957. (已发表)
-
-\noindent 2. Yikang Shen, Wenge Rong, \textbf{Nan Jiang}, Baolin Peng, Jie Tang and Zhang Xiong. Word Embedding Based Correlation Model for Question/Answer Matching[C]. Proceedings of the Thirtieth {AAAI} Conference on Artificial Intelligence (AAAI), 2017, pp. 3511-3517.(已发表)
-
-\noindent 3. \textbf{Nan Jiang}, Wenge Rong, Yifan Nie, Yikang Shen and Zhang Xiong. Event Trigger Identification with Noise Contrastive Estimation[J]. IEEE/ACM Transactions on Computational Biology and Bioinformatics, 2017, pp. 1-11.(已发表)
-
-\noindent 4. \textbf{Nan Jiang}, Wenge Rong, Baolin Peng, Yifan Nie and Zhang Xiong. Modeling Joint Representation with Tri-Modal DBNs for Query and Question Matching[J]. IEICE Transactions on Information and Systems, 2016, 99(4): 927-935.(已发表)
-
-\noindent 5. \textbf{Nan Jiang}, Wenge Rong, Baolin Peng, Yifan Nie and Zhang Xiong. An Empirical Analysis of Different Sparse Penalties
-for Autoencoder in Unsupervised Feature Learning[C]. International Joint Conference on Neural Networks (IJCNN), 2015, pp. 1-8.(已发表)
-
-\chapter{致\quad 谢}
-在2015年，我来到了北京航空航天大学计算机学院先进计算机技术教育工程研究中心，开始了我为期三年的研究生学习阶段。
 \end{document}
