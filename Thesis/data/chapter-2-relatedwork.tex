@@ -1,5 +1,5 @@
 \chapter{相关技术介绍}
-基于神经网络的分布表示一般称为词向量、词嵌入（Word Embedding）或分布式表示（Distributed Representation）~\upcite{DBLP:conf/nips/MikolovSCCD13}。神经网络词向量表示技术通过神经网络技术对上下文，以及上下文与目标词之间的关系进行建模。由于神经网络较为灵活，这类方法的最大优势在于可以表示复杂的上下文。在前面基于矩阵的分布表示方法中，最常用的上下文是词。如果使用包含词序信息的n-gram 作为上下文，当n 增加时，n-gram 的总数会呈指数级增长，此时会遇到维数灾难问题。而神经网络在表示n-gram 时，可以通过一些组合方式对n 个词进行组合，参数个数仅以线性速度增长。有了这一优势，神经网络模型可以对更复杂的上下文进行建模，在词向量中包含更丰富的语义信息。神经网络模型主要包括： 传统前向传递神经网络（Feed Forward Neural Network, FFNN）、循环神经网络（Recurrent Neural Network, RNN）建模方案。
+基于神经网络的分布表示一般称为词向量、词嵌入（Word Embedding）或分布式表示（Distributed Representation）~\upcite{DBLP:conf/nips/MikolovSCCD13}。神经网络词向量表示技术通过神经网络技术对上下文（Context），以及上下文与目标词之间的关系进行建模。由于神经网络较为灵活，这类方法的最大优势在于可以表示复杂的上下文。在前面基于矩阵的分布表示方法中，最常用的上下文是词。如果使用包含词序信息的n-gram 作为上下文，当n 增加时，n-gram 的总数会呈指数级增长，此时会遇到维数灾难问题。而神经网络在表示n-gram 时，可以通过一些组合方式对n 个词进行组合，参数个数仅以线性速度增长。有了这一优势，神经网络模型可以对更复杂的上下文进行建模，在词向量中包含更丰富的语义信息。神经网络模型主要包括： 传统前向传递神经网络（Feed Forward Neural Network, FFNN）、循环神经网络（Recurrent Neural Network, RNN）建模方案。
 
 另外针对大词表问题，主要可以分为以下两种策略：基于类别的多元分类模型(class-based hierarchical softmax， cHSM）和基于二叉树的二元分类模型（class-based hierarchical softmax，tHSM），我们分别在下面详细讨论和介绍。
 
