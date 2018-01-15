@@ -1,11 +1,11 @@
 \chapter{绪论}
 \section{课题来源与意义}
-近年来，随着 互联网（Internet）的兴起，互联网上的数据急剧膨胀。根据国际数据信息公司\footnote{https://www.idc.com/}（International Data Corporation, IDC）的统计和预测，2017 年全球网络数据量已经达到1.8ZB，到2025 年，全球数据总量预计还将增长50 倍。随着大量无标注数据的出现，也让研究人员开始考虑，如何利用现有的算法从这些大规模无标注的文本数据中自动挖掘规律和知识，以提取出有用的信息。自从2006年，加拿大多伦多大学教授 Geoffrey Hinton 提出的深度学习（Deep Learning, DL）概念以来\upcite{hinton2006reducing}，为解决如何利用爆炸的数据量，以提取有效知识带来了新的思路。在这之后的发展中，基于神经网络的表示学习技术（Representation Learning）开始在各个研究领域崭露头角。尤其在图像(Image Classification)和语音自动识别(Automatic Speech Recognition，ASR)领域的多个任务上，基于表示学习的方法在性能上均超过了传统基于特征提取（Feature Extraction）的方法。
+近年来，随着 互联网（Internet）的兴起，互联网上的数据急剧膨胀。根据国际数据信息公司\footnote{https://www.idc.com/}（International Data Corporation, IDC）的统计和预测，2017 年全球网络数据量已经达到1.8ZB，到2025 年，全球数据总量预计还将增长50 倍。随着大量无标注数据的出现，也让研究人员开始考虑，如何利用现有的算法从这些大规模无标注的文本数据中自动挖掘规律和知识，以提取出有用的信息。自从2006年，加拿大多伦多大学教授 Geoffrey Hinton 提出的深度学习（Deep Learning, DL）概念以来\upcite{hinton2006reducing}，为解决如何利用爆炸的数据量，以提取有效知识带来了新的思路。在这之后的发展中，基于神经网络的表示学习技术（Representation Learning）开始在各个研究领域崭露头角。尤其在图像分类(Image Classification)和语音自动识别(Automatic Speech Recognition，ASR)领域的多个任务上，基于表示学习的方法在性能上均超过了传统基于特征提取（Feature Extraction）的方法。
 
 近年来，深度学习技术（Deep Learning）逐渐在自然语言处理中（Natural Language Processing, NLP）得到广泛应用。 例如，蒙特利尔大学教授 Yousha Bengio 提出用神经网络(Neural Network, NN) 来训练语言模型(Language Model)并进行了相关探索\upcite{DBLP:conf/nips/BengioDV00}。 后续的工作中，基于循环神经网络（Recurrent Neural Network， RNN）的语言模型建模方法由其学生 Tomas Mikolov 进行了极大拓展和完善\upcite{DBLP:conf/interspeech/MikolovKBCK10}。 网络通过学习能够将当前词的历史信息存储起来，以词的整个上下文（Context）作为依据，来预测下一个词出现的概率，克服了 N-gram 语言模型无法利用语句中长距离上下文依赖（Long Term Dependency）的缺点。 另外，在模型训练的过程中，由于词的历史信息被映射到低维连续空间，语义相似的单词被聚类，在语料中出现次数较少的词仍然能够得到很好的训练，不再需要额外的数据平滑技术(Smoothing Technology)。
 迄今为止，采用RNN 训练的语言模型在模型困惑度(Perplexity, PPL)和识别系统的识别率（Accuracy）上都取得了最好的效果。
 
-RNN 建模方法虽然表现出极大的优越性，但却是以牺牲计算复杂度为代价。 若训练大规模的文本语料，则需要花费很长的时间，制约了RNN 语言模型训练效率并且无法广泛应用到现实场景中去。 为克服这一不足，文献~\cite{DBLP:conf/icassp/MikolovKBCK11}~提出了多种优化策略来降低网络的计算复杂度，如缩短模型训练周期、减少训练数据集的规模、降低训练词表（Vocabulary）的大小、减少隐含层的节点数等，这些方法都在一定程度上降低了网络的运算量，提高了模型的训练效率，但同时也牺牲了较多的模型性能和精确度。 另外，在网络结构层面上，文献~\cite{DBLP:journals/coling/BrownPdLM92}~研究了一种基于分类的循环神经网络(Class-based RNN) 结构，网络的输出层被分解为两部分，增加的一部分称为分类层，从结构上降低了整个网络的计算复杂度，使得模型训练效率有了一定的提升且模型性能没有大的变化。 然而，在大词汇量连续语音识别系统中，采用此结构训练大规模语料语言模型仍需要花费大量时间。 因此，模型训练效率有待进一步优化。
+迄今为止，采用RNN 训练的语言模型在模型困惑度(Perplexity, PPL)和识别系统的识别率上都取得了最好的效果。 RNN 建模方法虽然表现出极大的优越性，却以牺牲计算复杂度为代价。 若训练大规模的文本语料，则需要花费很长的时间，制约了RNN 语言模型训练效率并且无法广泛应用到现实场景中去。 为克服这一不足，文献~\cite{DBLP:conf/icassp/MikolovKBCK11}~提出了多种优化策略来降低网络的计算复杂度，如缩短模型训练周期、减少训练数据集的规模、降低训练词表（Vocabulary）的大小、减少隐含层的节点数等，这些方法都在一定程度上降低了网络的运算量，提高了模型的训练效率，但同时也牺牲了较多的模型性能和精确度。 另外，在网络结构层面上，文献~\cite{DBLP:journals/coling/BrownPdLM92}~研究了一种基于分类的循环神经网络(Class-based RNN) 结构，网络的输出层被分解为两部分，增加的一部分称为分类层，从结构上降低了整个网络的计算复杂度，使得模型训练效率有了一定的提升且模型性能没有大的变化。 然而，在大词汇量连续语音识别系统中，采用此结构训练大规模语料语言模型仍需要花费大量时间。 因此，模型训练效率有待进一步优化。
 
 \section{国内外研究现状}
 语言模型可以用来对一段文本的概率进行估计，对信息检索（Information Retrieval）、机器翻译(Machine Translation)、语音识别（Speech Recognition）等任务有着重要的作用。语言模型的发展历史可以主要分为两个阶段：统计语言模型（Statistical Language Model）和神经网络语言模型（Neural Language Model）。其中统计模型主要指的是N-gram 语言模型，而随着深度学习的发展，神经网络语言模型产生了各种变体。我们接下来会一一介绍。
@@ -39,7 +39,7 @@ p(w_i | w_1,w_2,\cdots,w_{t-1})  \approx p(w_i | w_{t-(n-1)},\cdots,w_{t-1})
 由于神经网络对参数进行高度共享，因此对低频词具有天然的平滑能力。这里所指的神经网络语言模型(Neural Probabilistic Language Model, NPLM) ，最早由Bengio等人在2001年提出\upcite{DBLP:conf/nips/BengioDV00}， 近年来一些学者开始展开这方面的研究，并取得一系列成果，如~\cite{DBLP:conf/acl/BaroniDK14,DBLP:journals/sigkdd/BellK07,DBLP:journals/pami/BengioCV13,DBLP:journals/tnn/BengioSF94}~。 但总体而言， 对NPLM的研究还处在起步阶段。具体而言，NPLM通过一个多层感知网络(Multi-Layer Perceptron, MLP)来计算公式.~\ref{equ:approx} 中概率。
 \begin{figure}
   \centering
-  \includegraphics[width=0.6\linewidth]{./figures/nplm2.png}
+  \includegraphics[width=0.79\linewidth]{./figures/nplm.pdf}
   \caption{前馈神经网络语言模型。}\label{fig:nplm}
 \end{figure}
 

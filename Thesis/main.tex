@@ -1,30 +1,41 @@
-% !Mode:: "TeX:UTF-8"
 \documentclass[master,openright,twoside,color]{buaathesis}
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage[ruled]{algorithm2e} % For algorithms
-\renewcommand{\algorithmcfname}{ALGORITHM}
+\renewcommand{\algorithmcfname}{算法}
+\SetKwInput{KwData}{输入}
+\SetKwInput{KwResult}{输出}
+
 \begin{document}
 
 % 用户信息
-\include{data/info}
+%\include{data/info}
 
 % 中英封面、提名页、授权书
-\maketitle
+%\maketitle
 % 前言页眉页脚样式
 \pagestyle{frontmatter}
 % 摘要
 \begin{cabstract}
-最近在自然语言处理中，已经提出了基于神经网络结构的变体，并成功地应用于神经语言模型和神经声学模型。这些神经模型可以通过学习来自大规模语料库的参数来利用知识，而对于真实世界的挑战来说，它们是非常缓慢的，因为它们在训练和推理期间预测来自大词汇量的候选者。作为基于抽样的近似的替代，我们探索历史提出的基于树和基于类的分层softmax方法。在这项研究中，为了减少计算时间，并使其与现代图形处理单元兼容，我们引入了一系列高效和有效的方法，并将我们的贡献归类为：a）首先，我们改进它们的结构组成并引入一个compact基于树和基于类的相应的分层softmax方法的损失函数; b）其次，我们讨论几种基于ngram的句法和语义聚类算法对香草层级softmax的影响，因为它们对聚类方法敏感; c）第三，我们讨论了可能的分层softmax变体的推理算法，保证模型可以在不同情况下获取可能的预测结果。最后，我们用标准基准数据集，即WikiText-2，WikiText-103和十亿字数据集对语言建模任务进行了我们的实验。与其他传统的优化方法相比，还实现了几个内在的评估标准：字错误率和困惑度的改进。
+最近在自然语言处理中，已经提出了基于神经网络结构的变体，并成功地应用于神经语言模型和神经声学模型。这些神经模型可以通过学习来自大规模语料库的参数来利用知识，而对于真实世界的挑战来说，它们是非常缓慢的，因为它们在训练和推理期间预测来自大词汇量的候选者。作为基于抽样的近似的替代，我们探索历史提出的基于树和基于类的分层softmax方法。
+
+
+在本论文研究中，为了减少计算时间，并使其与通用图像计算单元单元（GPGPU）兼容，我们引入了一系列高效和有效的方法，并将我们的贡献归类为：a）首先，我们改进它们的结构组成并引入一个紧凑的基于树和基于类的相应的分层softmax方法的损失函数; b）其次，我们讨论几种基于ngram的句法和语义聚类算法对各种类型层级softmax的影响，因为它们对聚类方法敏感; c）第三，我们讨论了可能的分层softmax变体的推理算法，保证模型可以在不同情况下获取可能的预测结果。
+
+最后，我们用标准基准数据集，即WikiText-2，WikiText-103和十亿字数据集对语言建模任务进行了我们的实验。与其他传统的优化方法相比，还实现了几个内在的评估指标的提升：单词错误率和困惑度。
 \end{cabstract}
 
 \begin{eabstract}
-Recently in natural language processing, variants of neural networks based architecture have been proposed, and successfully applied to neural language models and neural acoustic models. These neural models can leverage knowledge by learning parameters from massive corpora, while they are extremely slow for the real world challenge as they predict candidates from a large vocabulary during training and inference. As an alternative to sampling-based approximation, we explore the historical proposed tree-based and class-based hierarchical softmax methods. In this research, aiming at reducing its computational time as well as making them compatible with modern graphics processing units, we introduce a series of efficient and effective approaches and categorise our contributions as: a) Firstly, we reform their structural composition and introduce a compact tree-based and class-based loss function for the corresponding hierarchical softmax methods; b) Secondly, we discuss the impact of several ngram-based, syntactic and semantic clustering algorithms for the vanilla hierarchical softmax as they are sensitive to clustering methods; c) Thirdly, we discuss possible inference algorithms for the hierarchical softmax variants, assuring the model can fetch presumable predictions under different circumstances. Finally, Our experiments were carried out on language modelling tasks with standard benchmarks datasets, i.e., WikiText-2, WikiText-103 and One Billion Word datasets. Consist improvement with several intrinsic evaluation criterions: word error rate and perplexity, were also achieved over other conventional optimisation methods.
+Recently in natural language processing, variants of neural networks based architecture have been proposed, and successfully applied to neural language models and neural acoustic models. These neural models can leverage knowledge by learning parameters from massive corpora, while they are extremely slow for the real world challenge as they predict candidates from a large vocabulary during training and inference. As an alternative to sampling-based approximation, we explore the historical proposed tree-based and class-based hierarchical softmax methods.
+
+In this research, aiming at reducing its computational time as well as making them compatible with modern graphics processing units, we introduce a series of efficient and effective approaches and categorise our contributions as: a) Firstly, we reform their structural composition and introduce a compact tree-based and class-based loss function for the corresponding hierarchical softmax methods; b) Secondly, we discuss the impact of several ngram-based, syntactic and semantic clustering algorithms for the vanilla hierarchical softmax as they are sensitive to clustering methods; c) Thirdly, we discuss possible inference algorithms for the hierarchical softmax variants, assuring the model can fetch presumable predictions under different circumstances.
+
+Finally, Our experiments were carried out on language modelling tasks with standard benchmarks datasets, i.e., WikiText-2, WikiText-103 and One Billion Word datasets. Consist improvement with several intrinsic evaluation criterions: word error rate and perplexity, were also achieved over other conventional optimisation methods.
 \end{eabstract}
 % 目录、插图目录、表格目录
-\tableofcontents
-\listoffigures
-\listoftables
+%\tableofcontents
+%\listoffigures
+%\listoftables
 % 符号表
 %\include{data/master/denotation}
 
@@ -34,241 +45,17 @@ Recently in natural language processing, variants of neural networks based archi
 \pagestyle{mainmatter}
 
 \include{data/chapter-1-introduction}
+\include{data/chapter-2-relatedwork}
+\include{data/chapter-3-models}
+\include{data/chapter-4-experiment}
+\include{data/chapter-5-summary}
 
-
-
-\chapter{相关技术介绍}
-
-\section{已经完成的工作}
-基于神经网络的分布表示一般称为词向量、词嵌入（Word Embedding）或分布式表示（Distributed Representation）~\upcite{DBLP:conf/nips/MikolovSCCD13}。神经网络词向量表示技术通过神经网络技术对上下文，以及上下文与目标词之间的关系进行建模。由于神经网络较为灵活，这类方法的最大优势在于可以表示复杂的上下文。在前面基于矩阵的分布表示方法中，最常用的上下文是词。如果使用包含词序信息的n-gram 作为上下文，当n 增加时，n-gram 的总数会呈指数级增长，此时会遇到维数灾难问题。而神经网络在表示n-gram 时，可以通过一些组合方式对n 个词进行组合，参数个数仅以线性速度增长。有了这一优势，神经网络模型可以对更复杂的上下文进行建模，在词向量中包含更丰富的语义信息。神经网络模型主要包括： 传统前向传递神经网络(Feed Forward Neural Network, FFNN)、循环神经网络(Recurrent Neural Network, RNN)建模方案。
-
-另外针对大词表问题，主要可以分为以下两种策略：基于类别的多元分类模型(class-based hierarchical softmax， cHSM)和基于二叉树的二元分类模型(class-based hierarchical softmax，tHSM)，我们分别在下面详细讨论和介绍。
-
-
-\subsection{完成的工作内容: 上下文信息建模}
-
-
-\subsection{完成的工作内容: 大词表问题的优化}
-传统的多元分类模型(Softmax):
-\begin{equation}
-\label{eq:softmax}
-\begin{split}
-%p(w_i|h)=&\frac{\exp(h^\top v_{w_i})}{\sum_{w_j\in \mathcal{V}}{\exp(h^\top v_{w_j} )}} \\
-\log p(w_i|h) &= \theta^w_i h-\log \sum_{w_j\in \mathcal{V}}{\exp(\theta^w_j h)}\\
-%\frac{\partial p(w_i|h)}{\partial v_{w_j}}=&p(w_j|h)(\delta_{ij}-p(w_i|h))h^\top\\
-\nabla_{\theta^w_j}{\log p(w_i|h)}&= (\delta_{ij}-p(w_i|h))h
-\end{split}
-\end{equation}
-其中 \textit{Kronecker delta} 函数的定义为: $\delta_{ij} = 1$ 如果 $i = j$。 $h$ 是隐藏层输出的向量，并且 $\theta^w$ 是目标端的词向量 $w$~\upcite{duda2012pattern}.
-
-其中由于分母是正则项，一旦词表扩大，每次迭代更新都需要计算这一项，是主要的问题所在，所以本课题拟在主要解决该问题所导致的计算费时的问题，在保证计算精度不下降的情况下，提高模型的训练速度。 目前主要的算法分为以下三类： 单词拆分算法、采样估计模型和层次分解模型。
-
-
-\subsubsection{单词拆分算法}
-最直接的算法就是我们放弃使用大词表，转而保留一个较小的词表来保证训练的内存占用和计算效率。那么针对过多的词表外的单词（Out-Of-Vocabulary，OOV），我们可以使用传统的N-gram语言模型来估算其可能的概率分布。这样做一方面保证神经网络模型可以在有限时间内训练完，同时保证模型的最后的测试结果不会很差~\upcite{DBLP:journals/csl/Schwenk07}。当我们的词表继续增大的时候，我们会发现训练样本中存在过多的$\langle$unk$\rangle$ 字符，这样使得神经网络的模型训练非常苦难导致效果变得不可接受，所以这种方案只是一定程度上缓解了大词表问题，但是也是一种有效的尝试方案。
-
-\begin{figure}
-  \centering
-\includegraphics[width=0.6\linewidth]{./figures/subword.png}
-\caption{词到子词划分样例.单词背划分成前缀和后缀，其中$+$代表是单词的前缀同时$\langle /w \rangle$是单词的后缀。}\label{fig:subword}
-\end{figure}
-除了上述方案，目前采用的方案是将单词按照字符级别来划分，可以将一个单词按照字符统计规律划分成任意多个子词。其中二元对编码（byte-pair-encoding，BPE）能将一个单词划分成两部分：前缀（Prefix）和后缀（Suffix）~\upcite{DBLP:conf/icassp/Tucker0P94, DBLP:conf/acl/SennrichHB16a,Gage:1994:NAD:177910.177914}，如图.~\ref{fig:subword} 所示。由于划分规则是从训练数据中学习到的，我们可以指定需要缩减的词表大小，该算法的动态适应性很强，目前主流的机器翻译模型都采用这个方案~\upcite{DBLP:journals/corr/JozefowiczVSSW16}。尽管如此，我们仍然需要看到它这样的解构操作依然带来了一定的损失，因为句子的长度增倍了，对RNN的长距离关系学习能力提出了更高的挑战~\upcite{DBLP:conf/aaai/KimJSR16}。
-
-\subsubsection{采样估计模型}
-目前采用的采样算法主要是针对概率规约那一项进行概率估计，其中著名的算法有：重要性采样（Importance Sampling）~\upcite{DBLP:journals/tnn/BengioS08}，噪声差分估计（Noise Contrastive Estimation, NCE）~\upcite{DBLP:conf/icml/MnihT12}和Blackout 采样算法~\upcite{DBLP:journals/iclr/JiVSAD15}。第一种算法在实验中被证明模型无法收敛，目前主要使用的后面两种算法。
-
-对于噪声差分估计算法来说，模型需要学习将正确的单词 $w_0$ 与随机生成的单词 $\{w_1\cdots w_k\}$做一个二元分类。 其中 $w_0$ 训练样本中真正的下一个单词， $\{w_1\cdots w_k\}$ 是采用先验分布  $q(w)$产生的随机噪声单词. 正例归一化后的概率和所有负例联合概率的公式可以写成：
-\begin{equation}\label{equ:nce}
-\begin{split}
-  \tilde{p}(y=1|h)=&\frac{\exp( \theta^w_0 h)}{ \exp( \theta^w_0 h)+k *q(w_0)}\\
-  \tilde{p}(y=0|h)=&\prod_{i=1}^{k}\frac{k *q(w_i)}{\exp( \theta^w_i h)+k *q(w_i)}\\
-\end{split}
-\end{equation}
-需要注意的是 $\tilde{p}(y=0|h)$ 需要对 $k$ 个噪声样本做加法运算而不是对整个词表单词进行的。 这样的话该算法的计算机复杂度就是$\mathcal{O}(k)$，和整个词表的大小无关了。除此之外，最近提出的Blackout采样算法针对噪声概率归一化的时候与当前上下文的相关，对NCE算法进行了进一步修改~\upcite{DBLP:journals/iclr/JiVSAD15}。
-
-\subsection{层次分解模型}
-目前主要的策略分为： 基于类别的多元分类模型(class-based hierarchical softmax, cHSM)和基于二叉树的二元分类模型(class-based hierarchical softmax, tHSM)。图.~\ref{fig:case_hsm}展示了第一种算法的示例，图.~\ref{fig:tree_hsm}展示了第二种算法的示例。
-\begin{figure}
-  \centering
-\includegraphics[width=0.7\linewidth]{./figures/case_chsm.pdf}
-\caption{cHSM算法可视化模型。其中词表 \{duck,cat,mop,broom\} 被划分成:\{duck,cat\},\{mop,broom\}.}\label{fig:case_hsm}
-\end{figure}
-
-
-
-\begin{figure}
-  \centering
-    \includegraphics[width=0.75\linewidth]{./figures/thsm.pdf}
-\caption{树状层次概率模型. 内部参数 $\theta_i^w$, 边 $d_i^w$ 并且单词在树的叶子节点上. 除此之外, 加粗的那条路径从根节点到叶子节点 $w$ 被定义为参数对 $(d^w,\theta^w)$。其中 $d^w$ 是一个向量， $\theta^w$ 是一个参数矩阵. 例如, $d^w=[-1,+1,-1]$ ， $d^{v}=[-1,+1,+1]$.}\label{fig:tree_hsm} %
-\end{figure}
-
- \begin{equation}
-p(d^w_i|\theta_{i}^w,h) =\sigma(\theta_{i}^w h)^{d_i^w}\times[1-\sigma(\theta_{i}^w h)]^{1-{d_i^w}},d_i^w \in [0,1]
-\end{equation}
- \begin{equation}
-p(d^w_i|\theta_{i}^w,h) =\sigma(\theta_{i}^w h)^{d_i^w}, d_i^w \in [-1,1]
-\end{equation}
-\begin{equation}
-p(d^w_i=\pm 1|\theta_{i}^w,h) = \sigma({d_i^w}\theta_{i}^w h)
-\end{equation}
-
-一个单词的概率 $w$:
-\begin{equation}\label{equ:pw}
-\begin{split}
- \log p(w|h)=&\log\prod_{i=0}^{l^w-1} p(d^w_i|\theta_{i}^w,h) = \sum_{i=0}^{l^w -1} \log\sigma(d_i^w \theta_{i}^w h)\\
- =&\log\sigma({d^w}^\top \theta^w h)=\zeta(- {d^w}^\top \theta^w h )
- \end{split}
-\end{equation}
-$\zeta(z)$ 表示 softplus 函数: $\zeta(z)= \log (1+\exp(z))$.
-树状模型的优点：
-\begin{equation}
-\sum_{w\in \mathcal{V}}{p(w|h)}=\sum_{w \in \mathcal{V}}\sum_{i=0}^{l^w-1}{\sigma(d_i^w\theta_{i}^w h)}=1.
-\end{equation}
-
-
-\begin{figure}
-  \centering
-\includegraphics[width=0.45\linewidth]{./figures/softplus.png}
-\caption{Softplus和ReLU函数的示意图。}\label{fig:soft}
-\end{figure}
-
-\section{关键技术或难点}
-
-\subsection{关键技术或难点：复杂上下文建模方案}
-依照上章节的分析，本章节主要介绍我们实验中所要涉及的模型，主要是各种循环神经网络的变种 \upcite{DBLP:conf/icml/JozefowiczZS15}: 普通循环神经网络节点、长短记忆网络(Long shrot-term memory, LSTM)~\upcite{DBLP:journals/taslp/SundermeyerNS15} 和门限记忆节点(Gated Recurrent Unit, GRU) \upcite{DBLP:conf/nips/ChungKDGCB15}。 LSTM的计算公式定于如下 \upcite{DBLP:journals/neco/HochreiterS97}：
-\begin{itemize}
-\item 输入门: 控制当前输入 $x_t$ 和前一步输出 $h_{t−1}$ 进入新的 cell 的信息量：$i_t=\sigma(W^i x_t+U^i h_{t-1}+b^i)$
-\item  忘记门：决定是否清楚或者保持单一部分的状态$f_t=\sigma(W^f x_t+U^f h_{t-1}+b^f)$
-\item  变换输出和前一状态到最新状态$g_t=\phi(W^g x_t+U^g h_{t-1}+b^g)$
-\item  输出门: 计算 cell 的输出$o_t=\sigma(W^o x_t+U^o h^{t-1}+b^o)$
-\item  cell 状态更新步骤：计算下一个时间戳的状态使用经过门处理的前一状态和输入：$s_t=g_t\odot i_t+s_{t-1}\odot f_t$
-\item  最终 LSTM 的输出：使用一个对当前状态的 tanh 变换进行重变换：$h_t=s_t\odot \phi(o_t)$
-\end{itemize}
-其中$\odot$ 代表对应元素相乘(Element-wise Matrix Multiplication)， 函数 $\phi(x), \sigma(x)$ 的定义如下：
-\begin{equation}\label{equ:tanh}
-  \phi(x)=\frac{e^x-e^{-x}}{e^x+e^{-x}},\sigma(x)=\frac{1}{1+e^{-x}}
-\end{equation}
-
-\begin{figure}
-  \centering
-  \includegraphics[width=0.7\linewidth]{./figures/lstm.pdf}
-  \caption{LSTM 模型}\label{fig:lstm}
-\end{figure}
-
-
-GRU 可以看成是 LSTM 的变种，GRU 把 LSTM中的 遗忘门和输入门用更新门来替代。 把 cell state 和隐状态 $h_t$ 进行合并，在计算当前时刻新信息的方法和 LSTM 有所不同。 下图是GRU更新 $h_t$ 的过程\upcite{DBLP:journals/corr/Pezeshki15}, 具体定义如下：
-\begin{itemize}
-\item 更新门 $z_t$: 定义保存多少以前的信息： $z_t = \sigma ( W^z x_t+ U^z h_{t-1}  )$
-
-\item 重置门 $r_t$: 决定保留多少输入信息： $r_t = \sigma(W^r x_t  + U^r h_{t-1}  )$
-
-\item 节点内部更新值$\tilde h_t $: 其次是计算候选隐藏层(candidate hidden layer) $\tilde h_t$，这个候选隐藏层 和LSTM中的$\tilde c_t$是类似，可以看成是当前时刻的新信息，其中$r_t$用来控制需要 保留多少之前的记忆，如果$r_t$为0，那么$\tilde h_t$只包含当前词的信息：$\tilde h_t  = \tanh (W^h x_t  + U^h(h_{t-1} \odot r_t) )$
-
-\item 隐藏层输出值$h_t$: 最后$z_t$控制需要从前一时刻的隐藏层 $h_{t-1}$ 中遗忘多少信息，需要加入多少当前 时刻的隐藏层信息$\tilde h_t$，最后得到$h_t$，直接得到最后输出的隐藏层信息， 这里与LSTM的区别是GRU中没有 输出门：$h_t = (1-z_t)\odot \tilde h_t  + z_t \odot h_{t-1}$
-\end{itemize}
-如果重置门接近0，那么之前的隐藏层信息就会丢弃，允许模型丢弃一些和未来无关 的信息；更新门 控制当前时刻的隐藏层输出$h_t$需要保留多少之前的隐藏层信息， 若$z_t$接近1相当于我们之前把之前的隐藏层信息拷贝到当前时刻，可以学习长距离依赖。 一般来说那些具有短距离依赖的单元重置门比较活跃（如果$r_t$为1，而$z_t$为$0$ 那么相当于变成了一个标准的RNN，能处理短距离依赖），具有长距离依赖的单元更新门比较活跃。
-
-\begin{figure}
-  \centering
-  \includegraphics[width=0.45\linewidth]{./figures/gru.png}
-  \caption{GRU模型示意图}\label{fig:gru}
-\end{figure}
-
-
-\subsection{关键技术或难点：层次概率模型}
-大词表问题，主要是对softmax如何建模的问题。在本课题中，我们探讨 cHSM 和 tHSM 两种不同的方案所带来的影响和优劣。
-
-假设语料中的每一个词样本属于且只属于一个类，在此基础上计算词样本在语料中的分布时，可以先计算类的概率分布，然后在所属类上计算当前词的概率分布，于是可将公式.~\ref{eq:softmax} 转化为：
-  \begin{equation}
-  \begin{split}
-p(w|h)=&p^c(\mathcal{C}(w)|h)\cdot p^w(w|\mathcal{C}(w),h) , w\in \mathcal{C}(w),\\
-&\mathcal{V}=\bigcup _{i = 1}^\mathcal{C}{c_i},\quad  c_i \bigcap c_j=\phi, \text{若}\quad i\ne j, \\
-\end{split}
-\end{equation}
-此时，训练一个词样本的计算复杂度正比于: $O =HC$。 式中，$C$ 为语料中所有词的分类数，可根据语料中词的词频进行划分。 当$C$ 取$1$ 或取词典大小$V$ 时，此结构等同于标准的RNN 结构。 由于$C \ll V$，该结构训练的softmax 降低了计算复杂度。
-
-
-\chapter{模型}
-
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=0.7\columnwidth]{./figures/lm.pdf}
-  \caption{Visualisation of Recurrent Neural Language Model. Every sentence is wrapped with start (i.e., $\langle s\rangle$) and end (i.e., $\langle /s\rangle$) tokens. Before predicting the next utterance $w_{t+1}$, the input of recurrent unit is received from the last hidden state $h_{t-1}$ and current word $w_t$.}
-  \label{fig:lm}
-\end{figure}
-
-\section{模型二}
-\begin{figure}[!t]
-%\setlength{\abovecaptionskip}{0pt}
-%\setlength{\belowcaptionskip}{0pt}
-  \centering
-\includegraphics[width=0.85\linewidth]{./figures/chsm-simple.pdf}
-\caption{Visualisation of two partition algorithms with class-based hierarchical softmax. The flatten vocabulary can be formed into upper right matrix, where the size of matrix should be greater or equal to the vocabulary and no external mask is needed.
-Besides, the flatten vocabulary can be formed into upper left matrix, where external mask is needed and the composition of this matrix is depended on partition algorithms.}\label{fig:chsm}
-\end{figure}
-\begin{algorithm}[t]
-\caption{Exact $\arg\max$ algorithm for cHSM.}\label{alog:exact}
-\KwData{ Last hidden layer output $h$;}
-\KwResult{ The predicted best candidate word $w$.}
- $\hat y^o=\arg\max_o{\log p^o(w| c,h)}$ \tcp*[r]{select best candidates in every group}
- $\tilde y^c=\arg\max_c{(\log p^c(y^c|h)+\log p^w(\hat y^w|\hat y^c,h))}$\tcp*[r]{calculate best candidate}
- alter $(\tilde y^c,\hat y^o[\tilde y^c])$ with word $w$ by looking-up table $\Gamma'$ \;
- \Return $w$ \;
-\end{algorithm}
-
-
-
-\begin{algorithm}[t]
-\SetAlgoLined
-\KwData{Hidden layer output $h$;}
-\KwResult{ The predicted word $w$. }
- $\mathtt{path}$=[] \;
-\While(\tcp*[h]{Search every layer}){$k \le \log \mathcal{V}$ }{
-\eIf{$p(d_{k} |\theta_{k},h) \ge 0.5$ }{
- $k$= left child of node $k$ \tcp*[r]{左分支}
-}{
- $k$= right child of node $k$ \tcp*[r]{右分支}
-}
- $\mathtt{path}$.append($k$) \tcp*[r]{append $k$ to path list}
-}
- alter $\mathtt{path}$ with word $w$ by looking-up table $\Gamma$.\;
- \Return $w$ \;
-\caption{Greedy Layer-wise Argmax}\label{alog:greed_argmax}
-\end{algorithm}
-
-\include{data/chapter-3-experiment}
-
-
-\section{总结和展望}
-Mikolov曾提出使用基于二叉树的层级softmax模型来加速的训练方案，加速比能达到理论的最大速度，但是当时提出的背景是基于CPU构建的，如今越来越多的算法随着应用领域的推广，需要在并行度更高的GPU上进行计算，因此基于GPU进行建模的tHSM尚未被研究提及，需要在本文中研讨。
-\section{下一阶段工作计划}
-当我们使用多层分类模型的时候，我们就需要将单词按照模型的架构进行划分。其中对于cHSM模型，我们有以下策略可以使用：1) 基于词频划分类别； 2) 基于Bigram 的布朗聚类(Brown clustering) 进行划分；3)按照word-embedding 的词向量信息进行聚类。另外，我们还需要注意的是，各个类别可以包含不同的数量的单词，也可以包含数量相同的单词。对于后者，我们考虑的划分模型就是基于交换算法(Exchange Algorithm), 以此来保证获得近似的最优解。
-
-\subsection{存在的问题}
-目前存在的问题主要是两点：模型仍然计算很复杂需要使用更底层语言来加速计算，和目前采用的聚类算法比较费时间。
-
-由于我们选择的建模平台是python平台，好处是可以使用许多现成的已有的框架。并且python语法简单，矩阵计算库numpy和scipy更成熟，便于调试。另一方面，我们采用的建模语言是theano框架，它的底层计算都是调用BLAS计算库，或者直接调用基于GPU的CUDA的CuBLAS计算库。虽然这样做便于在前期模型建立阶段能方便尝试各种设计方案，但是他的计算瓶颈在python解释器对代码的缓慢执行，所以如果能将部分模型组件使用CUDA语言重写。那样的话，我们的模型能接受一定的组合排列的可能性，同时计算速度能得到极大提升。这也是许多目前流行框架发展的方向，有些框架更超前。例如MXNET直接使用C++语言建立深度模型，他的计算效率也是目前已知的框架中最快的。因此，考虑到目前的thenao计算瓶颈，我们想将RNN的框架使用CUDA语言重构，基于CuDNN库开发的样板，帮助我们在他基础上改进。
-
-另一方面，目前采用的聚类算法计算非常费时，尤其是当我们希望进行多层次聚类的时候，我们需要花费数周时间来获得结果。这样的缓慢的计算效果是无法接受的，经过针对代码的调试，我们发现计算瓶颈在算法初始化的时候，计算两两单词之间的距离，它花费了90\%的计算时间。如果能存在有效的初始化算法，而不是挑选尽可能高精度的聚类模型，那么实验进度和试验结果就可以针对多组参数调试。
-\subsection{尚未完成的工作}
-\begin{enumerate}
-\item 大规模实验数据分析验证算法；
-\item 优化模型速度，用底层语言封装模型，以达到最好的效果；
-\item 实验和评价不同聚类算法的效果；
-\item 讨论和研究不同语言模型优化方案的优缺点，以及使用场景。
-\end{enumerate}
-\subsection{解决问题的技术思路或措施}
-\begin{enumerate}
-\item 大规模实验数据分析验证算法：目前已经找到三个标准文本数据集，需要重写数据处理算法，这样保证模型能正常运算和收敛；
-\item 优化模型速度，用底层语言封装模型，以达到最好的效果：学习CUDA语言，并着手构建基于深度学习的模型框架；
-\item 实验和评价不同聚类算法的效果：调研可用的层次聚类算法并进行测试和实验检验；
-\item 讨论和研究不同语言模型优化方案的优缺点，以及使用场景：提出不同的实验评价指标，观察不同模型的结果，并分析其背后的原因。
-\end{enumerate}
 % 参考文献
 \cleardoublepage
 \phantomsection
 \addcontentsline{toc}{chapter}{参考文献}
 \nocite{*}
+\bibliographystyle{GBT7714-2005}
 \bibliography{thesis_reference}
 \cleardoublepage
 
@@ -277,25 +64,6 @@ Mikolov曾提出使用基于二叉树的层级softmax模型来加速的训练方
 
 % 附页标题样式
 \backmatter
+%\include{data/chapter-6-appendix}
 
-% 附页
-% !Mode:: "TeX:UTF-8"
-\chapter{攻读硕士学位期间取得的学术成果}
-% 此处标题及内容请自行更改
-\noindent 发表论文：
-
-\noindent 1. \textbf{Nan Jiang}, Wenge Rong, Min Gao, Yikang Shen and Zhang Xiong. Exploration of Tree-based Hierarchical Softmax for Recurrent Language Models[C]. Proceedings of the Twenty-Sixth International Joint Conference on Artificial Intelligence (IJCAI), 2017, pp. 1951-1957. (已发表)
-
-\noindent 2. Yikang Shen, Wenge Rong, \textbf{Nan Jiang}, Baolin Peng, Jie Tang and Zhang Xiong. Word Embedding Based Correlation Model for Question/Answer Matching[C]. Proceedings of the Thirtieth {AAAI} Conference on Artificial Intelligence (AAAI), 2017, pp. 3511-3517.(已发表)
-
-\noindent 3. \textbf{Nan Jiang}, Wenge Rong, Yifan Nie, Yikang Shen and Zhang Xiong. Event Trigger Identification with Noise Contrastive Estimation[J]. IEEE/ACM Transactions on Computational Biology and Bioinformatics, 2017, pp. 1-11.(已发表)
-
-\noindent 4. \textbf{Nan Jiang}, Wenge Rong, Baolin Peng, Yifan Nie and Zhang Xiong. Modeling Joint Representation with Tri-Modal DBNs for Query and Question Matching[J]. IEICE Transactions on Information and Systems, 2016, 99(4): 927-935.(已发表)
-
-\noindent 5. \textbf{Nan Jiang}, Wenge Rong, Baolin Peng, Yifan Nie and Zhang Xiong. An Empirical Analysis of Different Sparse Penalties
-for Autoencoder in Unsupervised Feature Learning[C]. International Joint Conference on Neural Networks (IJCNN), 2015, pp. 1-8.(已发表)
-
-% !Mode:: "TeX:UTF-8"
-\chapter{致\quad 谢}
-在2015年，我来到了北京航空航天大学计算机学院先进计算机技术教育工程研究中心，开始了我为期三年的研究生学习阶段。
 \end{document}
