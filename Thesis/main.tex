@@ -1,5 +1,14 @@
 \documentclass[master,openright,twoside,color]{buaathesis}
 \usepackage{booktabs}
+\usepackage{courier}
+\usepackage{fontspec}
+\usepackage{minted}
+\usemintedstyle{pastie}
+\setmonofont{Courier New}
+\renewcommand{\theFancyVerbLine}{\sffamily
+\textcolor[rgb]{0.5,0.5,1.0}{\scriptsize
+\oldstylenums{\arabic{FancyVerbLine}}}}
+
 \usepackage{graphicx}
 \usepackage[ruled]{algorithm2e} % For algorithms
 \renewcommand{\algorithmcfname}{算法}

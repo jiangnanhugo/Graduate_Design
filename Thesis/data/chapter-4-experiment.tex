@@ -160,7 +160,7 @@ p-tHSM  &$\mathcal{|H|\log{|V|}}$ &\textbf{383.5}&	86.4 &\textbf{7.0}&	\textbf{1
   \caption{在wikitext-2数据集上 BPTT和截断BPTT算法对RNN的影响.}\label{fig:tbptt}
 \end{figure}
 \section{采样近似算法比较}
-从离散分布采样的初始程序通常需要词汇数量具有线性时间复杂度。虽然别名方法可用于生成丰富的噪声字，因为它需要线性建立时间和恒定的采样时间~\upcite{10.2307/2683739,DBLP:conf/emnlp/VaswaniZFC13}。
+
 基于抽样的算法的效率和准确性与样本大小密切相关，我们在下一次评估中测试了这个样本。我们测试了几个样本大小，以评估它们对停电和NCE近似值的影响，结果显示在表格~\ref{fig:blackout_nce}中。根据图1所示，中断算法比传统的NCE模型表现得相对较好，这与报道的实验结果是一致的~\cite{DBLP:journals/iclr/JiVSAD15}。
 
 

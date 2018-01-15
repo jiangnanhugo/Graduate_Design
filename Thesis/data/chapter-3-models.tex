@@ -1,8 +1,29 @@
 \RestyleAlgo{boxed}
-\chapter{并行树状概率模型}
-在本章中，我们将这个目标词表示扩展到一个分层的形式，使它们适配基于树的分层概率计算。首先，我们提出了一个在分层结构上建模参数的字编码方案。因此，考虑到GPU上的并行吞吐性能，我们推导出紧凑的代价函数及其梯度。同时，树上的单词分布对其性能有很大的影响，应该在训练阶段之前定义，这些动态交换算法在训练过程中改变了单词群或子树结构在这个研究中。我们采用了几个分层聚类和词汇分割策略，用统计，句法和语义知识来初始化其结构，以达到一个稳定和可以预期的性能。而且，在推理过程中，不同于传统的softmax情况，得到最好的候选者自然是可行的，层次推理不能直接用 softmax 方法来实现。我们讨论基于树的搜索策略的两种不同的推理情况：a）打分：输出给定序列的概率；b）排序   ：在给定的上下文中获取得分最高的一个候选单词。
+\chapter{并行树状概率计算模型}
+\section{引言}
+在本章中，我们将这个预测端的词用二叉树的分层的形式表示，使它们的编码适配基于树的分层概率计算。首先，我们提出了一个在分层结构上建模参数的字编码方案。因为考虑到GPU上的算法的并行计算的吞吐性能，我们进而推导出紧凑的代价函数及其梯度，使得模型在GPU设备上的能并行计算模型的内部概率函数。
+
+同时，树上的单词分布对其性能有很大的影响，应该在训练阶段之前定义，这些动态交换算法在训练过程中改变了单词群或子树结构在这个研究中。我们采用了几个分层聚类和词汇分割策略，用统计，句法和语义知识来初始化其结构，以达到一个稳定和可以预期的性能。
+
+而且，在推理过程中，不同于传统的softmax情况，得到最好的候选者自然是可行的，层次推理不能直接用 softmax 方法来实现。我们讨论基于树的搜索策略的两种不同的推理情况：a）打分：输出给定序列的概率；b）排序   ：在给定的上下文中获取得分最高的一个候选单词。
 \section{基于二叉树的单词极性编码}
 首先，所有的单词分布在二叉树的叶节点上，因此我们可以通过访问从根到叶节点的所有内部节点来定位每个特定的词，所以不同的访问路径代表不同的单词。在这里，单词$ w $的路径表示所有内部节点$ \theta^w_i $和它访问的边$ d ^ w_i $。
+
+\begin{table}[!ht]
+  \centering
+  \caption{符号助记表}
+\begin{tabular}{llc}
+  \toprule
+   符号&涵义&取值范围\\ \midrule
+$l^w$ &单词$w$ 所对应的叶子节点和中间节点的路径&Int32 \\
+$d_j\in \{-1,+1\}$&表示路径$l^w$中第$j$个节点对应的编码（根节点对应编码$0$）&\\
+$ d^w=[d_0^w,d_1^w,\cdots,d_{l^w-1}^w] $& 单词 $w$ 的极性编码，他由 $l^w-1$位编码构成，&\\
+$\theta_{j}^w\in\mathbb{R}^m$ &表示路径$l^w$中第 $j$ 个非叶子节点对应的向量& Float32\\
+$ \theta^w=[\theta_1^w,\theta_2^w,\theta_3^w, \cdots,\theta_{l^w}^w]$&表示路径$l^w$所对应的参数矩阵&Float32 \\
+$\Gamma$ &路径查找表，给定路径序列，可以获得对应的单词& \\
+  \bottomrule
+\end{tabular}
+\end{table}
 
 我们接下来详细说明模型的编码方式。其中，$ \theta_i ^ w $表示到达单词$w$的路径上的$ i^{th} $层上的非叶节点，并且$\theta_i ^ w$是一个 $m$维度的向量，$ \theta_i ^ w \in\mathbb{R}^m $ 其中$ i \in [0, l ^ w - 1] $。同样的，$ d_i ^ w $表示连接第$(i-1)^ {th} $和$ i ^ {th} $层节点的边。对于每个非叶子节点来说，向下移动到左边的分支标记为$ -1 $，选择正确的分支标记为$ + 1 $。因此，在$i\in[0,l^w-1]$, $d_i^w\in \{-1,+1\}$。 此外， $l^w$~表示从根到叶单词的路径长度。如果该二叉树是平衡树，即单词都均匀分布在同一层叶子节点上，那么树深是$l^w\approx \log \mathcal{|V|}$ 。通过这个方案，我们可以通过表示极性路径来定位每个单词，将单词索引（Indexing）或二元稀疏表示（One-hot Representation）改变为单词极性编码元组$(d ^ w,\theta ^ w)$。
 
@@ -18,7 +39,7 @@
 如图~\ref{fig:tree_hsm}~所示，内部参数向量 $\theta_i^w$, 边 $d_i^w$ 并且单词在树的叶子节点上。除此之外, 加粗的那条路径从根节点到叶子节点 $w$ 被定义为参数对 $(d^w,\theta^w)$。其中 $d^w$ 是一个向量， $\theta^w$ 是一个参数矩阵. 例如, 图里面的参数实际结果是 $d^w=[-1,+1,-1]$ ， $d^{v}=[-1,+1,+1]$。
 \begin{figure}[!h]
   \centering
-    \includegraphics[width=0.85\linewidth]{./figures/thsm.pdf}
+    \includegraphics[width=0.8\linewidth]{./figures/thsm.pdf}
 \caption{树状层次概率模型}\label{fig:tree_hsm} %
 \end{figure}
 
@@ -35,9 +56,6 @@ p(d^w_i|\theta_{i}^w,h) =\sigma(\theta_{i}^w h)^{d_i^w}, d_i^w \in [-1,1]
 \begin{equation}
 p(d^w_i=\pm 1|\theta_{i}^w,h) = \sigma({d_i^w}\theta_{i}^w h)
 \end{equation}
-
-
-
  因此，单词$ w $的概率是从根到相应叶节点的路由概率$(d^w,\theta^w)$的联合乘积：
 \begin{equation}\label{equ:pw}
 \begin{split}
@@ -107,9 +125,8 @@ p(d^w_i=\pm 1|\theta_{i}^w,h) = \sigma({d_i^w}\theta_{i}^w h)
 \begin{algorithm}[!ht]
 \SetAlgoLined
 \KwData{隐藏层输出 $h$;}
-\KwResult{ 预测的单词 $w$. }
  路径列表 $\mathtt{path}$=[] \;
-\While(\tcp*[h]{逐层搜索}){$k \le \log \mathcal{V}$ }{
+\While(\tcp*[h]{逐层贪心路径搜索}){$k \le \log \mathcal{V}$ }{
 \eIf{$p(d_{k} |\theta_{k},h) \ge 0.5$ }{
  $k=  k*2$ \tcp*[r]{左分支}
 }{
@@ -118,9 +135,9 @@ p(d^w_i=\pm 1|\theta_{i}^w,h) = \sigma({d_i^w}\theta_{i}^w h)
  $\mathtt{path}$.append($k$) \tcp*[r]{将 $k$ 添加到路径列表}
 }
 {通过查找$\Gamma$路径表，找出对应的单词}\;
- alter $\mathtt{path}$ with word $w$ by looking-up table $\Gamma$\;
- \Return $w$ \;
-\caption{逐层贪心搜索 Argmax}\label{alog:greed_argmax}
+$w=\Gamma(\mathtt{path})$\;
+\KwResult{ 预测的单词 $w$. }
+\caption{逐层贪心搜索算法}\label{alog:greed_argmax}
 \end{algorithm}
 
 \section{基于二叉树的聚类算法}
@@ -129,11 +146,72 @@ p(d^w_i=\pm 1|\theta_{i}^w,h) = \sigma({d_i^w}\theta_{i}^w h)
 
 1）一元聚类算法。它根据词频对词汇进行排序，并根据单词统计从底端到顶端进行合并，也称为霍夫曼编码~\upcite{DBLP:conf/nips/MikolovSCCD13}。
 
+霍夫曼编码的构造过程。1） 根据$\mathcal{|V|}$个权值$\{w_1,w_2,\cdots,w_{\mathcal{|V|}}\}$，生成$\mathcal{|V|}$棵只有单个结点的树，没有左右子树的二叉树的集合$F\{T_1,T_2,\cdots,T_{\mathcal{|V|}}\}$，其中每颗树的根节点都有一个权值$w_i$；2） 在~$F$~中选取两颗根节点的权值最小的树作为左右子树构造一颗新的二叉树。对于这两颗子树，权值小的作为左子树，权值大的作为右子树。新的二叉树的权值是两颗子树的权值之和；3）将2步选取的两颗树在$F$中删除，并将新二叉树加入$F$中。4）重复2，3步，直到~$F$~中只有一颗树为止。
+
+\begin{algorithm}[!ht]
+\SetAlgoLined
+\KwData{单词和对应的频度词典 frequenties;}
+{Q=PriorityQueue()} \tcp*[r]{初始化优先队列$Q$}
+\For(\tcp*[h]{((freq,word),index)}){$v \gets frequenties$}{
+{Q.put(v)}\;
+}
+{$idx=0$}\;
+\While{$Q.qsize()>1$}{
+    {l,r=Q.get(),Q.get()}\;
+    {node=Node(l,r,idx++)}\;
+    {freq=l[0]+r[0]}\;
+    {Q.put((freq,node))}\;
+}
+\KwResult{ 霍夫曼树 $Q.get()[1]$. }
+\caption{基于单词频率的霍夫曼建树策略}\label{code:huffman}
+\end{algorithm}
+
+当我们构造完霍夫曼二叉树后，我们需要遍历这棵树来获取所有单词的极性编码霍夫曼编码：1）计算待压缩数据中所有的字符及其出现次数，根据次数的不同对没个字符分配不同的权值（一般用出现频率/总字符数）。2）对所有带压缩字符按起权值，构造一颗霍夫曼树。3）对huffman树所有子树的左支用$-1$编码，右支用$+1$编码。每个位于叶子节点的字符的编码为从根节点到该叶子节点路径上的$-1,+1$编码值,这个在huffman树上重新得到的编码叫huffman编码。这样可以得到每个字符的极性编码。
+\begin{algorithm}[!ht]
+\SetAlgoLined
+\KwData{单词和对应的频度词典 frequenties;}
+collector=[], polarity=[], param=[]\;
+\If{self.left}{
+    \eIf{isinstance(self.left[1],Node)}{
+          {self.left[1].preorder(polarity+[-1],param+[self.index],collector)}\;
+    }{
+          {collector.append((self.left[1],param+[self.index], polarity + [-1]))}\;
+    }
+    }
+    \If{self.right}{
+        \eIf {isinstance(self.right[1],Node)}{
+          self.right[1].preorder(polarity+[1],param+[self.index],collector)
+        }{
+          collector.append((self.right[1],param+[self.index], polarity + [1]))
+          }
+    }
+\KwResult{ 单词路径查找表 $\gamma$. }
+\caption{前序遍历函数}\label{code:preorder}
+\end{algorithm}
+如图~\ref{fig:zipf}~所示，我们算法中用到输入信息$frequenties$指的是单词的词频分布。
 \begin{figure}[!ht]
   \centering
 \includegraphics[width=0.6\linewidth]{./figures/zipf.png}
 \caption{单词 Unigram分布示意图}\label{fig:zipf}
 \end{figure}
+
+其对应的二叉树的数据结构采用基于数组的方式管理和访问。如下所示，每个节点（Node）包含信息为：左子树，右子树，节点编号。同时我们还定义了节点的打印字符串函数（即``repr''），方便我们检查数据结构是否正确实现。
+\begin{minted}[mathescape,linenos=False,gobble=1,frame=lines,baselinestretch=1.0,fontsize=\footnotesize,framesep=1mm]{python}
+ class Node(object):
+  def __init__(self,left=None,right=None,index=None):
+   self.left=left
+   self.right=right
+   self.index=index
+
+  def __repr__(self):
+   string=str(self.index)
+   if self.left:
+    string+=', -1:'+str(self.left.index)
+   if self.right:
+    string+=', +1:'+str(self.right.index)
+   return string 
+\end{minted}
+
 
 2）二元聚类算法\footnote{布朗聚类：https://github.com/percyliang/brown-cluster}。它是一个层次聚类算法，使用bigram上下文来确定单词的分布相似性，将相似的单词放置在二叉树的附近位置~\upcite{DBLP:journals/coling/BrownPdLM92,liang2005semi}。在将簇大小指定为1之后，它从底部到顶部合并具有一个节点的单词。生成的单词二进制路由正是分层二进制结构的分布。
 \begin{figure}[!ht]
@@ -146,6 +224,7 @@ p(d^w_i=\pm 1|\theta_{i}^w,h) = \sigma({d_i^w}\theta_{i}^w h)
 
 
 \section{本章小结}
+本章首先定义了极性编码的概念，同时给出了模型所涉及的参数的详细涵义。接下来，我们逐步推导模型的单个节点的概率公式，单个词的概率公式和模型的代价函数。另一方面，我们将提出的ptHSM算法和传统的线性tHSM算法进行的比较。通过比较两者计算的差异性证明我们提出的算法更适合在GPU等高并行设备上运算。进一步的，我们还讨论了模型在测试的时候所需的推理算法，因为基于二叉树的概率计算方案和传统的softmax计算方案不同，不能直接输出单个词的概率或者计算最佳的候选单词，所以我们分别针对这两个任务提出推理算法。最后，由于单词在二叉树上的分布需要初始化，我们讨论了传统的霍夫曼聚类算法，布朗聚类算法和语义向量聚类算法，并给出了三种算法的详细计算过程。
 
 \chapter{并行层次概率计算模型}
 在本章中，我们将这个目标词表示扩展到一个分层的形式，使它们适配基于类和基于树的分层概率计算。首先，我们提出了一个在分层结构上建模参数的字编码方案。因此，考虑到GPU上的并行吞吐性能，我们推导出紧凑的代价函数及其梯度。同时，类上的单词分布对其性能有很大的影响，应该在训练阶段之前定义，这些动态交换算法在训练过程中改变了单词群或子树结构在这个研究中。我们采用了几个分层聚类和词汇分割策略，用统计，句法和语义知识来初始化其结构，以达到一个稳定和可以预期的性能。而且，在推理过程中，不同于传统的softmax情况，得到最好的候选者自然是可行的，层次推理不能直接用 softmax 方法来实现。我们讨论基于类的搜索策略的两种不同的推理情况：a）打分：输出给定序列的概率；b）排序   ：在给定的上下文中获取得分最高的一个候选单词。

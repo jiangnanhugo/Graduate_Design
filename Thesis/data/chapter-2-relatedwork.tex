@@ -3,8 +3,11 @@
 
 另外针对大词表问题，主要可以分为以下两种策略：基于类别的多元分类模型(class-based hierarchical softmax， cHSM）和基于二叉树的二元分类模型（class-based hierarchical softmax，tHSM），我们分别在下面详细讨论和介绍。
 
-\section{循环神经网络语言模型}
-在这一节中，我们从语言模型任务的形式化开始，阐述语言模型的目标和应用~\upcite{DBLP:journals/tnn/ChienK16}。 具体来说，给定一个$T$个字的序列：$w_1,w_2,\cdots,w_T$，这个序列的对数概率（Log-probability），学习它的流畅性（Fluency）概率和相对似然性（Log Likelihood），可以被分解成一系列的条件概率 使用马尔可夫链规则：
+\section{语言模型}
+在这一节中，我们从语言模型任务的形式化开始，阐述语言模型的目标和应用~\upcite{DBLP:journals/tnn/ChienK16}。好的语言模型应当考虑对文本的两种特征进行建模：语法特征（Syntactics）和语义特征（Semantics）。为了保证语法的正确性，我们往往只需要考虑生成的单词的前面的上下文（Previous Context），这也就意味着语法特性往往只对局部特征（Local Representation）进行建模。而语义的一致性则复杂了许多，我们需要考虑大量的上下文信息乃至整个文档语料，来获取正确的全局语义。
+
+
+具体来说，给定一个$T$个字的序列：$w_1,w_2,\cdots,w_T$，这个序列的对数概率（Log-probability），学习它的流畅性（Fluency）概率和相对似然性（Log Likelihood），可以被分解成一系列的条件概率 使用马尔可夫链规则：
 \begin{equation}
 \label{laguage_model}
  \log p(w_1,\cdots, w_T ) = \sum_{t=1}^T \log p(w_t | w_{1:t-1}),
@@ -13,15 +16,24 @@
 \begin{equation}\label{equ:losses}
   \ell=\sum_{t=1}^{T}\ell_t=\sum_{t=1}^{T}\log p(w_t | w_{1:t-1})
 \end{equation}
-其中交叉熵是由KL散度（Kullback–Leibler Divergence），也叫做相对熵（Relative Entropy），推导而获得的。需要注意的是，交叉熵的定义是当编码方案不一定完美时（由于对概率分布的估计不一定正确），平均编码长度的是多少。
+其中交叉熵是由KL散度（Kullback–Leibler Divergence），也叫做相对熵（Relative Entropy），推导而获得的。需要注意的是，交叉熵的定义：是当编码方案不一定完美时（由于对概率分布的估计不一定正确），平均编码长度的是多少。其定义的计算公式是：
 \begin{equation}\label{equ:losses}
   KL(p||q)=-\sum_{t=1}^{T}p(x)\log q(x) - (\sum_{t=1}^{T}p(x)\log p(x))
 \end{equation}
-其中$p(x)$ 是数据的真实概率分布，$q(x)$ 是由数据计算得到的概率分布。需要注意的是，由于$p(x)$ 和$q(x)$ 在公式中的地位不是相等的，所以$\tt KL \it(p\parallel q)\not\equiv \tt KL \it (q\parallel p)$。对于特定的训练数据集，第二项的计算值是常数，由此可知其导数是0，不会对参数更新产生任何影响，所以通常情况下，我们采用交叉熵函数作为模型的代价函数，但其实我们希望模型优化的目标是使得模型的分布拟合实际的分布。
+其中$p(x)$ 指的是数据的真实概率分布，$q(x)$ 是由数据计算得到的概率分布。需要注意的是，由于$p(x)$ 和$q(x)$ 在公式中的地位不是相等的，所以$\tt KL \it(p\parallel q)\not\equiv \tt KL \it (q\parallel p)$。对于特定的训练数据集，第二项的计算值是常数，由此可知其导数是0，不会对参数更新产生任何影响，所以通常情况下，我们采用交叉熵函数作为模型的代价函数，但其实我们希望模型优化的目标是使得模型的分布拟合实际的分布。
 
-最近，利用序列的时间序列信息的循环神经网络已经非常流行，如图~\ref{fig:lm}~所示。 为了清楚起见，由于在当前时间步 $ t $的输出$ w_ {t + 1} $正好是下一个时间步的输入$ w_ {t + 1} $，所以没有输出的自动关联连接 的前一次步骤$ t $回到下一个时间步骤$ t + 1 $中的递归神经网络。
+\subsection{长距离依赖}
 
-如图~\ref{fig:lm} 所示，每个句子都需要用开始词（即，$ \langle s \rangle $）和结束词（即$ \langle / s \rangle $）标记进行封装。 在预测下一个单词 $ w_ {t + 1} $ 之前，从最后一个隐藏状态$ h_ {t-1} $和当前字$ w_t $接收到循环网络单元的输入。
+不同于前馈神经网络语言模型，循环神经网络语言模型使用隐藏层状态来记录单词的顺序性信息，能够捕捉句子中的长距离依赖（Long-term Depnendency）。这里的长距离依赖主要指两方面：
+
+1）在自然语言中，往往在句式中相隔较远的两个词却具备一定的语法与语义关联。譬如``He doesn't have very much confidence in himself'' 与 ``She doesn't have very much confidence in herself'' 这两句话中的``（He， himself）'' 与 ``（She， herself）'' 这两个词对，尽管句子中间的词可能会发生变化，但是这两种词对中两个词之间的关联却是固定的。这种依赖也不仅仅出现在英语中，在汉语、俄罗斯语中也都存在有大量此类型的词对组合；
+
+2）而另一种长期依赖就是指选择限制（Selectional Preferences）。简而言之，选择限制主要基于已知的某人会去做某事这样的信息。譬如我要用叉子吃沙拉与我要和我的朋友一起吃沙拉这两句话中，叉子指代的是某种工具，而我的朋友则是伴侣的意思。如果有人说我要用双肩背包来吃沙拉就觉得很奇怪了，双肩背包并不是工具也不是伴侣。如果我们破坏了这种选择限制就会生成大量的无意义句子。
+
+\subsection{语言模型的应用}
+语言模型的作用主要分为以下三种：1） 为句子打分（Sentence Scoring）。给定一个未知的单词序列，我们需要计算其作为一个句子的流畅性和出现的可能性；2） 挑选最佳的候选词（Next Utterance Prediction）。给定上下文，选择概率最高的单词。上下文的形式可能是：前面的句子给定，选择下一个最佳单词；前面和后面的句子给出，选择中间最适配的单词。3） 训练词向量（Pretrained Word Embedding）。语言模型的输入，在经过大规模数据集训练之后，可以作为词向量输出，从而为其他文本任务提供有效的特征。
+\subsection{循环神经网络}
+所以，考虑到上述问题，本实验采用的基准模型就是基于循环神经网络的语言模型。最近，利用序列的时间序列信息的循环神经网络已经非常流行，如图~\ref{fig:lm}~所示。 为了清楚起见，由于在当前时间步 $ t $的输出$ w_ {t + 1} $正好是下一个时间步的输入$ w_ {t + 1} $，所以没有输出的自动关联连接（Auto-associative Connection）的前一次步骤$ t $回到下一个时间步骤$ t + 1 $中的循环神经网络。每个句子都需要用开始词（即，$ \langle s \rangle $）和结束词（即$ \langle / s \rangle $）标记进行封装。 在预测下一个单词 $ w_ {t + 1} $ 之前，从最后一个隐藏状态$ h_ {t-1} $和当前字$ w_t $接收到循环网络单元的输入。
 \begin{figure}[!ht]
   \centering
   \includegraphics[width=1\columnwidth]{./figures/lm.pdf}
@@ -37,8 +49,9 @@
 
 自Elman提出基本循环网络模型~\upcite{DBLP:journals/cogsci/Elman90}~以来，已经有许多扩展模型提出了克服长距离依赖，梯度消失（Gradient Vanishing）和梯度爆炸（Gradient Exploding）等问题， 如长期短期记忆网络（LSTM）~\upcite{7508408}，门限记忆单元（GRU）~\upcite{DBLP:conf/nips/ChungKDGCB15}和近似递归神经网络（Quasi-RNNs）\upcite{DBLP:journals/corr/BradburyMXS16}。
 
-\subsection{长距离短期记忆网络}
- LSTM的计算公式定于如下 \upcite{DBLP:journals/neco/HochreiterS97}：
+
+
+{长距离短期记忆网络}。LSTM的计算公式定于如下 \upcite{DBLP:journals/neco/HochreiterS97}：
 \begin{itemize}
 \item 输入门。控制当前输入 $x_t$ 和前一步输出 $h_{t−1}$ 进入新的 cell 的信息量：$i_t=\sigma(W^i x_t+U^i h_{t-1}+b^i)$
 \item  遗忘门。决定是否清楚或者保持单一部分的状态$f_t=\sigma(W^f x_t+U^f h_{t-1}+b^f)$
@@ -58,8 +71,7 @@
   \caption{LSTM 模型示意图}\label{fig:lstm}
 \end{figure}
 
-\subsection{门限记忆单元}
-GRU 可以看成是 LSTM 的变种，GRU 把 LSTM中的 遗忘门和输入门用更新门来替代。 把 cell state 和隐状态 $h_t$ 进行合并，在计算当前时刻新信息的方法和 LSTM 有所不同。 下图是GRU更新 $h_t$ 的过程\upcite{DBLP:journals/corr/Pezeshki15}, 具体定义如下：
+{门限记忆单元。} GRU 可以看成是 LSTM 的变种，GRU 把 LSTM中的 遗忘门和输入门用更新门来替代。 把 cell state 和隐状态 $h_t$ 进行合并，在计算当前时刻新信息的方法和 LSTM 有所不同。 下图是GRU更新 $h_t$ 的过程\upcite{DBLP:journals/corr/Pezeshki15}, 具体定义如下：
 \begin{figure}[!h]
   \centering
   \includegraphics[width=0.45\linewidth]{./figures/gru.png}
@@ -140,11 +152,13 @@ p(w_i) =& \frac{\exp(\theta^w_i h)}{\sum_{w_i \sim p(w)} \exp(\theta^w_i h)}.
 
 总的来说，这些采样近似算法可以显着加快训练速度，但仍然需要时间来利用单词分布$q(w)$~\upcite{DBLP:conf/naacl/ZophVMK16}来采样大量的噪音单词，采样单词足够多的情况占用的时间仍然很客观，需要进一步手段优化。 另一方面，Softmax函数在推理测试的时候必须要计算，意味着在测试推理的时候该算法失效了。因为候选词是在整个词汇表中预测的，而不仅仅对当前的采样的早噪声单词做预测，而且我们更无法得知正确的单词是什么\upcite{DBLP:journals/jmlr/GutmannH12}。
 
+这里我们需要注意的是，由于我们引入了采样函数$q(w)$，模型会花费额外时间在采样计算上面。从离散分布采样的初始程序通常需要词汇数量具有线性时间复杂度。虽然别名方法可用于生成丰富的噪声字，因为它需要线性建立时间和恒定的采样时间~\upcite{10.2307/2683739,DBLP:conf/emnlp/VaswaniZFC13}。
+
 \subsection{层次分解模型}
 层次分解方法，可以大大降低学习和推理过程中表示概率分布的所占用的计算内存，因为它只计算局部概率并且选择每一层的排名最高的候选路径而不是保存全局计算结果。
-目前主要的分解策略可以分为： 基于类别的多元分类模型（class-based hierarchical softmax, cHSM）和基于二叉树的二元分类模型（class-based hierarchical softmax, tHSM）。图~\ref{fig:case_hsm} 展示了类别划分和分步概率计算的示例，图~\ref{fig:case_thsm} 展示了二叉树概率分解和计算的示例。
+目前主要的分解策略可以分为： 基于类别的多元分类模型（class-based hierarchical softmax, cHSM）和基于二叉树的二元分类模型（class-based hierarchical softmax, tHSM）。
 
-假设语料中的每一个词样本属于且只属于一个类，在此基础上计算词样本在语料中的分布时，可以先计算类的概率分布，然后在所属类上计算当前词的概率分布，于是可将公式~\ref{eq:softmax} 转化为：
+首先我们考虑基于类别的分解策略。假设语料中的每一个词样本属于且只属于一个类，在此基础上计算词样本在语料中的分布时，可以先计算类的概率分布，然后在所属类上计算当前词的概率分布，于是可将公式~\ref{eq:softmax} 转化为：
   \begin{equation}
   \begin{split}
 p(w|h)=&p^c(\mathcal{C}(w)|h)\cdot p^w(w|\mathcal{C}(w),h) , w\in \mathcal{C}(w),\\
@@ -153,25 +167,23 @@ p(w|h)=&p^c(\mathcal{C}(w)|h)\cdot p^w(w|\mathcal{C}(w),h) , w\in \mathcal{C}(w)
 \end{equation}
 其中 概率~$p^c(\mathcal{C}(w)|h)$~表示每个类别的概率，$p^w(w|\mathcal{C}(w),h)$~表示在类别$\mathcal{C}(w)$中所有单词的局部概率。
 
-此时，训练一个词样本的计算复杂度正比于: $\mathcal{O =|H||C|}$。 式中，$C$ 为语料中所有词的分类数，可根据语料中词的词频进行划分。 当$C$ 取$1$ 或取词典大小$|V|$ 时，此结构等同于标准的RNN 结构。 由于$C \ll V$，这种结构能有效降低 softmax 的计算复杂度。
-
-如图~\ref{fig:case_hsm} 所示，其中词表 [duck,cat,mop,broom] 被划分成两个类别：$c_1\to$[duck,cat]，$c_2\to$[mop,broom]。
+此时，训练一个词样本的计算复杂度正比于: $\mathcal{O =|H||C|}$。 式中，$C$ 为语料中所有词的分类数，可根据语料中词的词频进行划分。 当$C$ 取$1$ 或取词典大小$|V|$ 时，此结构等同于标准的Softmax 结构，此时词表还是原来的结构，并没有任何优化效果。因此，对于绝大多数情况，我们取$C \ll V$，这样的结构才能保证有效降低 softmax 的计算复杂度。图~\ref{fig:case_hsm} 展示了类别划分和分步概率计算的示例。如图~\ref{fig:case_hsm} 所示，其中词表 [duck,cat,mop,broom] 被划分成两个类别：$c_1\to$[duck,cat]，$c_2\to$[mop,broom]。
 \begin{figure}[!h]
   \centering
 \includegraphics[width=0.79\linewidth]{./figures/case_chsm.pdf}
 \caption{cHSM算法可视化模型}\label{fig:case_hsm}
 \end{figure}
 
-
 假设每个类包含 $\sqrt{\mathcal{|V|}}$ 单词，表示词汇被划分为相同大小的组，并且级联只涉及$2\sqrt{\mathcal{|V|}}$ 单词 softmax计算，所以最优时间复杂度可以减少到$(\mathcal{|H|}\sqrt{\mathcal{|V|}})$~\upcite{DBLP:conf/icassp/Goodman01}。虽然在更常见的情况下，分区算法会产生不同大小的字组，这需要外部努力来建立高效的数据结构并且尚未被探索。此外，精度和效率之间的权衡可以通过不同的类大小和分区算法来调整。
 
-另一方面，tHSM方法将一步多类分类分解为多个逻辑分类步骤。正因为如此，词汇组织为二叉树，其中词在叶上，中间节点是内部参数。在平衡树结构的情况下，每个词被赋予相等长度的前缀，最优时间复杂度可以减少到$\mathcal{O}(\log \mathcal{|H||V|})$。最早的工作中，单词在二叉树上的分布可以由WordNet与人类专家~\upcite{DBLP:conf/aistats/MorinB05}或单词 unigram 分布~\upcite{DBLP:conf/nips/MikolovSCCD13}的霍夫曼编码构建。然而，在现实世界的挑战中，专家知识的构建是相当昂贵的，霍夫曼编码方案只考虑单数据统计，而单词的语境，句法或语义信息尚未被考虑和得到彻底的讨论。
+另一方面，我们再介绍基于二叉树分解词表的建模策略。tHSM方法将一步多类分类分解为多个逻辑分类步骤。正因为如此，词汇组织为二叉树，其中词在叶上，中间节点是内部参数。在平衡树结构的情况下，每个词被赋予相等长度的前缀，最优时间复杂度可以减少到$\mathcal{O(|H|\log \mathcal{|V|})}$。最早的工作中，单词在二叉树上的分布可以由WordNet与人类专家~\upcite{DBLP:conf/aistats/MorinB05}或单词 unigram 分布~\upcite{DBLP:conf/nips/MikolovSCCD13}的霍夫曼编码构建。然而，在现实世界的挑战中，专家知识的构建是相当昂贵的，霍夫曼编码方案只考虑单数据统计，而单词的语境，句法或语义信息尚未被考虑和得到彻底的讨论。
 \begin{figure}[!h]
   \centering
 \includegraphics[width=0.9\linewidth]{./figures/thsm-example.pdf}
 \caption{tHSM算法可视化模型}\label{fig:case_thsm}
 \end{figure}
-
+图~\ref{fig:case_thsm} 展示了二叉树概率分解和计算的示例。
 
 大词表问题，主要是对softmax如何建模的问题。在本课题中，我们探讨 cHSM 和 tHSM 两种不同的方案所带来的影响和优劣。
 \section{本章小结}
+本章对国内外学者在语言模型的任务上相关工作进行了介绍。首先，介绍了语言模型的建模策略和对应的应用方案。并详细讨论了循环神经网络的语言模型的建模方式，并讨论了其结构的优缺点。同时为了解决使用循环网络所带来的梯度爆炸的问题，我们进而引入了长距离短期神经网络和门限记忆节点两种基于门限机制的循环网络；另一方面，我们还考虑了语言模型大规模应用所带来的大词表问题，并作了详细分析其原因。为了解决该问题，我们还讨论了历史上所提出的方案，并做了分类讨论。主要涉及三种思路：缩减词表大小，用采样算法近似估计和模型层次分解。针对各种模型提出的结果做了详细介绍，并分析了各种算法的优劣处。
