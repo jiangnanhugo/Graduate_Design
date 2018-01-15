@@ -179,14 +179,14 @@ collector=[], polarity=[], param=[]\;
     }
     }
     \If{self.right}{
-        \eIf {isinstance(self.right[1],Node)}{
+        \eIf(\tcp*[h]{右子树存在}){isinstance(self.right[1],Node)}{
           self.right[1].preorder(polarity+[1],param+[self.index],collector)
-        }{
+        }{\tcp*[h]{左子树存在}\;
           collector.append((self.right[1],param+[self.index], polarity + [1]))
           }
     }
 \KwResult{ 单词路径查找表 $\gamma$. }
-\caption{前序遍历函数}\label{code:preorder}
+\caption{前序遍历函数生成单词路径查找表}\label{code:preorder}
 \end{algorithm}
 如图~\ref{fig:zipf}~所示，我们算法中用到输入信息$frequenties$指的是单词的词频分布。
 \begin{figure}[!ht]

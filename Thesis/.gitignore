@@ -31,6 +31,6 @@
 *.xdy
 *.swp
 *.thm
-*.pdf
+main.pdf
 .DS_Store
 _minted-main/*

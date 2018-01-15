@@ -54,12 +54,12 @@
 我们首先介绍语言模型中每个模块的时间消耗，如图~\ref{fig:rnn_timing}~所示。 我们计算运行不同的RNN小区及其梯度（即，RNN Grad）所需的时间，以及Wikitext-103数据集的大词汇表上的常规softmax，这与词汇表的常见大小相当。 我们用Theano框架和CUDA实现了RNN单元，其中RNN的运行时间可以缩短到极限。 从图中可以看出，使用优化的CUDA，softmax模块的影响比RNN单元及其梯度更重要，这就需要我们详细讨论softmax优化。
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=0.9\columnwidth]{./figures/rnn_timing.pdf}
+  \includegraphics[width=0.8\columnwidth]{./figures/rnn_timing.pdf}
   \caption{Calculation Time of three modules with different recurrent cells on the Wikitext-103 dataset.}\label{fig:rnn_timing}
 \end{figure}
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=0.9\columnwidth]{./figures/all_time.pdf}
+  \includegraphics[width=0.8\columnwidth]{./figures/all_time.pdf}
   \caption{cHSM, tHSM 和 p-tHSM 算法随着词表大小的计算时间影响}\label{fig:hsm_benchmark}
 \end{figure}
 
@@ -104,7 +104,7 @@ p-tHSM  &$\mathcal{|H|\log{|V|}}$ &\textbf{383.5}&	86.4 &\textbf{7.0}&	\textbf{1
 由于我们提出了三个关于推理阶段搜索策略的算法，其影响可以通过WER度量来观察。在这个结构化预测过程中，一个合适的搜索规则将帮助模型获得最小风险的最佳候选人，如表~\ref{tab:search}所示。 “全球”方法表示我们计算所有单词的得分，单词的概率用整个词汇全局归一化。值得注意的是，对于cHSM方法算法~\ref{alog:argmax}比算法~\ref{alog:exact}得到更好的WER，尽管后一种方法获得了词汇表上的确切顶级候选。由于类结构中存在标签偏差问题，排名最高的词容易出现算法模型无法建模的小组。最后但并非最不重要的是，算法~\ref{alog:exact}和``global''获得相同的单词排序，唯一的区别是算法~\ref{alog:exact}避免了冗余计算。所以他们达到了可比的WER得分，但算法~\ref{alog:exact}需要更少的时间。
 \begin{table}[!ht]
   \centering
-  \caption{Word error rate with different searching rules on Wikitext-2 dataset.\label{tab:search}}
+  \caption{在wikitext-2数据集上ctHSM算法针对不同搜索算法的WER评测结果\label{tab:search}}
 \begin{tabular}{llccc}
   \toprule
    & 算法&计算时间 (ms)&验证集 (WER)& 测试集(WER)\\ \midrule
@@ -119,7 +119,7 @@ p-tHSM  &$\mathcal{|H|\log{|V|}}$ &\textbf{383.5}&	86.4 &\textbf{7.0}&	\textbf{1
 对于p-tHSM系列算法，我们比较了所提出的算法~\ref{alog:greed_argmax}和传统的“全局”算法。算法~\ref{alog:greed_argmax}比“global”方法获得本地最佳结果花费的时间更少。由于基于树的模型在以前的决策中更容易失败，所以“全局”方法的MER分数要比算法~\ref{alog:greed_argmax}要好。
 \begin{table}[!ht]
   \centering
-  \caption{Word error rate with different searching rules on Wikitext-2 dataset\label{tab:psearch}}
+  \caption{在wikitext-2数据集上p-tHSM算法针对不同搜索算法的WER评测结果\label{tab:psearch2}}
 \begin{tabular}{llccc}
   \toprule
         & 算法&计算时间 (ms)&验证集 (WER)& 测试集(WER)\\ \midrule
@@ -135,7 +135,7 @@ p-tHSM  &$\mathcal{|H|\log{|V|}}$ &\textbf{383.5}&	86.4 &\textbf{7.0}&	\textbf{1
 从表~\ref{tab:rnn}中可以看出，门控单元（即LSTM和GRU单元）的RNN模型在复杂度和字误码率方面比传统的RNN Relu和RNN Tanh模型表现得更好。因为门控功能可以避免梯度消失的问题。虽然它需要稍微多一些的时间进行计算。此外，LSTM的范例在GPU上比GRU单元更容易并行运行，因此LSTM比GRU模型需要更少的推理时间。
 \begin{table}[!ht]
   \centering
-  \caption{Results of different recurrent cells on Wikitext-2 dataset with metrics: PPL, WER and calculation time.\label{tab:rnn}}
+  \caption{在wikitext-2数据集上不同循环神经网络针对 PPL, WER和计算时间的评测结果\label{tab:rnn}}
 \begin{tabular}{lccc}
   \toprule
   循环神经网络 & 计算时间 (ms)&验证集（PPL / WER） & 测试集（PPL / WER）\\ \midrule
@@ -152,6 +152,11 @@ p-tHSM  &$\mathcal{|H|\log{|V|}}$ &\textbf{383.5}&	86.4 &\textbf{7.0}&	\textbf{1
 \end{table}
 
 对于传统的RNN模型，通常通过时间反向传播（BPTT）进行训练，梯度计算步骤中的努力花费在该训练批次中最长序列的长度上是线性的。因此，小批量生产可能效率低下，因为批次中的次序可能有不同的长度。这个问题的一个经典的解决方案是Truncated-BPTT，因此RNN模型的梯度在截断长度上是恒定的，并且对于GPU上的小批量处理是高效的。而前向概率计算步骤仍然是相同的，唯一的影响是避免梯度反向传播步骤。从图中可以看出，较小的截断BPTT在时间效率上取得了较好的效果，较长的截断BPTT长度在PPL度量方面效果更好。
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=0.7\columnwidth]{./figures/minibatch.pdf}
+  \caption{BPTT和截断BPTT算法示意图}\label{fig:minibatch}
+\end{figure}
 
 为了说明，在训练中，如果您在被截断的段中看到某些依赖关系，则可以学习它们。 如果这些依赖关系总是跨越不同的领域，我们已经打破了这些依赖关系，你永远不会学习它 因为渐变永远不会回流，并告诉前一个段中的某些内容对下一个段是有用的。 但是如果你在一个细分市场中看到他们，那么你实际上有一个希望，那就是在测试的时候，你将能够在不同的细分市场上预测它们。 因为我们总是向前传播。
 \begin{figure}[!h]
