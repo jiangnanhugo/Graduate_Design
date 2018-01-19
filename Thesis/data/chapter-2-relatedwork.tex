@@ -177,13 +177,84 @@ p(w|h)=&p^c(\mathcal{C}(w)|h)\cdot p^w(w|\mathcal{C}(w),h) , w\in \mathcal{C}(w)
 假设每个类包含 $\sqrt{\mathcal{|V|}}$ 单词，表示词汇被划分为相同大小的组，并且级联只涉及$2\sqrt{\mathcal{|V|}}$ 单词 softmax计算，所以最优时间复杂度可以减少到$(\mathcal{|H|}\sqrt{\mathcal{|V|}})$~\upcite{DBLP:conf/icassp/Goodman01}。虽然在更常见的情况下，分区算法会产生不同大小的字组，这需要外部努力来建立高效的数据结构并且尚未被探索。此外，精度和效率之间的权衡可以通过不同的类大小和分区算法来调整。
 
 另一方面，我们再介绍基于二叉树分解词表的建模策略。tHSM方法将一步多类分类分解为多个逻辑分类步骤。正因为如此，词汇组织为二叉树，其中词在叶上，中间节点是内部参数。在平衡树结构的情况下，每个词被赋予相等长度的前缀，最优时间复杂度可以减少到$\mathcal{O(|H|\log \mathcal{|V|})}$。最早的工作中，单词在二叉树上的分布可以由WordNet与人类专家~\upcite{DBLP:conf/aistats/MorinB05}或单词 unigram 分布~\upcite{DBLP:conf/nips/MikolovSCCD13}的霍夫曼编码构建。然而，在现实世界的挑战中，专家知识的构建是相当昂贵的，霍夫曼编码方案只考虑单数据统计，而单词的语境，句法或语义信息尚未被考虑和得到彻底的讨论。
+
 \begin{figure}[!h]
   \centering
 \includegraphics[width=0.9\linewidth]{./figures/thsm-example.pdf}
 \caption{tHSM算法可视化模型}\label{fig:case_thsm}
 \end{figure}
+
 图~\ref{fig:case_thsm} 展示了二叉树概率分解和计算的示例。
+
+Mikolov当年曾提出使用基于二叉树的层级softmax模型来加速的训练方案，加速比能达到理论的最大速度。但是需要注意的是，当时提出的背景是基于CPU计算方案构建的，如今越来越多的算法随着应用领域的推广，需要在并行度更高的GPU上进行计算，因此基于GPU进行建模的tHSM和历史上研究众多的cHSM算法尚未被研究提及，需要在本文中研讨。
+
+\section{离散采样算法}
+在我们使用基于采样的模型时，我们不可避免的需要使用到离散采样函数，即：设一共有$|\mathcal{V}|$个单词，第$i$个单词出现的概率是$p(w_i)$， 如何产生这样的随机变量序列$w_1,w_2,\cdots$?
+
+这问题其实正式来说，可称为模拟离散取样（Simulated Discrete Sampling），跟据有限类别的指定的概率，来模拟取样，生成采样序列输出。其中，要制造指定的概率分布随机变量，关键就是如何通过均匀分布变换获得。因为我们的计算机只能快速产生伪随机数，即均匀分布的采样输出。其他的复杂采样函数均建立在均匀分布的变换之上。
+\subsection{随机采样函数}
+当我们使用概率模型实现推理和学习算法时，通常需要从离散分布进行抽样。 也就是说，从参数$\boldsymbol {\pi} \in \mathbb{R} ^ K$中的多项式分布，使得$\ pi_k \geq 0$和$\sum_{k} \pi_k = 1$。 更常见的情况是我们在$\mathbb{R}^K$中有一个$\boldsymbol {\phi}$ ，其中$\phi_k \geq 0$，但我们不知道规范化常量。 也就是说，$\boldsymbol{\pi}$只与多项式参数$\boldsymbol {\pi}$成正比。 我们希望根据$\boldsymbol{\pi}$快速生成一个变量，给出$\boldsymbol {\pi}$，用（Matlab）代码很容易地完成某些操作：
+\begin{verbatim}
+cdf = cumsum(phi);
+samp_k = sum(cdf < rand()*cdf(end)) + 1;
+\end{verbatim}
+这很好很简单，但是你会注意到它具有每个样本的设置（计算CDF）和$\mathcal {O}(K)$时间复杂度的$\mathcal {O}(K)$时间复杂度。每个样本的复杂度可能被降低到$\mathcal {O}(\log K)$，找到阈值的数据结构更好。事实证明，我们可以做得更好，得到$\mathcal {O}(K)$的抽样，而仍然是$\mathcal {O}(K)$。
+\subsection{基于线性搜索的逆变换方法}
+在上节中，显示了CDF的一些特性，例如CDF的范围是$[0,1]$，而且是一个单调递增的（monotonic increasing）函数。逆变换取样算法（inverse transform sampling）就是利用了这些特性，来解决上面提出的问题。其实，逆变换取样方法并不是很复杂，我们接下来详细解释。给一个目标CDF，只要计算其逆函数(inverse function)，就可以把均匀的随机变数转换为目标CDF:
+\begin{equation}\label{equ:func}
+  X=F_X^{-1}(Y)
+\end{equation}
+
+这方法能用在所有CDF(包括连续及离散的)。其数学证明可参考维基百科。
+
+下图显示这个方法的直观解读，在Y轴范围$[0,1]$里均匀取样$(y_i)$，之后向右和CDF取交点，求交点的X轴位置($x_i$)，X则是符合CDF的概率分布。这个方法用在离散的情况就更简单，只需搜寻目标的CDF，找出超过均匀取样的元素即可。
+\begin{figure}[!h]
+  \centering
+\includegraphics[width=0.5\linewidth]{./figures/cdf.png}
+\caption{累计函数采样方法示意图}\label{fig:cdf}
+\end{figure}
+在离散的情况下(本文题目要求)，其时间复杂度是O(N)，其中N为类别数目。
+
+读者可能会注意到，这里用了线性搜寻(Linear Search)，如果targetPdf数组是由大至小排列，平均而言会更快找到结果。另外，也可以用二分搜寻(Binary Search)，那么复杂度会降低为$O(\log |\mathcal{V}|)$，。
+
+
+\subsection{基于二叉树搜索的逆变换方法}
+二分搜索（binary search），也称折半搜索（half-interval search）、对数搜索（logarithmic search），是一种在有序数组中查找某一特定元素的搜索算法。搜索过程从数组的中间元素开始，如果中间元素正好是要查找的元素，则搜索过程结束；如果某一特定元素大于或者小于中间元素，则在数组大于或小于中间元素的那一半中查找，而且跟开始一样从中间元素开始比较。如果在某一步骤数组为空，则代表找不到。这种搜索算法每一次比较都使搜索范围缩小一半。
+
+事实上，这个问题用二分搜寻是标准的方法。那么，还有没有更快的方法呢？答案是肯定的，例如别名方法(alias method)、近似方法等~\upcite{DBLP:journals/cgf/ClineRW09}。当然，在N很小的情况下，线性搜寻和二分搜寻也足够。
+\subsection{别名方法}
+
+设$ Z $为离散的随机变量，它有n个可能的结果$ z_0,z_1,\ldots,z_ {n-1} $。 为了简化下面的讨论，我们研究另一个变量$ Y $，其中$ P \{Y = i \} = P \{Z = z_i \} $。 当$ Y $取值$ i $时，让$ Z $为$ z_i $。 所以$ Z $可以从$ Y $生成。随机变量$ X $被均匀分布在$（0，n）$中，这个概率密度函数是
+\begin{equation}\label{equ:alias}
+ f(x) = \left\{
+ \begin{array}{rl}
+  1/n & \text{若 } 0 < x < n\\
+  0 & \text{否则}\\
+ \end{array} \right.
+\end{equation}
+那么我们现在生成的$Y'$是：
+\begin{equation}\label{equ:gen}
+  Y' =  \left\{
+ \begin{array}{rl}
+  \lfloor x  \rfloor & \text{if } (x - \lfloor x \rfloor) < F(\lfloor x \rfloor)\\
+  A(\lfloor x \rfloor)  & \text{otherwise}\\
+ \end{array} \right.
+\end{equation}
+其中$ A(i)$是别名函数。 当$ x $落入范围$ [i,i + 1)$（$ i $是一个整数）时，$ y $的概率$ F(i)$为$ i $，概率$ 1 - F(i )$是$ A(i)$。 由于$ x $是均匀分布的，
+\begin{equation}
+  \begin{split}
+P\{x \in [i, i + F(i))\}     &= \int_i^{i+F(i)}\frac{1}{n}dx= (i + F(i) - i) \times 1/n= F(i)/n,\\
+P\{x \in [i + F(i), i + 1)\} &= \int_{i+F(i)}^{i+1}\frac{1}{n}dx= (i + 1 - (i + F(i))) \times 1/n= (1-F(i))/n
+\end{split}
+\end{equation}
+
+让我们将满足$ A(j)= i $的值集合$ j $表示为$ A ^ { - 1}(i)$。 生成的变量$ Y'$具有以下概率质量函数：
+\begin{equation}
+  P\{Y' = i\} = F(i)/n + \sum_{j \in A^{-1}(i)}\frac{1-F(j)}{n}
+\end{equation}
+Alias方法是构造$ A $和$ F $的算法，所以$ P \{Y'= i \} $等于$ P\{Y = i \} $。 由于$ A $和$ F $的域都是整数$ 0,1，\ldots，n-1 $，所以它们可以存储在数组中，并且可以在$O(1)$中查找值，其中空间效率是 $\mathcal{O}(n)$。
+
 
 大词表问题，主要是对softmax如何建模的问题。在本课题中，我们探讨 cHSM 和 tHSM 两种不同的方案所带来的影响和优劣。
 \section{本章小结}
-本章对国内外学者在语言模型的任务上相关工作进行了介绍。首先，介绍了语言模型的建模策略和对应的应用方案。并详细讨论了循环神经网络的语言模型的建模方式，并讨论了其结构的优缺点。同时为了解决使用循环网络所带来的梯度爆炸的问题，我们进而引入了长距离短期神经网络和门限记忆节点两种基于门限机制的循环网络；另一方面，我们还考虑了语言模型大规模应用所带来的大词表问题，并作了详细分析其原因。为了解决该问题，我们还讨论了历史上所提出的方案，并做了分类讨论。主要涉及三种思路：缩减词表大小，用采样算法近似估计和模型层次分解。针对各种模型提出的结果做了详细介绍，并分析了各种算法的优劣处。
+本章对国内外学者在语言模型的任务上相关工作进行了介绍。首先，介绍了语言模型的建模策略和对应的应用方案。并详细讨论了循环神经网络的语言模型的建模方式，并讨论了其结构的优缺点。同时为了解决使用循环网络所带来的梯度爆炸的问题，我们进而引入了长距离短期神经网络和门限记忆节点两种基于门限机制的循环网络；另一方面，我们还考虑了语言模型大规模应用所带来的大词表问题，并作了详细分析其原因。为了解决该问题，我们还讨论了历史上所提出的方案，并做了分类讨论。主要涉及三种思路：缩减词表大小，用采样算法近似估计和模型层次分解。针对各种模型提出的结果做了详细介绍，并分析了各种算法的优劣处。最后我们分析了实验中需要用到的高效采样函数的构造算法。
