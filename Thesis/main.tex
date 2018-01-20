@@ -1,10 +1,9 @@
 \documentclass[master,openright,twoside,color]{buaathesis}
 \usepackage{booktabs}
 \usepackage{courier}
-\usepackage{fontspec}
 \usepackage{minted}
 \usemintedstyle{pastie}
-\setmonofont{Courier New}
+\setmonofont{Source Code Pro}
 \renewcommand{\theFancyVerbLine}{\sffamily
 \textcolor[rgb]{0.5,0.5,1.0}{\scriptsize
 \oldstylenums{\arabic{FancyVerbLine}}}}
@@ -14,11 +13,11 @@
 \renewcommand{\algorithmcfname}{算法}
 \SetKwInput{KwData}{输入}
 \SetKwInput{KwResult}{输出}
-
+\setmainfont{Times New Roman}
 \begin{document}
 
 % 用户信息
-%\include{data/info}
+\include{data/info}
 
 % 中英封面、提名页、授权书
 %\maketitle
@@ -53,7 +52,7 @@ Finally, Our experiments were carried out on language modelling tasks with stand
 % 正文页眉页脚样式
 \pagestyle{mainmatter}
 
-%\include{data/chapter-1-introduction}
+\include{data/chapter-1-introduction}
 \include{data/chapter-2-relatedwork}
 \include{data/chapter-3-models}
 \include{data/chapter-4-experiment}

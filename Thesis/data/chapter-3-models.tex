@@ -55,7 +55,7 @@ p(d^w_i|\theta_{i}^w,h) =\sigma(\theta_{i}^w h)^{d_i^w}\times(1-\sigma(\theta_{i
   &=\frac{\exp(z)}{1 + \exp(z)}+\frac{1}{1 + \exp(z)}=\frac{1 + \exp(z)}{1 + \exp(z)}=1
 \end{split}
 \end{equation}
-该规则可以用来帮我们把公式~\ref{equ:pp}~缩写成一下更简洁的形式：
+该规则可以用来帮我们把公式~\ref{equ:pp}~缩写成一下更简洁的形式~\upcite{minka2003algorithms}：
  \begin{equation}
 p(d^w_i|\theta_{i}^w,h) =\sigma(\theta_{i}^w h)^{d_i^w}, d_i^w \in [-1,+1]
 \end{equation}
@@ -134,17 +134,17 @@ p(d^w_i=\pm 1|\theta_{i}^w,h) = \sigma({d_i^w}\theta_{i}^w h)
 \begin{algorithm}[!ht]
 \SetAlgoLined
 \KwData{隐藏层输出 $h$;}
- 路径列表 $\mathtt{path}$=[] \;
+ 路径列表 $\mathtt{route}$=[] \;
 \While(\tcp*[h]{逐层贪心路径搜索}){$k \le \log \mathcal{V}$ }{
 \eIf{$p(d_{k} |\theta_{k},h) \ge 0.5$ }{
  $k=  k*2$ \tcp*[r]{左分支}
 }{
  $k = k*2+1$ \tcp*[r]{右分支}
 }
- $\mathtt{path}$.append($k$) \tcp*[r]{将 $k$ 添加到路径列表}
+ $\mathtt{route}$.add($k$) \tcp*[r]{将 $k$ 添加到路径列表}
 }
 {通过查找$\Gamma$路径表，找出对应的单词}\;
-$w=\Gamma(\mathtt{path})$\;
+$w=\Gamma(\mathtt{route})$\;
 \KwResult{ 预测的单词 $w$. }
 \caption{逐层贪心搜索算法}\label{alog:greed_argmax}
 \end{algorithm}
@@ -264,7 +264,7 @@ collector=[], polarity=[], param=[]\;
 \section{词表划分编码}
 为了提高GPU架构的加速比，并支持广义的词汇分割方法，我们提出了一种基于类的分层softmax方法的高效通用结构。
 
-扁平化的词汇表被分成类别向量$ \theta^c $和输出矩阵$ \theta^o $ 结构，其中前者定义了不同类别的概率$ p ^ c $，而后者则模拟了该分区组内的单词概率$ p ^ o $，如图~\ref {fig:chsm}~所示。输出矩阵的维度是：类维度和分组词维度。如果将词汇$ \mathcal {V} $划分为不等大小的组，我们首先将词组分类为等长矩阵，填充零掩码。对于不在这个组中的剩余节点，我们使用掩码向量$ \ theta ^ m $来消除其对概率计算和成本汇总过程的影响。因此，分组的文字尺寸是最大的组尺寸。如果我们应用相同大小的词汇分割算法，掩码向量则~$\theta^m$~可以被忽略，并且分组的词维度是$ \mathcal {| V | / | C |} $，其中$ \mathcal {| C |} $表示类维度。这里我们需要注意的是，如果$ \mathcal {| V |} $不能被$ \mathcal {| C |} $整除，那么最后一组中的确切单词应该小于该组的大小。
+扁平化的词汇表被分成类别向量$ \theta^c $和输出矩阵$ \theta^o $ 结构，其中前者定义了不同类别的概率$ p ^ c $，而后者则模拟了该分区组内的单词概率$ p ^ o $，如图~\ref {fig:chsm}~所示。输出矩阵的维度是：类维度和分组词维度。如果将词汇$ \mathcal {V} $划分为不等大小的组，我们首先将词组分类为等长矩阵，填充零掩码。对于不在这个组中的剩余节点，我们使用掩码向量$ \theta ^ m $来消除其对概率计算和成本汇总过程的影响。因此，分组的文字长度是最大的组长度。如果我们应用相同大小的词汇分割算法，掩码向量则~$\theta^m$~可以被忽略，并且分组的词维度是$ \mathcal {| V | / | C |} $，其中$ \mathcal {| C |} $表示类维度。这里我们需要注意的是，如果$ \mathcal {| V |} $不能被$ \mathcal {| C |} $整除，那么最后一组中的实际的单词数量应该小于该组的大小。但我们并不打算采用特殊的结构来处理这个问题。因为尽管这些不存在的单词会稀释该组中其他单词的概率大小。但是一方面不影响其他类别的概率计算，另一方面也不影响该组中，其他单词的概率顺序关系。因此实际影响比较小。
 \begin{figure}[!ht]
   \centering
 \includegraphics[width=0.85\linewidth]{./figures/chsm-simple.pdf}
@@ -272,7 +272,7 @@ collector=[], polarity=[], param=[]\;
 \end{figure}
 
 
-更重要的是，我们将一次性索引设置分成一个元组$(w ^ c,w ^ o)$，可以从查找表$\Gamma $中检索给定单词索引$ w $。此外，$ w ^ c $指代的是单词的类别编号，$ w^c $表示该组内的本地单词索引。
+更重要的是，我们将一维的单词索引替换成一个元组单词索引$(w ^ c,w ^ o)$，可以利用该元组从我们预先定预先定义的查找表$\Gamma $中检索给定单词索引$ w $。此外，$ w ^ c $指代的是单词的类别编号，$ w^c $表示该组内的本地单词索引。
 \begin{equation}\label{equ:partition}
  \theta^m=
 \begin{cases}
@@ -286,6 +286,7 @@ collector=[], polarity=[], param=[]\;
 另外，拼合词汇可以形成左上矩阵，需要外部掩码，矩阵的分布算法依赖于具体的词表分割算法。
 
 \section{基于类别的代价函数和导数}
+当我们顶一万单词基于类别的元组编码后，我们接下来讨论基于这种编码的代价函数和导数计算公式。
 给定最后一个隐藏层输出$ h $，那么这个分区组中的每个组和每个单词的概率可以被定义为:
 \begin{equation}
 \begin{split}
@@ -295,8 +296,10 @@ collector=[], polarity=[], param=[]\;
 \end{equation}
 其中$ p ^ c $和$ p ^ w $是分别计算而不是并行计算的，因为主要的计算瓶颈是局部标准化的单词概率$ p ^ w $，所以这两个概率的并行计算不会达到时间效率提升。
 
+\subsection{概率稀释问题}
+尽管如此，掩码矩阵不能直接应用于这个分词矩阵，应该应用在对数概率归一化（log softmax）的计算程序中。 为了说明，在softmax函数中：$ p(x_i)= {\exp({x_i}})/ {\sum_j \exp(x_j)} $，如果$ x_k = 0 $，但其概率$ p(x_k)> 0$因为$\exp(x_k)> 0 $。即：对于不存在的类别中的单词，我们仍然有概率分布，这样对于那些实际存在的单词概率来说，至多有$\mathcal{|V|/\mathcal{C}-1}$的类别存在这样的概率稀释问题。
 
-尽管如此，掩码矩阵不能直接应用于这个分词矩阵，应该应用在对数概率归一化（log softmax）的计算程序中。 为了说明，在softmax函数中：$ p(x_i)= {\exp({x_i}})/ {\sum_j \exp(x_j)} $，如果$ x_k = 0 $，但其概率$ p(x_k)> 0,\quad \exp(x_k)> 0 $。 因此，该组中确切的后验词对数概率计算如下：
+ 因此，该组中确切的后验词对数概率计算如下：
 \begin{equation}
   \log p^o(w|w^c,h)=\theta^o h -\log\sum\theta^m\exp(\theta^o h)
 \end{equation}
@@ -305,7 +308,7 @@ collector=[], polarity=[], param=[]\;
 \begin{equation}
 \ell(\theta|h) =\log p^c(w^c|h) +\log p^o(w^o|w^c,h)
 \end{equation}
-其中类别水平损失等于负对数似然的常见设置，并且字水平损失需要在计算其损失时指定其类别 $ w ^ c $。
+其中在类别层次损失等于负对数似然函数（代价函数），并且字水平损失需要在计算其损失时指定其类别 $ w ^ c $。
 
 在训练过程中，$ w ^ c $是需要预先定义的的，然而在测试过程中，$w^c$需要语言计算最有可能的类别，即由公式$\tilde w^c=\arg\max_c p^c$计算获得获取。 类似地，关于梯度，模型的参数被优化。
 \begin{equation}
@@ -328,34 +331,47 @@ collector=[], polarity=[], param=[]\;
 \end{equation}
 我们发现这种类型的操作比传统的softmax方法有效得多，该方法涉及$ \mathcal{O(|H|\sqrt{|V|})}$计算复杂度。
 
+\begin{algorithm}[!ht]
+\caption{基于 cHSM 算法的正确 $\arg\max$ 算法}\label{alog:alls}
+\KwData{ 隐藏层输出 $h$}
+ \For{$c \in \mathcal{C}$ }{
+  {Calculate $\log p^o(w| c,h)$} \tcp*[r]{计算类别的概率}
+ \For{w $\in$ c}{
+ {$\log p^w(\hat y^w|\hat y^c,h)$}\;
+  {$\log p(w|h)=\log p^c(y^c|h)+\log p^w(\hat y^w|\hat y^c,h)$}\tcp*[r]{计算每个单词全局概率}
+ }
+ }
+ \KwResult{概率最大的候选单词$w$。}
+\end{algorithm}
+
 其次，对于$\arg\max $的情况，我们可以在选择最佳候选项之前计算词汇表中所有单词的概率，这在直观上是正确的，但在
 ，因为涉及到整个单词的分割矩阵。 此外，我们仍然可以在算法~\ref{alog:exact}~中对上述方法进行少量修改，然后计算确切的最高候选人。
 \begin{algorithm}[!ht]
 \caption{基于 cHSM 算法的正确 $\arg\max$ 算法}\label{alog:exact}
-\KwData{ 隐藏层输出 $h$;}
- $\hat y^o=\arg\max_o{\log p^o(w| c,h)}$ \tcp*[r]{挑选每个类中概率最大的单词}
- $\tilde y^c=\arg\max_c{(\log p^c(y^c|h)+\log p^w(\hat y^w|\hat y^c,h))}$\tcp*[r]{在这些已经被栅选单词中挑选最佳的单词}
+\KwData{ 隐藏层输出 $h$}
+ {$\hat y^o=\arg\max_o{\log p^o(w| c,h)}$ }\tcp*[r]{挑选每个类中概率最大的单词}
+ {// 在这些已经被栅选单词中挑选最佳的单词}
+ {$\tilde y^c=\arg\max_c{(\log p^c(y^c|h)+\log p^w(\hat y^w|\hat y^c,h))}$}\;
  alter $(\tilde y^c,\hat y^o[\tilde y^c])$ with word $w$ by looking-up table $\Gamma'$ \;
- \Return $w$ \;
  \KwResult{概率最大的候选单词$w$。}
 \end{algorithm}
 
+\subsection{标签偏差问题}
 此外，cHSM算法的性能对词表划分算法有些敏感，因为某些方法可能会产生高度不平衡的字组，并且这种单词不均匀分布会在算法中产生标签偏差问题（Label Bias）。第一个本地 $\arg\max_o$ 进程~\upcite{DBLP:conf/icml/LaffertyMP01}。然而，在大多数情况下，如果选择合适的参数，则可以考虑不平衡的问题，本文考虑平衡词汇分区的广义形式。
 
 我们接下来来详细说明标签偏差问题。考虑两个类 $ c_p $ 和 $ c_q $，这两个类的包含的单词数量是不同的，我们不妨假设 $| c_p | \le | c_q |$。在计算了最后一个隐藏层输出 $h$与类图层参数的相似性之后，我们继续计算 $h$ 与每个组的内部单词 $w$ 的相似性得分，这些单词在每个特定组中都没有进行局部规范化整个词汇。当$ | c_p | \approx|c_q|$ 表示我们希望将词汇聚类成等大小的群组，而不是高度倾斜的群组分布时，可以减轻标签偏差问题，其中$ | c_p | \ll | c_q | $ 。更具体地说，对于分布不均的情况，对于类 $ c_q $中的单词来说这个概率被一大群单词稀释是不公平的，这样算法更有可能以较高的概率取出这个小组中的单词，放弃在其他大集团有更多的潜在的话。
 
 我们可以用局部贪婪算法搜索次优结果，而不是搜索确切的全局最优结果，而是建议将这个$ \arg\max $进程分解为两个阶段：a）计算类概率，并剔除顶端一个$ \hat c $; b）计算该类别的单词概率$ \hat c $，并选择具有最高本地单词概率的单词。这个算法会给psudo最好的候选人，但是与原始算法~\ref{alog:exact}相比，它的运行速度要快得多。而且，由于分组词在本地进行归一化，标签偏差问题可以在一定程度上缓解。在实验研究中将讨论算法~\ref{alog:exact}和~\ref{alog:argmax}的详细不同性能。
 \begin{algorithm}[!ht]
+ \caption{基于 cHSM 模型伪 $\arg\max$ 算法}\label{alog:argmax}
 \KwData{隐藏层输出 $h$;}
  $\hat w^c=\arg\max_c{\log p^c(c|h)}$ \tcp*[r]{挑选概率最大的类别}
  $\hat w^o=\arg\max_o{\log p^o(w|\hat w^c,h)}$\tcp*[r]{在这个类别下面，挑选概率最大的单词}
  alter $(\hat w^c,\hat w^o)$ with word $\hat w$ by looking-up table $\Gamma'$ \;
- \Return $\hat w$
  \KwResult{ 最佳的候选单词 $\hat w$.}
- \caption{基于 cHSM 模型伪 $\arg\max$ 算法}\label{alog:argmax}
 \end{algorithm}
 
-\subsection{词表划分算法}
+\section{词表划分算法}
 由于cHSM模型的性能与其词汇分割算法密切相关，我们将聚类算法的现有工作进行汇总，并将可能的方法分类如下：
 
 1）随机初始化。 这种直观的方法忽略了单词的所有外部信息，因此单词与随机随机播放过程是等分的。这是揭示其他聚类方法下界的最坏情况，也可以揭示应用高级聚类策略的相对收益。

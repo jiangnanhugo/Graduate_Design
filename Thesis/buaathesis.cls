@@ -46,7 +46,7 @@ The LaTeX template for thesis of BUAA]
 \RequirePackage{amsmath,amsfonts}
 \RequirePackage[amsmath,thmmarks,hyperref]{ntheorem}
 \RequirePackage{txfonts}
-\RequirePackage{microtype}
+%\RequirePackage{microtype}
 
 % 主要字体为Times New Roman和宋体
 % 模板某些标题需要华文行楷和32号字
@@ -146,8 +146,8 @@ The LaTeX template for thesis of BUAA]
 \linespread{1.5}
 % 汉化
 \renewcommand{\contentsname}{目\qquad 录}
-\renewcommand\listfigurename{插\ 图\ 目\ 录}
-\renewcommand\listtablename{表\ 格\ 目\ 录}
+\renewcommand\listfigurename{图\ 目}
+\renewcommand\listtablename{表\ 目}
 \renewcommand\bibname{参\ 考\ 文\ 献}
 \renewcommand{\figurename}{图}
 \renewcommand{\tablename}{表}
@@ -207,45 +207,58 @@ The LaTeX template for thesis of BUAA]
 % 目录
 
 \RequirePackage{titletoc}
-\ifbuaa@bachelor
-    \titlecontents{chapter}[0pt]{\heiti\zihao{-4}}{\thecontentslabel\ }{}
-        {\hspace{.5em}\titlerule*[3pt]{$\cdot$}\contentspage}
-    \titlecontents{section}[2em]{\vspace{0.1\baselineskip}\songti\zihao{-4}}{\thecontentslabel\ }{}
-        {\hspace{.5em}\titlerule*[3pt]{$\cdot$}\contentspage}
-    \titlecontents{subsection}[4em]{\vspace{0.1\baselineskip}\songti\zihao{-4}}{\thecontentslabel\ }{}
-        {\hspace{.5em}\titlerule*[3pt]{$\cdot$}\contentspage}
-\else
-    \titlecontents{chapter}[0pt]{\vspace{-0.25\baselineskip}\heiti\zihao{4}}{\thecontentslabel\ }{}
-        {\hspace{.5em}\titlerule*[3pt]{$\cdot$}{\zihao{-4}\contentspage}}[\vspace{0.07\baselineskip}]
-    \titlecontents{section}[2em]{\songti\zihao{-4}}{\thecontentslabel\ }{}
-        {\hspace{.5em}\titlerule*[3pt]{$\cdot$}{\zihao{-4}\contentspage}}[\vspace{0.1\baselineskip}]
-    \titlecontents{subsection}[4em]{\vspace{-0.2\baselineskip}\heiti\zihao{5}}{\thecontentslabel\ }{}
-        {\hspace{.5em}\titlerule*[3pt]{$\cdot$}{\zihao{-4}\contentspage}}[\vspace{0.1\baselineskip}]
-\fi
+\titlecontents{chapter}[0pt]{\heiti\zihao{-4}}{\thecontentslabel\ }{}
+{\hspace{.5em}\titlerule*[4pt]{$\cdot$}\contentspage}
+\titlecontents{section}[2em]{\songti\zihao{-4}}{\thecontentslabel\ }{}
+{\hspace{.5em}\titlerule*[4pt]{$\cdot$}\contentspage}
+\titlecontents{subsection}[3em]{\songti\zihao{-4}}{\thecontentslabel\ }{}
+{\hspace{.5em}\titlerule*[4pt]{$\cdot$}\contentspage}
+\titlecontents{figure}[0pt]{\songti\zihao{-4}}{图~\thecontentslabel\quad}{}
+{\hspace{.5em}\titlerule*[4pt]{$\cdot$}\contentspage}
+\titlecontents{table}[0pt]{\songti\zihao{-4}}{表~\thecontentslabel\quad}{}
+{\hspace{.5em}\titlerule*[4pt]{$\cdot$}\contentspage}
+
+% 图表环境设置
+\RequirePackage{remreset}     % 计数器设置
+\RequirePackage{caption}      % 标题设置
+\@removefromreset{table}{chapter}
+\@removefromreset{figure}{chapter}
+\renewcommand{\thefigure}{\arabic{figure}}
+\renewcommand{\thetable}{\arabic{table}}
+\DeclareCaptionFormat{tabfigformat}{\bf\songti\zihao{5}{#1~~#3}}
+\captionsetup[figure]{
+  position=bottom, margin=0mm, format=tabfigformat,
+  aboveskip=6pt, belowskip=-15pt, justification=centerlast}
+\captionsetup[table]{
+  position=top, margin=0mm, format=tabfigformat,
+  aboveskip=0pt, belowskip=0pt, justification=centerlast}
+%    \titlecontents{chapter}[0pt]{\vspace{-0.25\baselineskip}\heiti\zihao{4}}{\thecontentslabel\ }{}
+%        {\hspace{.5em}\titlerule*[3pt]{$\cdot$}{\zihao{-4}\contentspage}}[\vspace{0.07\baselineskip}]
+%    \titlecontents{section}[2em]{\songti\zihao{-4}}{\thecontentslabel\ }{}
+%        {\hspace{.5em}\titlerule*[3pt]{$\cdot$}{\zihao{-4}\contentspage}}[\vspace{0.1\baselineskip}]
+%    \titlecontents{subsection}[4em]{\vspace{-0.2\baselineskip}\heiti\zihao{5}}{\thecontentslabel\ }{}
+%        {\hspace{.5em}\titlerule*[3pt]{$\cdot$}{\zihao{-4}\contentspage}}[\vspace{0.1\baselineskip}]
 
 % 取消图片、表格目录中的章节空格
-\newcommand*{\noaddvspace}{\renewcommand*{\addvspace}[1]{}}
-\addtocontents{lof}{\protect\noaddvspace}
-\addtocontents{lot}{\protect\noaddvspace}
+%\newcommand*{\noaddvspace}{\renewcommand*{\addvspace}[1]{}}
+%\addtocontents{lof}{\protect\noaddvspace}
+%\addtocontents{lot}{\protect\noaddvspace}
 
 %表目录图目录的格式设置
 %表目录与图目录数字前增加“表”与“图”字，并且使目录行间距与section行间距一致
 
-\titlecontents{figure}[0pt]{\vspace{0.15\baselineskip}\songti\zihao{-4}}{\makebox[3em][l]{图~\thecontentslabel\quad}}{}
-    {\hspace{.5em}\titlerule*[4pt]{$\cdot$}\contentspage}[\vspace{0.15\baselineskip}]
+%\titlecontents{figure}[0pt]{\vspace{0.15\baselineskip}\songti\zihao{-4}}{\makebox[3em][l]{图~\thecontentslabel\quad}}{}
+ %   {\hspace{.5em}\titlerule*[4pt]{$\cdot$}\contentspage}[\vspace{0.15\baselineskip}]
 
 \titlecontents{table}[0pt]{\vspace{0.15\baselineskip}\songti\zihao{-4}}{\makebox[3em][l]{表~\thecontentslabel\quad}}{}
-    {\hspace{.5em}\titlerule*[4pt]{$\cdot$}\contentspage}[\vspace{0.15\baselineskip}]
+   {\hspace{.5em}\titlerule*[4pt]{$\cdot$}\contentspage}[\vspace{0.15\baselineskip}]
 
 %%%%%%%%%% cross reference %%%%%%%%%%
 % 交叉引用
 
 
-\ifbuaa@color
-    \hypersetup{colorlinks}
-\else
-    \hypersetup{hidelinks}
-\fi
+\hypersetup{hidelinks}
+
 \hypersetup{
     bookmarksnumbered,
     bookmarksopen,

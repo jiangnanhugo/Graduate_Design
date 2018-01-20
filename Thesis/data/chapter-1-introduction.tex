@@ -27,7 +27,7 @@ p(w_1,\cdots,w_m) &= p(w_1) p(w_2|w_1) p(w_3|w_1,w_2)\cdots p(w_m | w_1,w_2,\cdo
 \label{equ:approx}
 p(w_i | w_1,w_2,\cdots,w_{t-1})  \approx p(w_i | w_{t-(n-1)},\cdots,w_{t-1})
 \end{equation}
-当$n = 1$ 时，该模型称为称一元模型（unigram model），公式.~\ref{equ:approx} 右部会退化成$p(w_i)$，此时，整个句子的概率计算公式为：$p(w_1,w_2,\cdots,w_m) = p(w_1)p(w_2) \cdots p(w_m)$。从式中可以知道，一元语言模型中，文本的概率为其中各单词出现的概率的乘积。也就是说，模型假设了各个单词之间都是相互独立的，文本中的单词的先后顺序信息完全丢失。因此，该模型虽然估算方便，但性能有限而且实际精确度并不高。当$n = 2$ 时又称二元模型（bigram model），代入公式.~\ref{equ:approx}~中，右部为 $p(w_t|w_{t-1})$。常用的还有 $n = 3$ 时的三元模型（trigram model），使用$p(w_t |w_{t-2},w_{t-1})$ 作为近似。这些方法均可以保留一定的词序信息。
+当$n = 1$ 时，该模型称为称一元模型（unigram model），公式~\ref{equ:approx} 右部会退化成$p(w_i)$，此时，整个句子的概率计算公式为：$p(w_1,w_2,\cdots,w_m) = p(w_1)p(w_2) \cdots p(w_m)$。从式中可以知道，一元语言模型中，文本的概率为其中各单词出现的概率的乘积。也就是说，模型假设了各个单词之间都是相互独立的，文本中的单词的先后顺序信息完全丢失。因此，该模型虽然估算方便，但性能有限而且实际精确度并不高。当$n = 2$ 时又称二元模型（bigram model），代入公式~\ref{equ:approx}~中，右部为 $p(w_t|w_{t-1})$。常用的还有 $n = 3$ 时的三元模型（trigram model），使用$p(w_t |w_{t-2},w_{t-1})$ 作为近似。这些方法均可以保留一定的词序信息。
 
 传统方法采用单词或者n元组的词频来作为n元组的概率计算方法，该方法简单有效能满足线上负载的计算需求。但是随着n的增大，模型的参数呈现指数爆炸式增长、概率计算复杂度也相应上升。目前谷歌有在线存储的最大的9元模型（Google Ngram Viewer）\footnote{https://books.google.com/ngrams}，这已经是目前计算机系统存储，数据访问的极限了。
 
@@ -40,7 +40,7 @@ p(w_i | w_1,w_2,\cdots,w_{t-1})  \approx p(w_i | w_{t-(n-1)},\cdots,w_{t-1})
 \begin{figure}
   \centering
   \includegraphics[width=0.79\linewidth]{./figures/nplm.pdf}
-  \caption{前馈神经网络语言模型。}\label{fig:nplm}
+  \caption{前馈神经网络语言模型}\label{fig:nplm}
 \end{figure}
 
 图~\ref{fig:nplm} 给出一个典型的 NPLM 语言模型，神经网络语言模型采用普通的三层前馈神经网络结构。其中第一层为输入层，输入的是前$n$个单词；第二层是隐藏层，表征单词的上下文信息，最后一层是输出预测层，预测下一时刻的可能出现的单词概率分布。Bengio 提出使用各词的词向量作为输入以解决数据稀疏问题，因此输入层为词$w_{i-(n-1)}, \cdots,w_{i-1} $ 的词向量的顺序拼接：
