@@ -253,3 +253,7 @@ collector=[], polarity=[], param=[]\;
 
 \section{本章小结}
 本章首先定义了极性编码的概念，同时给出了模型所涉及的参数的详细涵义。接下来，我们逐步推导模型的单个节点的概率公式，单个词的概率公式和模型的代价函数。另一方面，我们将提出的p-tHSM算法和传统的线性tHSM算法进行的比较。通过比较两者计算的差异性证明我们提出的算法更适合在GPU等高并行设备上运算。进一步的，我们还讨论了模型在测试的时候所需的推理算法，因为基于二叉树的概率计算方案和传统的softmax计算方案不同，不能直接输出单个词的概率或者计算最佳的候选单词，所以我们分别针对这两个任务提出推理算法。最后，由于单词在二叉树上的分布需要初始化，我们讨论了传统的霍夫曼聚类算法，布朗聚类算法和语义向量聚类算法，并给出了三种算法的详细计算过程。
+
+本章的相关研究结果已经发表在国际会议：
+
+\textbf{Nan Jiang}, Wenge Rong, Min Gao, Yikang Shen and Zhang Xiong. Exploration of Tree-based Hierarchical Softmax for Recurrent Language Models[C]. Proceedings of the Twenty-Sixth International Joint Conference on Artificial Intelligence (IJCAI), 2017, pp. 1951-1957. (CCF A类)
