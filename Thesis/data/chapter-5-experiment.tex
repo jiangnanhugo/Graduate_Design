@@ -1,13 +1,13 @@
 
 \chapter{语言模型实验及实验结果分析}
 \section{引言}
-在前面两章中，我们介绍了我们提出的分层并行softmax概率计算模型和具体建模过程。在本章中，为了验证所提出的分层并行softmax方法与其他基准方法（Baselines）的效率和准确性，我们在三个标准文本数据集：Wikitext-2，Wikitext-103 和 One Billion Word数据集，上进行了循环语言建模任务的实验研究。本文将会展示并行层次概率计算算法的实验结果，并且在第二小节中展现实验结果，以及与其他加速算法的对比。 此外，我们还将考虑``效率分析，可扩展性，参数大小和性能评''四个方面对这些方法进行了实验研究和讨论分析。
+在前面两章中，我们介绍了我们提出的分层并行softmax概率计算模型和具体建模过程。在本章中，为了验证所提出的分层并行softmax方法与其他基准方法（Baselines）的效率和准确性，我们将在三个标准文本数据集：Wikitext-2，Wikitext-103 和 One Billion Word数据集，上进行了循环语言建模任务的实验研究和实验结果分析。本文将会展示并行层次概率计算算法的实验结果，并且在第二小节中展现实验结果，以及与其他大词表问题的优化加速算法的对比。 此外，我们还将考虑``效率分析，可扩展性，参数大小和性能评''四个方面对这些方法进行了实验研究和讨论分析。
 
 \section{实验设置}
 在这一小节，我们介绍了实验的数据集，实验的评测指标和实验模型的训练过程。
 \subsection{实验数据集}
-本次实验所采用的数据集主要是依照两个目的选取的：我们需要在小数据集能反映参数变化对模型的最后的效果产生的影响，同时我们还需要大数据集展示模型参数最佳配置下模型的最优结果比较。所以本次实验，我们选取了三个标准数据集：Wikitext-2，Wikitext-103 和 One Billion Word数据集。
-如表~\ref{tab:dataset}~所示，表中列举了这三个数据集全部统计指标：单词数量、句子数量、词表大小和词表外单词的比例（Out-of-Vocabulary）。这里我们需要注意的是，我们不能改变词表大小，而且不同词表大小的模型之前理论上是没有比较评测的意义的。因为我们接下来要计算的一个重要的评测指标就是和词表大小成负相关关系的。所以表格~\ref{tab:dataset}~中展示的数据已经预先固定了，不会再做任何修改，例如：单词大小写变化，数词转换操作。
+本次实验所采用的数据集主要是依照两个目的选取的：我们需要在小数据集能反映参数变化对模型的最后的效果产生的影响，同时我们还需要大数据集展示模型参数最佳配置下模型的最优结果比较。所以在本次实验中，我们选取了三个标准文本数据集：Wikitext-2，Wikitext-103 和 One Billion Word数据集。
+如表~\ref{tab:dataset}~所示，表中列举了这三个数据集全部统计指标：单词数量、句子数量、词表大小和词表外单词的比例（Out-of-Vocabulary）。这里我们需要注意的是，我们不能改变词表大小，而且不同词表大小的模型之前理论上是没有比较评测的意义的。因为我们接下来要计算的一个重要的评测指标就是和词表大小成负相关关系的。所以表格~\ref{tab:dataset}~中展示的数据已经预先固定了，不会再做任何的修改，例如：单词大小写变化，数词转换操作或者分词操作。
 \begin{table}
   \centering
   \caption{WikiText-2, WikiText-103 和 One Billion Words 数据集统计指标 \label{tab:dataset}}
@@ -29,19 +29,19 @@
 \end{tabular}
 \end{table}
 
-其中，Wikitext-2和Wikitext-103数据集，训练，验证和测试集都是预先划分固定的，并且其词汇表大小也已经被定义\footnote{https://metamind.io/research/the-wikitext-long-term-dependency-language-modeling-dataset/}。这两个数据集拥有相同的验证和测试集，而Wikitext-103的训练集则比Wikitext-2的训练集大得多的多。对于第三个``One Billion Word''数据集\footnote{http://www.statmt.org/lm-benchmark/}，它是由之前里面的机器翻译的文本融合而成，文本数据也取自维基百科（wikipedia）\footnote{维基百科主页：https://en.wikipedia.org/wiki/Main\_Page/}。为了评价的标准性和实验的可互相比较性，官方还提供了一套数据预处理脚本，同时指定了该脚本所需要的perl版本，可见要求极为严苛。因为对于语言模型来说，词表不同，模型之间的结果相互比较是没有意义的。通常来说，词表小的模型更占优势。当我们用官方提供的脚本处理完数据后，我们将``./train/''目录中的所有数据视为训练集，选择``./holdout/''目录下面的第一和第二数据集作为相应的验证和测试集。这些数据集的详细统计数据在表格~\ref{tab:dataset}~中进行了说明。
+其中，Wikitext-2和Wikitext-103数据集，训练、验证和测试集都是预先划分固定的，并且其词汇表大小也已经被定义\footnote{https://metamind.io/research/the-wikitext-long-term-dependency-language-modeling-dataset/}。这两个数据集拥有相同的验证和测试集，而Wikitext-103的训练集则比Wikitext-2的训练集大得多的多。所以我们还可以间接测算出增大训练集对测试集上的提升效果表现。对于第三个``One Billion Word''数据集\footnote{http://www.statmt.org/lm-benchmark/}，它是由之前里面的机器翻译的文本融合而成，文本数据也取自维基百科（wikipedia）\footnote{维基百科主页：https://en.wikipedia.org/wiki/Main\_Page/}。为了评价的标准性和实验的可互相比较性，官方还提供了一套数据预处理脚本，同时指定了该脚本所需要的perl版本，可见要求极为严苛。因为对于语言模型来说，perl 内置函数处理出来的文本也略有不同，模型之间的结果相互比较就会变得没有意义的。通常来说，词表小的模型更占优势。当我们用官方提供的脚本处理完数据后，我们将``./train/''目录中的所有数据视为训练集，选择``./holdout/''目录下面的第一和第二数据集作为相应的验证和测试集。这些数据集的详细统计指标在表格~\ref{tab:dataset}~中进行了详细说明。
 
 \subsection{实验评价指标}
-当我们将各种实验模型在训练数据集上训练到收敛之后，针对语言模型的两个标准评估度量标准来针对不同的优化方法：困惑度（Perplexity，$ \mathrm{PPL} $）和单词误差率（Word Error Rate，$\mathrm{WER} $）。为了说明，$ \mathrm{PPL} $是一个内在度量，代表了在候选人中选择下一个话语时的混乱程度。语言模型较低的困惑意味着在相同词汇下更好的可预测性。此外，在整个测试集上，平均负对数似然分是指数，表示我们直接优化了训练过程中的困惑度量。
+当我们将各种实验模型在训练数据集上训练到收敛之后。在本次实验研究中，我们就需要评价不同模型的性能差异，针对语言模型的两个标准评估度量标准来揭示针对不同的优化方法的优劣：困惑度（Perplexity，$ \mathrm{PPL} $）和单词误差率（Word Error Rate，$\mathrm{WER} $）。为了说明，$ \mathrm{PPL} $是一个内在度量（Intrinsic Metric），代表了在候选人中选择下一个话语时的混乱程度。语言模型较低的困惑意味着在相同词表下拥有更好的可预测性。此外，在整个测试集上，$\mathrm{PPL}$ 数值是与平均负对数似然分呈指数相关关系，表示我们直接优化了训练过程中的我们的评测指标，即困惑度量。
 \begin{equation}\label{equ:ppl}
    \mathrm{PPL}(w_1,\cdots,w_T)=\sqrt[T]{\frac{1}{\prod_{t=1}^T p(w_t|w_{1:t-1})}}
 \end{equation}
 
-此外，$\mathrm{WER}$是单词的萊文斯坦距离（Levenshtein distance），于衡量两个字符串参考句子（reference，r）和预测句子（hypothesis，h）之间的相似度。他是编辑距离的一种类型，被定义为错误识别的单词（删除，插入，替换）占单词总数的百分比\footnote{https://martin-thoma.com/word-error-rate-calculation}：
+此外，$\mathrm{WER}$指代的是单词的萊文斯坦距离（Levenshtein Distance），于衡量两个字符串参考句子（reference，记作r）和预测句子（hypothesis，记作h）之间的相似度。他是编辑距离的一种衍生出来的类型，它被定义为错误识别的单词（删除，插入，替换）占单词总数的百分比\footnote{https://martin-thoma.com/word-error-rate-calculation}：
 \begin{equation}\label{equ:wer}
   \mathrm{WER} = \frac{\text{插入的单词数 + 删除的单词数 + 替换的单词数}}{\text{全部单词数量}}
 \end{equation}
-其数学上的定义公式为：
+其数学形式的定义公式为：
 \begin{equation}\label{equ:distance}
 d_{r,h}(i,j) =  \begin{cases}
 \max (i,j)& \text{如果}\min(i,j)=0\\
@@ -52,18 +52,20 @@ d_{r,h}(i - 1,j - 1) + I{(r_i\neq h_j)},\text{//替换的单词}
 \end{cases} &\text{否则}
 \end{cases}
 \end{equation}
-其中$I{(r_i\neq h_j)}$ 是示性函数， 当$r_i= h_j$的时候取值为$0$，否则该函数取值为$1$。 $d_{r,h}(i,j)$ 表示的是 $w$的第一个$i$个字符与$r$的第一个$j$个字符之间的距离。
+其中$I{(r_i\neq h_j)}$ 指代的是示性函数， 当且仅当$r_i= h_j$的时候取值为$0$，否则该函数取值为$1$。 $d_{r,h}(i,j)$ 表示的是参考句子 $r$的第一个$i$个字符与预测句子 $r$的第一个$j$个字符之间的距离。
 
-采用萊文斯坦距离的优点主要有以下两点：a）至少总是两个字符串大小的差值；b） 两个字符串的莱文斯坦距离不大于分别与第三个字符串的莱文斯坦距离之和（三角不等式）。
+我们在本实验中采用萊文斯坦距离作为我们的一个度量指标，主要是考虑到他的两个优点：a）至少总是两个字符串大小的差值；b） 两个字符串的莱文斯坦距离不大于分别与第三个字符串的莱文斯坦距离之和（三角不等式）。
 
-除了以上的准确性度量，\textit{训练时间效率，词汇可伸缩性}和\textit{运行时内存消耗}也应该被视为衡量不同模型的重要指标。因此，我们分别从GPU和CPU的理论和经验角度分析了不同优化算法的评估指标。最后，进行实验并在三个标准文本数据集上收集结果。
+除了以上的定量的度量指标，\textit{训练时间效率，词汇可伸缩性}和\textit{运行时内存消耗}等定性度量指标也应该被视为衡量不同模型的重要衡量维度。因此，我们在实验中分别从GPU和CPU的理论和经验角度分析了不同优化算法在不同评估指标上的具体数值结果。最后，统计实验数值并分析在三个标准文本数据集上的最终结果。
 
 \subsection{模型训练和参数配置}
-在我们的实验研究中，每个使用Theano框架实现的模型都运行在一个独立的GPU设备上，它具有12GB的显存（即Nvidia K40m），使得大矩阵乘法成为可能，也就是说我们能测试大词表的计算代价。然而，随着参数维数的增加，一个GPU显存资源被快速利用殆尽。
+在我们的实验研究中，每个模型都是使用Theano框架实现的而且都运行在一个独立的GPU设备上，它具有12GB的显存（即Nvidia K40m），使得大矩阵乘法的运算成为可能，也就是说我们能测试大词表的计算代价。然而，我们在实际试验中发现随着参数维数的增加，一个GPU显存资源被快速利用殆尽。
 
-然后，对于wikitext-2数据集，最大句子长度固定为256，对于wikitext-103数据集，最大句子长度固定为100，对于10亿字数据集，最大句子长度固定为50，因为它需要更多的显存消耗。对于长度超过长度阈值的句子，超出部分全部删除。由于我们测量的是语言模型的字级损失而不是句子级的分数，因此删除部分的句子对模型训练的影响是很小的。另外，我们将Adam优化器应用于两种学习率（即$ lr = 0.06,0.001 $）设置。词汇因子分解方法应用较大的学习率，而传统的softmax和抽样方法应用较小的学习率。
+然后，对于wikitext-2数据集来说，我们固定最大句子长度为256；对于wikitext-103数据集来说，我们固定最大句子长度为100；对于OBW数据集来说，我们固定最大句子长度为50，因为它需要占用更多的显存消耗。对于长度超过长度阈值的那部分字符串，超出部分全部删除。由于我们测量的是语言模型的单词级损失而不是句子级的分数，因此删除部分的句子对模型训练的影响是很小的。
 
-对于在WikiText-2数据集上运行的实验，我们在批处理大小为20的20个时期内运行，直到我们观察到验证集上的最小$ \mathrm{PPL} $。培训损失约4.8，最好的验证错误。而对于Wikitext-103数据集，在训练集上优化参数需要大约3-4个时间，因为训练集大约比较小的一个大50倍。此外，训练损失大约在5.1左右，为什么在 wikitext-2 数据集上更高的原因是我们预测的词汇量要大得多，所以混淆程度（即训练损失）应该更高。虽然我们发现模型可以很容易地收敛到局部最小点，验证误差在这个局部最小值的范围内振荡，但是Wikitext-2和Wikitext-103的唯一区别是训练数据的大小，表示收集很多训练数据不能保证模型在相同的验证和测试集上学得更好，而不是更普遍的结果。
+另外，我们将Adam优化器（Optimizer）应用于两种学习率（Learning Rate），即设置$ lr = 0.06,0.001 $。词汇因子分解方法应用较大的学习率，而传统的softmax和采样方法应用较小的学习率。因为我们实验中发现，词表分解算法收敛很慢，需要配合更大的学习率。
+
+对于在WikiText-2数据集上运行的实验，我们在批处理大小（batch size）为20的20个时期内运行，直到我们观察到验证集上的最小$ \mathrm{PPL} $。验证集上的损失数值约4.8，最好的验证错误。而对于Wikitext-103数据集，在训练集上优化参数需要大约3-4个轮数（Epochs），因为训练集大约比较小的一个大50倍。此外，训练集损失数值大约在5.1左右，因为在 wikitext-2 数据集上更高的原因是我们预测的词汇量要大得多，所以混淆程度（即训练损失）应该更高。虽然我们发现模型可以很容易地收敛到局部最小点，验证误差在这个局部最小值的范围内振荡，但是Wikitext-2和Wikitext-103的唯一区别是训练数据的大小，表示收集很多训练数据不能保证模型在相同的验证和测试集上学得更好，而不是更普遍的结果。
 
 此外，在“十亿字”数据集上运行实验相当具有挑战性，因为它需要更大的参数来拟合。所以我们应用优化的CUDA实现的RNN模型~\upcite{DBLP:journals/corr/AppleyardKB16}，将RNN小区的计算时间降到最低。然而，等待模型收敛到训练集上需要480小时，因此我们可以在验证集上得到可能的结果。
 \begin{figure}[!ht]
@@ -78,7 +80,7 @@ d_{r,h}(i - 1,j - 1) + I{(r_i\neq h_j)},\text{//替换的单词}
 \begin{figure}[!ht]
   \centering
   \includegraphics[width=0.8\columnwidth]{./figures/rnn_timing.pdf}
-  \caption{在Wikitext-103数据集上，测量语言模型三个不同部分的计算时间比较：Softmax，RNN和RNN求导}\label{fig:rnn_timing}
+  \caption{在Wikitext-103数据集上测量语言模型三个部分的计算时间比较}\label{fig:rnn_timing}
 \end{figure}
 \begin{figure}[!ht]
   \centering
@@ -88,7 +90,7 @@ d_{r,h}(i - 1,j - 1) + I{(r_i\neq h_j)},\text{//替换的单词}
 
 \begin{table}[!ht]
   \centering
-  \caption{在Wikitext-103数据集上面评价GPU和CPU的运行时内存占用和计算时间比较\label{tab:time}}
+  \caption{在Wikitext-103数据集上面GPU和CPU的运行时内存和计算时间比较\label{tab:time}}
 \begin{tabular}{lccccc}
   \toprule
  \multirow{2}{*}{算法}  &\multirow{2}{*}{运行时内存占用} &\multicolumn{2}{c}{总计算时间 (ms)} & \multicolumn{2}{c}{前向计算时间 (ms)}   \\
@@ -158,7 +160,7 @@ p-tHSM  &$\mathcal{|H|\log{|V|}}$ &\textbf{383.5}&	86.4 &\textbf{7.0}&	\textbf{1
 从表~\ref{tab:rnn}中可以看出，门控单元（即LSTM和GRU单元）的RNN模型在复杂度和字误码率方面比传统的RNN Relu和RNN Tanh模型表现得更好。因为门控功能可以避免梯度消失的问题。虽然它需要稍微多一些的时间进行计算。此外，LSTM的范例在GPU上比GRU单元更容易并行运行，因此LSTM比GRU模型需要更少的推理时间。
 \begin{table}[!ht]
   \centering
-  \caption{在wikitext-2数据集上不同循环神经网络针对 PPL, WER和计算时间的评测结果\label{tab:rnn}}
+  \caption{在wikitext-2数据集上不同循环网络针对 PPL、 WER和计算时间的影响\label{tab:rnn}}
 \begin{tabular}{lccc}
   \toprule
   循环神经网络 & 计算时间 (ms)&验证集（PPL / WER） & 测试集（PPL / WER）\\ \midrule
@@ -203,7 +205,7 @@ p-tHSM  &$\mathcal{|H|\log{|V|}}$ &\textbf{383.5}&	86.4 &\textbf{7.0}&	\textbf{1
 陈等人发现cHSM的性能对~\upcite{DBLP:conf/acl/ChenGA16}这个词的聚类很敏感。同样，为了稳定cHSM和p-HSM方法的性能，我们考虑了几个现有的聚类准则，如表1和表2所示。
 \begin{table*}[!t]
   \centering
-  \caption{在Wikitext-2数据集上，cHSM 算法采用不同聚类算法的PPL 和 WER 结果\label{table:clustering}}
+  \caption{在Wikitext-2数据集上不同聚类算法对cHSM 算法的PPL 和 WER 影响\label{table:clustering}}
   \begin{tabular}{lclccc} \toprule
 聚类算法 & 均匀划分？&分支数& 训练轮数& 测试集 (PPL / WER)&耗时 (ms)\\ \midrule
   \multirow{6}{*}{Random}  &\multirow{6}{*}{是}&10/3330&145&211.15 / 78.55 &791\\
