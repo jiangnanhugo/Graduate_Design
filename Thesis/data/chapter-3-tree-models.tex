@@ -1,7 +1,7 @@
 \RestyleAlgo{boxed}
 \chapter{并行树状概率计算模型}
 \section{引言}
-在本章中，我们将这个预测端的词用二叉树的分层的形式表示，使它们的编码适配基于树的分层概率计算。首先，我们提出了一个在分层结构上建模参数的字编码方案。因为考虑到GPU上的算法的并行计算的吞吐性能，我们进而推导出紧凑的代价函数及其梯度，使得模型在GPU设备上的能并行计算模型的内部概率函数。
+在本章中，我们将这个预测端的词用二叉树的分层的形式表示，使它们的编码适配基于树的分层概率计算。首先，我们提出了一个在分层结构上建模参数的字编码方案。因为考虑到GPU上的算法的并行计算的吞吐性能，我们进而推导出紧凑的代价函数及其梯度公式，使得分层模型在GPU设备上的能并行计算模型的内部概率函数。
 
 同时，树上的单词分布对其性能有很大的影响，应该在训练阶段之前定义。在本实验中，我们并不打算考虑那些在训练过程中动态交换子树的算法进而改变了单词在子树上的分布结构， 而是我们采用了几个分层聚类策略，用统计，句法和语义知识来初始化其结构，以达到一个稳定和可以预期的性能。
 
@@ -16,8 +16,8 @@
   \toprule
    符号&涵义&取值范围\\ \midrule
 $l^w$ &单词$w$ 所对应的叶子节点和中间节点的路径&Int32 \\
-$d_j\in \{-1,+1\}$&表示路径$l^w$中第$j$个节点对应的编码（根节点对应编码$0$）&\\
-$ d^w=[d_0^w,d_1^w,\cdots,d_{l^w-1}^w] $& 单词 $w$ 的极性编码，他由 $l^w-1$位编码构成，&\\
+$d_j$&表示路径$l^w$中第$j$个节点对应的编码（根节点对应编码$0$）&$ \{-1,+1\}$\\
+$ d^w=[d_0^w,d_1^w,\cdots,d_{l^w-1}^w] $& 单词 $w$ 的极性编码，他由 $l^w-1$位编码构成，&$\{-1,+1\}^{l_w}$\\
 $\theta_{j}^w\in\mathbb{R}^m$ &表示路径$l^w$中第 $j$ 个非叶子节点对应的向量& Float32\\
 $ \theta^w=[\theta_1^w,\theta_2^w,\theta_3^w, \cdots,\theta_{l^w}^w]$&表示路径$l^w$所对应的参数矩阵&Float32 \\
 $\Gamma$ &路径查找表，给定路径序列，可以获得对应的单词& \\
@@ -55,7 +55,7 @@ p(d^w_i|\theta_{i}^w,h) =\sigma(\theta_{i}^w h)^{d_i^w}\times(1-\sigma(\theta_{i
   &=\frac{\exp(z)}{1 + \exp(z)}+\frac{1}{1 + \exp(z)}=\frac{1 + \exp(z)}{1 + \exp(z)}=1
 \end{split}
 \end{equation}
-该规则可以用来帮我们把公式~\ref{equ:pp}~缩写成一下更简洁的形式~\upcite{minka2003algorithms}：
+该计算规则可以用来帮我们把公式~\ref{equ:pp}~缩写成一下更简洁的形式~\upcite{minka2003algorithms}：
  \begin{equation}
 p(d^w_i|\theta_{i}^w,h) =\sigma(\theta_{i}^w h)^{d_i^w}, d_i^w \in [-1,+1]
 \end{equation}
@@ -63,7 +63,7 @@ p(d^w_i|\theta_{i}^w,h) =\sigma(\theta_{i}^w h)^{d_i^w}, d_i^w \in [-1,+1]
 \begin{equation}
 p(d^w_i=\pm 1|\theta_{i}^w,h) = \sigma({d_i^w}\theta_{i}^w h)
 \end{equation}
-这样的操作之后，我们就完成了单节点概率计算的紧凑表示。针对计算一个单词的概率，我们需要考虑从根节点到该单词叶子节点的所涉及的所有层的概率公式。然而因为在训练的时候，我们实际上预先知道每个单词所对应的路径，所以我们实际上可以同时的计算各个节点的概率值，然后将所有节点相乘起来。这样做的好处，现在看起来十分费力，但是我们可以在下面详细说明。
+经过这样的操作之后，我们就完成了单节点概率计算的紧凑表示。针对计算一个单词的概率，我们需要考虑从根节点到该单词叶子节点的所涉及的所有层的概率公式。然而因为在训练的时候，我们实际上预先知道每个单词所对应的路径，所以我们实际上可以同时的计算各个节点的概率值，然后将所有节点相乘起来。这样做的好处，现在看起来十分费力，但是我们可以在下面详细说明。
 
  因此，我们传统意义上计算的单词的概率在这里指的是：单词$ w $在二叉树上的概率，即从根到相应叶节点的路由概率$(d^w,\theta^w)$的联合乘积：
 \begin{equation}\label{equ:pw}
@@ -72,7 +72,7 @@ p(d^w_i=\pm 1|\theta_{i}^w,h) = \sigma({d_i^w}\theta_{i}^w h)
  =&\log\sigma({d^w}^\top \theta^w h)=\zeta(- {d^w}^\top \theta^w h )
  \end{split}
 \end{equation}
-其中 $\zeta(z)$ 代表 softplus 函数: $\zeta(z)= \log (1+\exp(z))$。 该函数的导数是 $\sigma$ 函数, 其导数计算公式是: ${\mathrm{d}\zeta(z)}/{\mathrm{d} z}= \sigma(z)$~\upcite{DBLP:conf/nips/DugasBBNG00}。如图所示， softplus 函数通常被视为 ReLU函数的替代函数，因为他们两个函数除了零点附近分布不一样以外，其他地方分布相同。但是softplus函数在零点附近可导，ReLU函数在零点附近不可导。
+其中 $\zeta(z)$ 代表 softplus 函数: $\zeta(z)= \log (1+\exp(z))$。 该函数的导数是 $\sigma$ 函数, 其导数计算公式是: ${\mathrm{d}\zeta(z)}/{\mathrm{d} z}= \sigma(z)$~\upcite{DBLP:conf/nips/DugasBBNG00}。如图所示， softplus 函数通常被视为 ReLU函数的替代函数，因为他们两个函数除了零点附近分布不一样以外，其他地方分布相同。但是softplus函数在零点附近可导，ReLU函数在零点附近不可导。ReLU被使用的更多，因为它能获得近似线性的参数表示，这样能防止模型学习出复杂的表示。
 \begin{figure}[!ht]
   \centering
 \includegraphics[width=0.6\linewidth]{./figures/relus.pdf}
@@ -94,9 +94,9 @@ p(d^w_i=\pm 1|\theta_{i}^w,h) = \sigma({d_i^w}\theta_{i}^w h)
 \end{equation}
 其中 $d'^w_i\in \{0,1\}$，这两个部分从底到顶，分别对内部节点的左右子树的联合概率进行建模。
 
-值得注意的是，p-tHSM和tHSM算法之间的主要区别在于：a）tHSM算法涉及许多微小的矩阵乘法操作，而在p-tHSM中我们直接将所有参数$(d^w,\theta^w)$ 2D矩阵是以运行时内存消耗为代价的，我们考虑这个向量和相对较大的矩阵的乘法，如图~\ref{fig:tree_hsm}~所示。 b）扣除模型的紧凑损失函数，并行的计算这条路径上所有节点的对数概率而不是逐层计算，为p-tHSM模型提供更好的时间效率。
+值得注意的是，p-tHSM和tHSM算法之间的主要区别在于：1）tHSM算法涉及许多微小的矩阵乘法操作，而在p-tHSM中我们直接将所有参数$(d^w,\theta^w)$ 2D矩阵是以运行时内存消耗为代价的，我们考虑这个向量和相对较大的矩阵的乘法，如图~\ref{fig:tree_hsm}~所示； 2）扣除模型的紧凑损失函数，并行的计算这条路径上所有节点的对数概率而不是逐层计算，为p-tHSM模型提供更好的时间效率。
 
-接下来，模型的所有参数$\{\theta^w,h\}$针对模型的代价函数的导数是 ：
+当我们计算完模型的代价函数后，我们就需要计算模型的参数的导数。接下来，模型的所有参数$\{\theta^w,h\}$针对模型的代价函数的导数是 ：
 \begin{equation}
 \begin{split}
 \frac{\partial \ell}{\partial \theta^w}=&(\sigma({d^w}^\top\theta^w h) -1){d^w}^\top h \\
@@ -105,7 +105,7 @@ p(d^w_i=\pm 1|\theta_{i}^w,h) = \sigma({d_i^w}\theta_{i}^w h)
 \end{equation}
 
 
-二叉树分解的一个主要优点是它避免了在整个词汇表中概率的归一化，因为树中词的汇总概率自然等于1。
+在这个模型中，我们采用二叉树分解的方法，主要是考虑到它一个优点是：它避免了在整个词汇表中概率的归一化，因为树中词的汇总概率自然等于1。
 \begin{equation}
 \sum_{w\in \mathcal{V}}{p(w|h)}=\sum_{w \in \mathcal{V}}\sum_{i=0}^{l^w-1}{\sigma(d_i^w\theta_{i}^w h)}=1.
 \end{equation}
@@ -113,14 +113,14 @@ p(d^w_i=\pm 1|\theta_{i}^w,h) = \sigma({d_i^w}\theta_{i}^w h)
 
 
 \section{基于二叉树的推理算法}
-考虑到本章开始提出的第一个问题，即给定序列$ [w_1,\cdots,w_T] $，求该序列出现的概率。 直观地说，当给定相应的上下文$ h $时，我们可以通过获取一个特定单词$ w $的概率或对数概率来分解问题：
+考虑到本章开始提出的第一个问题，即给定序列$ [w_1,\cdots,w_T] $，求该序列出现的概率$   \log p(w_1,\cdots, w_T)$。 直观地说，当给定相应的上下文$ h $时，我们可以通过获取一个特定单词$ w $的概率或对数概率来分解问题：
 \begin{equation}
 \begin{split}
     p(w|h) =&\sigma({d^w}^\top \theta^w h)\\
    \log p(w|h) =& -\zeta(- {d^{w}}^\top \theta^{w} h )
 \end{split}
 \end{equation}
-其中概率$ p(w | h)$和单词$ w $的对数概率$ \log p(w | h)$可以直接通过等式~\ref{equ:pw}~和~\ref{equ:cost}~逐步计算出来。 因此，我们可以推导出这个序列的概率为：
+其中概率$ p(w | h)$和单词$ w $的对数概率$ \log p(w | h)$可以直接通过等式~\ref{equ:pw}~和公式~\ref{equ:cost}~逐步计算出来。 因此，我们可以推导出这个序列的概率为：
 \begin{equation}
    \log p(w_1,\cdots, w_T)=\sum_{t=1}^T\log p(w_t|h_t) = -\zeta(- {d^{w_t}}^\top \theta^{w_t} h_t )
 \end{equation}
@@ -223,7 +223,7 @@ collector=[], polarity=[], param=[]\;
 \caption{单词 Unigram分布示意图}\label{fig:zipf}
 \end{figure}
 
-其对应的二叉树的数据结构采用基于数组的方式管理和访问。如下所示，每个节点（Node）包含信息为：左子树，右子树，节点编号。同时我们还定义了节点的打印字符串函数（即``repr''），方便我们检查数据结构是否正确实现。
+其对应的二叉树的数据结构采用基于数组的方式管理和访问。如下所示，每个节点（Node）包含信息为：左子树，右子树，节点编号。同时我们还定义了节点的打印字符串函数（即``\_\_repr\_\_''），方便我们检查数据结构是否正确实现。
 \begin{minted}[mathescape,linenos=False,gobble=1,frame=lines,baselinestretch=1.0,fontsize=\footnotesize,framesep=1mm]{python}
  class Node(object):
   def __init__(self,left=None,right=None,index=None):

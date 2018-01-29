@@ -58,7 +58,11 @@ She doesn't have very much confidence in herself
 
 自Elman提出基本循环网络模型~\upcite{DBLP:journals/cogsci/Elman90}~以来，已经有许多扩展模型提出了克服长距离依赖，梯度消失（Gradient Vanishing）和梯度爆炸（Gradient Exploding）等问题， 如长期短期记忆网络（LSTM）~\upcite{7508408}，门限记忆单元（GRU）~\upcite{DBLP:conf/nips/ChungKDGCB15}和近似递归神经网络（Quasi-RNNs）\upcite{DBLP:journals/corr/BradburyMXS16}。
 
-
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=0.7\linewidth]{./figures/lstm.pdf}
+  \caption{LSTM 模型示意图}\label{fig:lstm}
+\end{figure}
 
 {长距离短期记忆网络}。LSTM的计算公式定于如下 \upcite{DBLP:journals/neco/HochreiterS97}：
 \begin{itemize}
@@ -74,11 +78,14 @@ She doesn't have very much confidence in herself
   \phi(x)=\frac{e^x-e^{-x}}{e^x+e^{-x}},\sigma(x)=\frac{1}{1+e^{-x}}
 \end{equation}
 
-\begin{figure}[!ht]
-  \centering
-  \includegraphics[width=0.7\linewidth]{./figures/lstm.pdf}
-  \caption{LSTM 模型示意图}\label{fig:lstm}
-\end{figure}
+{并行计算实现方法}。输入门、遗忘门、输出门和状态更新门矩阵乘法可以并行实现，从而提高LSTM模型的计算效率。因为LSTM的计算模型更容易并行，所以他与GRU的计算时间相差无几，尽管LSTM的模型需要的参数量是GRU模型的1.5倍。
+\begin{equation}\label{equ:lstm}
+\begin{bmatrix} i^t\\ f^t\\g^t\\o^t \end{bmatrix} =\begin{bmatrix}\sigma\\ \sigma\\\phi\\\sigma\end{bmatrix}\times W\times[x^t,h^{t-1}]
+\end{equation}
+其中 $W$ 指的是四个小矩阵互相层叠起来 $[W^i,W^f,W^g,W^o]$。
+
+
+
 
 {门限记忆单元。} GRU 可以看成是 LSTM 的变种，GRU 把 LSTM中的 遗忘门和输入门用更新门来替代。 把 cell state 和隐状态 $h_t$ 进行合并，在计算当前时刻新信息的方法和 LSTM 有所不同。 下图是GRU更新 $h_t$ 的过程\upcite{DBLP:journals/corr/Pezeshki15}, 具体定义如下：
 \begin{figure}[!h]
@@ -236,7 +243,7 @@ samp_k = sum(cdf < rand()*cdf(end)) + 1;
 事实上，这个问题用二分搜寻是标准的方法。那么，还有没有更快的方法呢？答案是肯定的，例如别名方法(alias method)、近似方法等~\upcite{DBLP:journals/cgf/ClineRW09}。当然，在N很小的情况下，线性搜寻和二分搜寻也足够。
 \subsection{别名方法}
 
-设$ Z $为离散的随机变量，它有n个可能的结果$ z_0,z_1,\ldots,z_ {n-1} $。 为了简化下面的讨论，我们研究另一个变量$ Y $，其中$ P \{Y = i \} = P \{Z = z_i \} $。 当$ Y $取值$ i $时，让$ Z $为$ z_i $。 所以$ Z $可以从$ Y $生成。随机变量$ X $被均匀分布在$（0，n）$中，这个概率密度函数是
+设$ Z $为离散的随机变量，它有n个可能的结果$ z_0,z_1,\ldots,z_ {n-1} $。 为了简化下面的讨论，我们研究另一个变量$ Y $，其中$ P \{Y = i \} = P \{Z = z_i \} $。 当$ Y $取值$ i $时，让$ Z $为$ z_i $。 所以$ Z $可以从$ Y $生成。随机变量$ X $被均匀分布在$(0,n)$中，这个概率密度函数是
 \begin{equation}\label{equ:alias}
  f(x) = \left\{
  \begin{array}{rl}
@@ -248,8 +255,8 @@ samp_k = sum(cdf < rand()*cdf(end)) + 1;
 \begin{equation}\label{equ:gen}
   Y' =  \left\{
  \begin{array}{rl}
-  \lfloor x  \rfloor & \text{if } (x - \lfloor x \rfloor) < F(\lfloor x \rfloor)\\
-  A(\lfloor x \rfloor)  & \text{otherwise}\\
+  \lfloor x  \rfloor & \text{若 } (x - \lfloor x \rfloor) < F(\lfloor x \rfloor)\\
+  A(\lfloor x \rfloor)  & \text{否则}\\
  \end{array} \right.
 \end{equation}
 其中$ A(i)$是别名函数。 当$ x $落入范围$ [i,i + 1)$（$ i $是一个整数）时，$ y $的概率$ F(i)$为$ i $，概率$ 1 - F(i )$是$ A(i)$。 由于$ x $是均匀分布的，
