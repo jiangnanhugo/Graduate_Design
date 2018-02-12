@@ -39,7 +39,7 @@ p(w_i | w_1,w_2,\cdots,w_{t-1})  \approx p(w_i | w_{t-(n-1)},\cdots,w_{t-1})
 由于神经网络对参数进行高度共享，因此对低频词具有天然的平滑能力。这里所指的神经网络语言模型(Neural Probabilistic Language Model, NPLM) ，最早由Bengio等人在2001年提出\upcite{DBLP:conf/nips/BengioDV00}， 近年来一些学者开始展开这方面的研究，并取得一系列成果，如~\cite{DBLP:conf/acl/BaroniDK14,DBLP:journals/sigkdd/BellK07,DBLP:journals/pami/BengioCV13,DBLP:journals/tnn/BengioSF94}~。 但总体而言， 对NPLM的研究还处在起步阶段。具体而言，NPLM通过一个多层感知网络(Multi-Layer Perceptron, MLP)来计算公式.~\ref{equ:approx} 中概率。
 \begin{figure}
   \centering
-  \includegraphics[width=0.79\linewidth]{./figures/nplm.pdf}
+  \includegraphics[width=0.8\linewidth]{./figures/nplm.pdf}
   \caption{前馈神经网络语言模型}\label{fig:nplm}
 \end{figure}
 
@@ -107,7 +107,7 @@ RNNLM 的核心在于其隐藏层的计算公式:
 \section{论文的组织结构}
 \textbf{第一章：}``绪论''，主要介绍了本论文的研究背景和意义，另外简要说明了语言模型的发展历史以及本文的主要工作，并对本文的组织架构进行了说明。
 
-\textbf{第二章：}``相关技术介绍''，
+\textbf{第二章：}``相关技术介绍''，对国内外学者在语言模型的任务上相关工作进行了介绍。
 
 \textbf{第三章：}``并行树状概率模型''，
 

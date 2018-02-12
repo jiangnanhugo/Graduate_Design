@@ -80,7 +80,7 @@ She doesn't have very much confidence in herself
 
 {并行计算实现方法}。输入门、遗忘门、输出门和状态更新门矩阵乘法可以并行实现，从而提高LSTM模型的计算效率。因为LSTM的计算模型更容易并行，所以他与GRU的计算时间相差无几，尽管LSTM的模型需要的参数量是GRU模型的1.5倍。
 \begin{equation}\label{equ:lstm}
-\begin{bmatrix} i^t\\ f^t\\g^t\\o^t \end{bmatrix} =\begin{bmatrix}\sigma\\ \sigma\\\phi\\\sigma\end{bmatrix}\times W\times[x^t,h^{t-1}]
+\begin{bmatrix} i^t\\ f^t\\g^t\\o^t \end{bmatrix} =\begin{bmatrix}\sigma\\ \sigma\\\phi\\\sigma\end{bmatrix}\times W\times[x_t,h_{t-1}]
 \end{equation}
 其中 $W$ 指的是四个小矩阵互相层叠起来 $[W^i,W^f,W^g,W^o]$。
 
@@ -219,14 +219,14 @@ samp_k = sum(cdf < rand()*cdf(end)) + 1;
 \end{verbatim}
 这很好很简单，但是你会注意到它具有每个样本的设置（计算CDF）和$\mathcal {O}(K)$时间复杂度的$\mathcal {O}(K)$时间复杂度。每个样本的复杂度可能被降低到$\mathcal {O}(\log K)$，找到阈值的数据结构更好。事实证明，我们可以做得更好，得到$\mathcal {O}(K)$的抽样，而仍然是$\mathcal {O}(K)$。
 \subsection{基于线性搜索的逆变换方法}
-在上节中，显示了CDF的一些特性，例如CDF的范围是$[0,1]$，而且是一个单调递增的（monotonic increasing）函数。逆变换取样算法（inverse transform sampling）就是利用了这些特性，来解决上面提出的问题。其实，逆变换取样方法并不是很复杂，我们接下来详细解释。给一个目标CDF，只要计算其逆函数(inverse function)，就可以把均匀的随机变数转换为目标CDF:
+在上节中，显示了CDF的一些特性，例如CDF的范围是$[0,1]$，而且是一个单调递增的（Monotonic Increasing）函数。逆变换取样算法（Inverse Transform Sampling）就是利用了这些特性，来解决上面提出的问题。其实，逆变换取样方法并不是很复杂，我们接下来详细解释。给一个目标CDF，只要计算其逆函数（Inverse Function），就可以把均匀的随机变数转换为目标CDF:
 \begin{equation}\label{equ:func}
   X=F_X^{-1}(Y)
 \end{equation}
 
 这方法能用在所有CDF(包括连续及离散的)。其数学证明可参考维基百科。
 
-下图显示这个方法的直观解读，在Y轴范围$[0,1]$里均匀取样$(y_i)$，之后向右和CDF取交点，求交点的X轴位置($x_i$)，X则是符合CDF的概率分布。这个方法用在离散的情况就更简单，只需搜寻目标的CDF，找出超过均匀取样的元素即可。
+下图显示这个方法的直观解读，在Y轴范围$[0,1]$里均匀取样$(y_i)$，之后向右和CDF取交点，求交点的$X$轴位置($x_i$)，$X$则是符合CDF的概率分布。这个方法用在离散的情况就更简单，只需搜寻目标的CDF，找出超过均匀取样的元素即可。
 \begin{figure}[!h]
   \centering
 \includegraphics[width=0.5\linewidth]{./figures/cdf.png}

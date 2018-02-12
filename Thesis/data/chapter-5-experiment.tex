@@ -81,21 +81,19 @@ d_{r,h}+d_{r,s}\ge d_{r,s}
 \section{影响因素比较}
 我们在这部分将讨论语言模型的大词表问题的具体实验计算瓶颈和各种不同计算策略对实验计算效率和性能的影响。
 \subsection{词表层次化比较}
-我们首先使用wiki103数据集，统计了语言模型中每个模块的计算时间消耗，如图~\ref{fig:rnn_timing}~所示。 我们计算运行不同的RNN模型（即LSTM模型和GRU模型）及其梯度（即，RNN Grad）所需的时间，以及Wikitext-103数据集的大词汇表上的常规softmax，这与词汇表的常见大小相当。 我们分别用Theano框架和CUDA实现了RNN单元，一个采用python语言实现，第二个使用并行C++语言实现。目前基于CuDNN实现的RNN模型计算时间最快，它里面的RNN的运行时间可以缩短到最短。 从图中可以看出，使用优化的CUDA，softmax模块的影响比RNN单元及其梯度更重要，这就需要我们详细讨论softmax优化。
+我们首先使用wiki103数据集，统计了语言模型中每个模块的计算时间消耗，如图~\ref{fig:rnn_timing}~所示。 我们计算运行不同的RNN模型（即LSTM模型和GRU模型）及其梯度（即，RNN Grad）所需的时间，以及Wikitext-103数据集的大词汇表上的常规softmax，这词汇表大小与我们平时所采用的数据集的词表相当。 我们分别用Theano框架和CUDA实现了RNN单元，一个采用python语言实现，第二个使用并行C++语言实现。目前基于CuDNN实现的RNN模型计算时间最快，它里面的RNN的运行时间可以缩短到最短。 我们将代码重复了100遍，统计了每个模块的总时间占用，然后分别计算其平均时间占用。这样做的目的是通过多次实验来保证实验数据准确性。
+
+从图中可以看出，使用优化的CUDA，softmax模块的影响比RNN单元及其梯度更重要。Softmax计算时间占用总计算时间随着词表的增大占比越来越大，并且已经超过了$50\%$的计算时间，这就需要我们详细讨论softmax优化。
 \begin{figure}[!ht]
   \centering
   \includegraphics[width=0.8\columnwidth]{./figures/rnn_timing.pdf}
-  \caption{在Wikitext-103数据集上测量语言模型三个部分的计算时间比较}\label{fig:rnn_timing}
+  \caption{wikitext-103数据集上测量语言模型三个部分的计算时间比较}\label{fig:rnn_timing}
 \end{figure}
-\begin{figure}[!ht]
-  \centering
-  \includegraphics[width=0.8\columnwidth]{./figures/all_time.pdf}
-  \caption{cHSM, tHSM 和 p-tHSM 算法随着词表大小的计算时间影响}\label{fig:hsm_benchmark}
-\end{figure}
+
 
 \begin{table}[!ht]
   \centering
-  \caption{在Wikitext-103数据集上面GPU和CPU的运行时内存和计算时间比较\label{tab:time}}
+  \caption{wikitext-103数据集上面GPU和CPU的运行时内存和计算时间比较\label{tab:time}}
 \begin{tabular}{lccccc}
   \toprule
  \multirow{2}{*}{算法}  &\multirow{2}{*}{运行时内存占用} &\multicolumn{2}{c}{总计算时间 (ms)} & \multicolumn{2}{c}{前向计算时间 (ms)}   \\
@@ -114,7 +112,7 @@ p-tHSM  &$\mathcal{|H|\log{|V|}}$ &\textbf{383.5}&	86.4 &\textbf{7.0}&	\textbf{1
 
 \begin{table}[!ht]
   \centering
-   \caption{在Wikitext-2上评价不同聚类方法对p-HSM 算法的PPL影响\label{table:p-thsm}}
+   \caption{wikitext-2上评价不同聚类方法对p-HSM 算法的PPL影响\label{table:p-thsm}}
   \begin{tabular}{lcccc} \toprule
   算法  &建树时间&最大树深度 &验证集 (PPL) & 测试集 (PPL)  \\ \midrule
   Uigram  &3分钟&12 &218.42& 216.05     \\
@@ -124,17 +122,22 @@ p-tHSM  &$\mathcal{|H|\log{|V|}}$ &\textbf{383.5}&	86.4 &\textbf{7.0}&	\textbf{1
   \end{tabular}
 \end{table}
 
-为了验证与词汇大小相关的cHSM，tHSM和p-tHSM算法的可扩展性，结果在图1中被收集。 为了显示p-tHSM算法的影响，不包含“Softmax”方法，因为与其他算法相比，它消耗了更多的计算时间。 很显然，cHSM随着词汇大小的平方根（即，$ \mathcal{O(| H | \sqrt{| V |})} $）进行缩放，而p-tHSM随着词汇大小的增加呈现出稳定的表现。
+为了验证与词汇大小相关的cHSM，tHSM和p-tHSM算法的可扩展性，结果展示在图~\ref{fig:hsm_benchmark}~中。 为了显示p-tHSM算法的影响，我们在这里不包含“Softmax”方法，因为与其他算法相比，它消耗了更多的计算时间，无法被放在这个图里面。 很显然，cHSM随着词汇大小的平方根（即，$ \mathcal{O(| H | \sqrt{| V |})} $）进行缩放，而p-tHSM随着词汇大小的增加呈现出稳定的表现。tHSM算法随着此表大小的对数进行变化 （即，$ \mathcal{O(| H | \log{| V |})} $）,我们的p-tHSM算法所需要的计算时间词表变大，与tHSM算法的差异越来越大。这一结果证明我们提出的计算模型更加优越。
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=0.8\columnwidth]{./figures/all_time.pdf}
+  \caption{cHSM, tHSM 和 p-tHSM 算法随着词表大小的计算时间影响}\label{fig:hsm_benchmark}
+\end{figure}
 
 在这些实验的基础上，我们可以得出结论：所提出的p-tHSM方法胜过历史记录$ \mathcal{O(| H | \log| V |)})$，并且取得了令人满意的分层softmax方法的加速比。 这种性能归因于基于GPU并行性的加速，也是由于p-tHSM方法的基本结构，其将目标字树并行地维持。
 
 
 
 \subsection{搜索策略的影响}
-由于我们提出了三个关于推理阶段搜索策略的算法，其影响可以通过WER度量来观察。在这个结构化预测过程中，一个合适的搜索规则将帮助模型获得最小风险的最佳候选人，如表~\ref{tab:search}所示。 “全球”方法表示我们计算所有单词的得分，单词的概率用整个词汇全局归一化。值得注意的是，对于cHSM方法算法~\ref{alog:argmax}比算法~\ref{alog:exact}得到更好的WER，尽管后一种方法获得了词汇表上的确切顶级候选。由于类结构中存在标签偏差问题，排名最高的词容易出现算法模型无法建模的小组。最后但并非最不重要的是，算法~\ref{alog:exact}和``global''获得相同的单词排序，唯一的区别是算法~\ref{alog:exact}避免了冗余计算。所以他们达到了可比的WER得分，但算法~\ref{alog:exact}需要更少的时间。
+由于我们提出了三个关于推理阶段搜索策略的算法，其影响可以通过WER度量来观察。在这个结构化预测过程中，一个合适的搜索规则将帮助模型获得最小风险的最佳候选人，如表~\ref{tab:search}~所示。 “全球”方法表示我们计算所有单词的得分，单词的概率用整个词汇全局归一化。值得注意的是，对于cHSM方法算法~\ref{alog:argmax}~比算法~\ref{alog:exact}~得到更好的WER，尽管后一种方法获得了词汇表上的确切顶级候选。由于类结构中存在标签偏差问题，排名最高的词容易出现算法模型无法建模的小组。最后但并非最不重要的是，算法~\ref{alog:exact}~和``global''获得相同的单词排序，唯一的区别是算法~\ref{alog:exact}~避免了冗余计算。所以他们达到了可比的WER得分，但算法~\ref{alog:exact}~需要更少的时间。
 \begin{table}[!ht]
   \centering
-  \caption{在wikitext-2数据集上ctHSM算法针对不同搜索算法的WER评测结果\label{tab:search}}
+  \caption{wikitext-2数据集上ctHSM算法针对不同搜索算法的WER评测结果\label{tab:search}}
 \begin{tabular}{llccc}
   \toprule
    & 算法&计算时间 (ms)&验证集 (WER)& 测试集(WER)\\ \midrule
@@ -149,7 +152,7 @@ p-tHSM  &$\mathcal{|H|\log{|V|}}$ &\textbf{383.5}&	86.4 &\textbf{7.0}&	\textbf{1
 对于p-tHSM系列算法，我们比较了所提出的算法~\ref{alog:greed_argmax}和传统的“全局”算法。算法~\ref{alog:greed_argmax}比“global”方法获得本地最佳结果花费的时间更少。由于基于树的模型在以前的决策中更容易失败，所以“全局”方法的MER分数要比算法~\ref{alog:greed_argmax}要好。
 \begin{table}[!ht]
   \centering
-  \caption{在wikitext-2数据集上p-tHSM算法针对不同搜索算法的WER评测结果\label{tab:psearch2}}
+  \caption{wikitext-2数据集上p-tHSM算法针对不同搜索算法的WER评测结果\label{tab:psearch2}}
 \begin{tabular}{llccc}
   \toprule
         & 算法&计算时间 (ms)&验证集 (WER)& 测试集(WER)\\ \midrule
@@ -162,10 +165,10 @@ p-tHSM  &$\mathcal{|H|\log{|V|}}$ &\textbf{383.5}&	86.4 &\textbf{7.0}&	\textbf{1
 
 \subsection{循环网络模型的影响}
 
-从表~\ref{tab:rnn}中可以看出，门控单元（即LSTM和GRU单元）的RNN模型在复杂度和字误码率方面比传统的RNN Relu和RNN Tanh模型表现得更好。因为门控功能可以避免梯度消失的问题。虽然它需要稍微多一些的时间进行计算。此外，LSTM的范例在GPU上比GRU单元更容易并行运行，因此LSTM比GRU模型需要更少的推理时间。
+从表~\ref{tab:rnn}中可以看出，门控单元（即LSTM和GRU单元）的RNN模型在复杂度和字误码率方面比传统的RNN Relu和RNN Tanh模型表现得更好。因为门控功能可以避免梯度消失的问题。虽然它需要稍微多一些的时间进行计算。此外，LSTM的计算公式在GPU上比GRU单元更容易并行运行，因此LSTM比GRU模型需要更少的推理时间。
 \begin{table}[!ht]
   \centering
-  \caption{在wikitext-2数据集上不同循环网络针对 PPL、 WER和计算时间的影响\label{tab:rnn}}
+  \caption{wikitext-2数据集上不同循环网络针对 PPL、 WER和计算时间的影响\label{tab:rnn}}
 \begin{tabular}{lccc}
   \toprule
   循环神经网络 & 计算时间 (ms)&验证集（PPL / WER） & 测试集（PPL / WER）\\ \midrule
@@ -188,11 +191,11 @@ p-tHSM  &$\mathcal{|H|\log{|V|}}$ &\textbf{383.5}&	86.4 &\textbf{7.0}&	\textbf{1
   \caption{BPTT和截断BPTT算法示意图}\label{fig:minibatch}
 \end{figure}
 
-为了说明，在训练中，如果你在被截断的段中看到某些依赖关系，则可以学习它们。 如果这些依赖关系总是跨越不同的领域，我们已经打破了这些依赖关系，你永远不会学习它 因为渐变永远不会回流，并告诉前一个段中的某些内容对下一个段是有用的。 但是如果你在一个细分市场中看到他们，那么你实际上有一个希望，那就是在测试的时候，你将能够在不同的细分市场上预测它们。 因为我们总是向前传播。
+我们在此说明，在训练中，如果你在被截断的段中看到某些依赖关系，则可以学习它们。 如果这些依赖关系总是跨越不同的领域，我们已经打破了这些依赖关系，你永远不会学习它 因为渐变永远不会回流，并告诉前一个段中的某些内容对下一个段是有用的。 但是如果你在一个细分市场中看到他们，那么你实际上有一个希望，那就是在测试的时候，你将能够在不同的细分市场上预测它们。 因为我们总是向前传播。
 \begin{figure}[!h]
   \centering
   \includegraphics[width=0.9\columnwidth]{./figures/tbptt.pdf}
-  \caption{在wikitext-2数据集上 BPTT和截断BPTT算法对RNN的影响.}\label{fig:tbptt}
+  \caption{wikitext-2数据集上 BPTT和截断BPTT算法对RNN的影响.}\label{fig:tbptt}
 \end{figure}
 \subsection{采样近似算法比较}
 
@@ -203,14 +206,14 @@ p-tHSM  &$\mathcal{|H|\log{|V|}}$ &\textbf{383.5}&	86.4 &\textbf{7.0}&	\textbf{1
 \begin{figure}[!ht]
   \centering
   \includegraphics[width=0.9\columnwidth]{./figures/nce_blackout.pdf}
-  \caption{在wikitext-2上测试不同采样数量对NCE和Blackout算法的影响}\label{fig:blackout_nce}
+  \caption{wikitext-2上测试不同采样数量对NCE和Blackout算法的影响}\label{fig:blackout_nce}
 \end{figure}
 
 \subsection{单词聚类策略分析}
 陈等人发现cHSM的性能对~\upcite{DBLP:conf/acl/ChenGA16}这个词的聚类很敏感。同样，为了稳定cHSM和p-HSM方法的性能，我们考虑了几个现有的聚类准则，如表1和表2所示。
 \begin{table*}[!t]
   \centering
-  \caption{在Wikitext-2数据集上不同聚类算法对cHSM 算法的PPL 和 WER 影响\label{table:clustering}}
+  \caption{wikitext-2数据集上不同聚类算法对cHSM 算法的PPL 和 WER 影响\label{table:clustering}}
   \begin{tabular}{lclccc} \toprule
 聚类算法 & 均匀划分？&分支数& 训练轮数& 测试集 (PPL / WER)&耗时 (ms)\\ \midrule
   \multirow{6}{*}{Random}  &\multirow{6}{*}{是}&10/3330&145&211.15 / 78.55 &791\\
