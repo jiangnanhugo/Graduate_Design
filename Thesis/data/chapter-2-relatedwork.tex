@@ -1,25 +1,27 @@
 \chapter{相关技术介绍}
 \section{引言}
-基于神经网络的分布表示（Distributional Representation）一般称为词向量（Word Vector）、词嵌入（Word Embedding）或分布式表示（Distributed Representation）~\upcite{DBLP:conf/nips/MikolovSCCD13}。神经网络词向量表示技术通过神经网络技术对上下文（Context），以及上下文与目标词之间的关系进行建模。由于神经网络结构或各种组合较为灵活，这类方法的最大优势在于可以表示复杂的上下文（Complex Context）。历史上的方法主要是基于矩阵的分布表示方法，最常用的上下文仅仅是利用了单词。然而，如果使用包含词序信息的n-gram 作为上下文，当$n$ 增加时，n-gram 的总数会呈指数级增长，此时会遇到维数灾难问题（Curse of Dimensionality）\footnote{https://en.wikipedia.org/wiki/Curse\_of\_dimensionality}。这一瓶颈深深限制了ngram模型的实际应用。而神经网络在表示n-gram 时，可以通过一些组合方式对n 个词进行组合，其优点显而易见：参数个数仅以线性速度增长。有了这一优势，神经网络模型可以对更复杂的上下文进行建模，在从训练后的模型提取出来的词向量中包含更丰富的语义信息。
+在自然语言处理研究领域中，基于神经网络的分布式表示（Distributional Representation）一般统称为词向量（Word Vector）、词嵌入（Word Embedding）或者分布式表示（Distributed Representation）~\upcite{DBLP:conf/nips/MikolovSCCD13}。神经网络词向量表示技术，是通过神经网络技术对：1）单词的语境，即上下文（Context）；2）以及上下文与下一步的目标单词之间的关系（Next-Utterance Prediction），这两个主要的部分进行建模。
+由于神经网络结构或各种组合较为灵活，这类方法的最大优势在于可以表示复杂的上下文语义（Complex Context）。历史上的方法主要是基于单词共现矩阵（Co-occurrence Matrix）的分布表示方法，最常用的上下文仅仅是利用了单词的顺序信息。单词的语义向量是通过给这个单词共现矩阵进行矩阵分解，例如奇异值分解（Singular Value Decomposition，SVD），潜在语义分析（Latent Semantic Analysis，LSA），也可以写成潜在语义索引（Latent Semantic Indexing，LSI)分解算法。其中对于SVD分解算法，第一个分解获得的矩阵就是我们模型输出的单词的词向量矩阵。然而，如果使用包含词序信息的~N-gram~作为上下文，当~$N$~增加时，N-gram 的所需要存储的单词序列总数会呈指数级增长，此时会遇到维数灾难问题（Curse of Dimensionality）\footnote{https://en.wikipedia.org/wiki/Curse\_of\_dimensionality}。这一瓶颈深深限制了~N-gram~模型的实际应用。而用神经网络替代表示~N-gram~的单词概率分布时，可以通过一些组合方式对~N~个词进行组合，其优点显而易见：神经网络语言模型所需要的参数数量仅以线性速度增长。有了这一优势，神经网络模型可以对更复杂的上下文进行建模，在从训练后的模型提取出来的词向量中包含更丰富的语义信息。
 
-到目前为止，在语言模型的研究领域中，所应用到的神经网络模型主要包括： 传统前向传递神经网络（Feed Forward Neural Network, FFNN）、循环神经网络（Recurrent Neural Network, RNN）三种基本的建模方案。当然基于这些基本组件，我们还可以构造更复杂的模型结构，但无法保证复杂模型一定优于简洁的模型结构。
+到目前为止，在语言模型的研究领域中，所应用到的神经网络模型主要包括： 传统前向传递神经网络（Feed Forward Neural Network, FFNN）、循环神经网络（Recurrent Neural Network, RNN）三种基本的建模方案。当然基于这些基本组件，我们还可以构造更复杂的模型结构，但是我们无法保证复杂模型一定在效率和精确度上优于简洁的模型结构。复杂的模型可以表征更复杂的本文语义信息，例如句子的依存关系结构或者句子的句法分析树结构，但是这样的效果不一定能保证模型的泛化性能（Generalization）会很好，因为日常聊天文本的语序是混乱的，很难找到学者良好定义的句子关系，所以也无法让模型从混乱的文本分布中学习到有效的句子结构，以提升模型的精度。最好的模型，显然是假设越弱越合适，因为针对复杂的网络文本数据，我们模型训练所需要的要求越弱，模型越容易收敛并获得我们想要的结果。模型假设越强，模型所需要的数据质量越高，实际稳定性就会降低，产生得不偿失的后果。
 
-另外在本论文讨论的语言模型的大规模应用中遇到的针对大词表问题，目前现有的主要解决方法主要可以分为以下三种种策略。单词拆分算法（Vocabulary Truncation）、采样估计模型（Sampling-based Approximation）和层次分解模型（Vocabulary Factorisation），我们会陆续介绍。其中本论文重点是研究基于类别的多元分类模型(class-based hierarchical softmax， cHSM）和基于二叉树的二元分类模型（class-based hierarchical softmax，tHSM），这两种算法我们分别在下一章更详细讨论和介绍。
+语言模型的历史发展
+除此以外，针对在本论文所讨论的语言模型的大规模应用过程中所遇到的大词表问题，目前现有的主要解决方法主要可以分为以下三种种策略：单词拆分算法（Vocabulary Truncation）、采样估计模型（Sampling-based Approximation）和层次分解模型（Vocabulary Factorisation），我们会在接下来的章节陆续介绍。其中本论文重点是研究基于类别的多元分类模型(class-based hierarchical softmax， cHSM）和基于二叉树的二元分类模型（class-based hierarchical softmax，tHSM），这两种算法我们分别在下一章更详细讨论和介绍。
 
 \section{语言模型}
-在这一节中，我们从语言模型任务的形式化定义开始，以阐述语言模型的训练目标和实际应用~\upcite{DBLP:journals/tnn/ChienK16}。一个好的语言模型应当考虑对文本的两种特征进行建模：语法特征（Syntactics）和语义特征（Semantics）。为了保证语法的正确性，我们往往只需要考虑生成的单词的前面的上下文（Previous Context），这也就意味着语法特性往往只对局部特征（Local Representation）进行建模。而语义的一致性则复杂了许多，我们需要考虑更大、更完善的上下文信息乃至整个文档语料，来获取正确的全局语义（Global Context）。
+在这一节中，我们将首先从语言模型提出的实际任务的形式化定义开始，以阐述语言模型的训练目标和实际应用场景~\upcite{DBLP:journals/tnn/ChienK16}。一个好的语言模型应当考虑对文本的两种特征进行建模：语法特征（Syntactics）和语义特征（Semantics）。为了保证语法的正确性，我们往往只需要考虑生成的单词的前面的上下文（Previous Context），这也就意味着语法特性往往只对局部特征（Local Representation）进行建模。而语义特征的一致性则复杂了许多，它意味着我们需要考虑更大、更完善的上下文信息乃至整个文档语料，来获取正确的全局语义（Global Context）而不仅仅是局部语义信息（Local Context）。
 
 
-具体地来说，给定一个包含$T$个字的序列：$w_1,w_2,\cdots,w_T$，这个序列的对数概率（Log-probability），即描述该序列作为一个合理且合法的句子的流畅性（Fluency）概率和出现该单词组合的句子的可能性（ Likelihood）。它可以使用马尔可夫链规则分解成一系列的条件概率的联合分布：
+具体地来说，给定一个包含$T$个单词的序列：$w_1,w_2,\cdots,w_T$，这个序列的对数概率（Log-probability），即描述该序列作为一个合理且合法的句子的流畅性（Fluency）概率和出现该单词组合的句子的可能性（ Likelihood），可以使用马尔可夫链规则分解成一系列的条件概率的联合分布：
 \begin{equation}
 \label{laguage_model}
  \log p(w_1,\cdots, w_T ) = \sum_{t=1}^T \log p(w_t | w_{1:t-1}),
 \end{equation}
-其中前 $t-1$个单词在本论文中一律记作$w_ {1:t-1}$。进而，条件概率~$p(w_t | w_ {1:t-1})$表示给定其前面上下文$w_ {1:t-1} $作为输入的下一个单词的条件概率（Conditional Probability）， 传统上可以由前馈网络建模~\upcite{DBLP:journals/jmlr/BengioDVJ03}。 在训练的过程中，整个模型以最小化每个时间步的交叉熵损失（Cross Entropy Loss）：
+其中前 $t-1$个单词在本论文中一律记作$w_ {1:t-1}$。进而，条件概率~$p(w_t | w_ {1:t-1})$表示给定其前面上下文$w_ {1:t-1} $作为预测的下一个单词的条件概率分布（Conditional Probability）。最早的传统方法可以由前馈网络来建模这个上下文信息， 同时用多标签概率函数（Multi-class Classification）来表示下一个单词的概率分布计算公式~\upcite{DBLP:journals/jmlr/BengioDVJ03}。 在训练的过程中，整个模型以最小化每个单位预测步骤里面的交叉熵损失（Cross Entropy Loss）：
 \begin{equation}\label{equ:losses}
   \ell=\sum_{t=1}^{T}\ell_t=\sum_{t=1}^{T}\log p(w_t | w_{1:t-1})
 \end{equation}
-其中交叉熵的代价函数$\ell$ 的定义：是当编码方案不一定完美时（由于对概率分布的估计不一定正确），平均编码长度的是多少。它是由$ \texttt{KL}$散度（Kullback–Leibler Divergence），也叫做相对熵（Relative Entropy），推导而获得的。需要注意的是，$  \texttt{KL}   $散度的计算公式是：
+其中文本或者句子的交叉熵的代价函数$\ell$ 的实际定义为：是当编码方案不一定完美时（由于对概率分布的估计不一定正确），平均编码长度的是多少。这里的编码长度就是指的是如何用01字节对所有的单词进行最短的编码，保证单词之间两两不互相冲突。它是由$ \texttt{KL}$散度（Kullback–Leibler Divergence），也叫做相对熵（Relative Entropy），推导而获得的。需要注意的是，$  \texttt{KL}   $散度的计算公式是：
 \begin{equation}\label{equ:losses}
   \texttt{KL}(p||q)=-\sum_{t=1}^{T}p(x)\log q(x) - (\sum_{t=1}^{T}p(x)\log p(x))
 \end{equation}
