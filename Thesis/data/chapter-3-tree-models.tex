@@ -1,7 +1,7 @@
 \RestyleAlgo{boxed}
 \chapter{并行树状概率计算模型}
 \section{引言}
-在本章中，我们将这个预测端的词用二叉树的分层的形式表示，使它们的编码适配基于树的分层概率计算。首先，我们提出了一个在分层结构上建模参数的字编码方案。因为考虑到GPU上的算法的并行计算的吞吐性能，我们进而推导出紧凑的代价函数及其梯度公式，使得分层模型在GPU设备上的能并行计算模型的内部概率函数。
+在本章中，我们将这个预测端的词表用二叉树的分层的形式表示，使单词基于二叉树的路径的编码适配基于树的分层概率计算。首先，我们提出了一个在分层结构上建模参数的单词编码方案。与此同时，因为考虑到GPU设备上的算法的并行计算的吞吐性能，我们进而推导出紧凑的代价函数及其梯度公式，使得该分层模型在GPU设备上的能并行计算分层模型的内部概率函数，而不是线性计算模型概率，浪费GPU设备的高并行的特性。
 
 同时，树上的单词分布对其性能有很大的影响，应该在训练阶段之前定义。在本实验中，我们并不打算考虑那些在训练过程中动态交换子树的算法进而改变了单词在子树上的分布结构， 而是我们采用了几个分层聚类策略，用统计，句法和语义知识来初始化其结构，以达到一个稳定和可以预期的性能。
 
@@ -39,7 +39,7 @@ $\Gamma$ &路径查找表，给定路径序列，可以获得对应的单词& \\
 如图~\ref{fig:tree_hsm}~所示，内部参数向量 $\theta_i^w$, 边 $d_i^w$ 并且单词在树的叶子节点上。除此之外, 加粗的那条路径从根节点到叶子节点 $w$ 被定义为参数对 $(d^w,\theta^w)$。其中 $d^w$ 是一个向量， $\theta^w$ 是一个参数矩阵. 例如, 图里面的参数实际结果是 $d^w=[-1,+1,-1]$ ， $d^{v}=[-1,+1,+1]$。
 \begin{figure}[!h]
   \centering
-    \includegraphics[width=0.8\linewidth]{./figures/thsm.pdf}
+    \includegraphics[width=1\linewidth]{./figures/thsm.pdf}
 \caption{树状层次概率模型}\label{fig:tree_hsm} %
 \end{figure}
 
@@ -52,7 +52,9 @@ p(d^w_i|\theta_{i}^w,h) =\sigma(\theta_{i}^w h)^{d_i^w}\times(1-\sigma(\theta_{i
 \begin{equation}\label{equ:sig}
 \begin{split}
 \sigma(z)+ \sigma(-z)  &=\frac{1}{1 + \exp(-z)}+\frac{1}{1 + \exp(z)}\\
-  &=\frac{\exp(z)}{1 + \exp(z)}+\frac{1}{1 + \exp(z)}=\frac{1 + \exp(z)}{1 + \exp(z)}=1
+  &=\frac{\exp(z)}{1 + \exp(z)}+\frac{1}{1 + \exp(z)}\\
+  &=\frac{1 + \exp(z)}{1 + \exp(z)}\\
+  &=1
 \end{split}
 \end{equation}
 该计算规则可以用来帮我们把公式~\ref{equ:pp}~缩写成一下更简洁的形式~\upcite{minka2003algorithms}：
@@ -68,22 +70,26 @@ p(d^w_i=\pm 1|\theta_{i}^w,h) = \sigma({d_i^w}\theta_{i}^w h)
  因此，我们传统意义上计算的单词的概率在这里指的是：单词$ w $在二叉树上的概率，即从根到相应叶节点的路由概率$(d^w,\theta^w)$的联合乘积：
 \begin{equation}\label{equ:pw}
 \begin{split}
- \log p(w|h)=&\log\prod_{i=0}^{l^w-1} p(d^w_i|\theta_{i}^w,h) = \sum_{i=0}^{l^w -1} \log\sigma(d_i^w \theta_{i}^w h)\\
- =&\log\sigma({d^w}^\top \theta^w h)=\zeta(- {d^w}^\top \theta^w h )
+ \log p(w|h)=&\log\prod_{i=0}^{l^w-1} p(d^w_i|\theta_{i}^w,h) \\
+ =& \sum_{i=0}^{l^w -1} \log\sigma(d_i^w \theta_{i}^w h)\\
+ =&\log\sigma({d^w}^\top \theta^w h)\\
+ =&\zeta(- {d^w}^\top \theta^w h )
  \end{split}
 \end{equation}
 其中 $\zeta(z)$ 代表 softplus 函数: $\zeta(z)= \log (1+\exp(z))$。 该函数的导数是 $\sigma$ 函数, 其导数计算公式是: ${\mathrm{d}\zeta(z)}/{\mathrm{d} z}= \sigma(z)$~\upcite{DBLP:conf/nips/DugasBBNG00}。如图所示， softplus 函数通常被视为 ReLU函数的替代函数，因为他们两个函数除了零点附近分布不一样以外，其他地方分布相同。但是softplus函数在零点附近可导，ReLU函数在零点附近不可导。ReLU被使用的更多，因为它能获得近似线性的参数表示，这样能防止模型学习出复杂的表示。
 \begin{figure}[!ht]
   \centering
-\includegraphics[width=0.6\linewidth]{./figures/relus.pdf}
+\includegraphics[width=1\linewidth]{./figures/relus.pdf}
 \caption{Softplus和ReLU函数的示意图}\label{fig:soft}
 \end{figure}
 
 接下来，我们给出模型相应的损失函数$ \ell(\theta | h,w)$，它是定义在二叉树上面的负对数似然函数（Negative Log-Likelihood，NLL）：
 \begin{equation}\label{equ:cost}
 \begin{split}
-   \ell(\theta|h,w) =&-\log\prod_{i=0}^{l^w -1} \sigma(d_i^w \theta_{i}^w h) = -\log \sigma({d^w}^\top \theta^w h)\\
-    =& \log (1+\exp(- {d^w}^\top \theta^w h )) =  \zeta(- {d^w}^\top \theta^w h )
+   \ell(\theta|h,w) =&-\log\prod_{i=0}^{l^w -1} \sigma(d_i^w \theta_{i}^w h) \\
+   =& -\log \sigma({d^w}^\top \theta^w h)\\
+    =& \log (1+\exp(- {d^w}^\top \theta^w h )) \\
+    =&  \zeta(- {d^w}^\top \theta^w h )
 \end{split}
 \end{equation}
 从此公式中，我们可以发现最小化基于树的负对数似然值，意味着直接最大化softplus损失和估计字的概率。
@@ -107,7 +113,10 @@ p(d^w_i=\pm 1|\theta_{i}^w,h) = \sigma({d_i^w}\theta_{i}^w h)
 
 在这个模型中，我们采用二叉树分解的方法，主要是考虑到它一个优点是：它避免了在整个词汇表中概率的归一化，因为树中词的汇总概率自然等于1。
 \begin{equation}
-\sum_{w\in \mathcal{V}}{p(w|h)}=\sum_{w \in \mathcal{V}}\sum_{i=0}^{l^w-1}{\sigma(d_i^w\theta_{i}^w h)}=1.
+\begin{split}
+\sum_{w\in \mathcal{V}}{p(w|h)}=&\sum_{w \in \mathcal{V}}\sum_{i=0}^{l^w-1}{\sigma(d_i^w\theta_{i}^w h)}\\
+=&1.
+\end{split}
 \end{equation}
 
 
@@ -122,7 +131,10 @@ p(d^w_i=\pm 1|\theta_{i}^w,h) = \sigma({d_i^w}\theta_{i}^w h)
 \end{equation}
 其中概率$ p(w | h)$和单词$ w $的对数概率$ \log p(w | h)$可以直接通过等式~\ref{equ:pw}~和公式~\ref{equ:cost}~逐步计算出来。 因此，我们可以推导出这个序列的概率为：
 \begin{equation}
-   \log p(w_1,\cdots, w_T)=\sum_{t=1}^T\log p(w_t|h_t) = -\zeta(- {d^{w_t}}^\top \theta^{w_t} h_t )
+\begin{split}
+   \log p(w_1,\cdots, w_T)=&\sum_{t=1}^T\log p(w_t|h_t) \\
+   =& -\zeta(- {d^{w_t}}^\top \theta^{w_t} h_t )
+\end{split}
 \end{equation}
 显然，这种类型的操作比传统的softmax方法有效得多，因为它只需要$\mathcal{O}(\mathcal {| H | \log| V |})$计算复杂度，而传统的softmax算法却需要$\mathcal{O}(\mathcal {| H || V |})$。
 
@@ -172,15 +184,17 @@ $w=\Gamma(\mathtt{path})$\;
 词汇表中每个单词$(d^w,\theta^w)$的极性编码与树的结构密切相关。因此对于提出的p-tHSM算法，我们采用了多种树聚类算法来初始化单词在二叉树上的分布，以提高左后模型的精确性和稳定性。总的来说，这些聚类算法为每个单词生成二进制前缀字符串，表示树中单词的位置，并将用于初始化p-tHSM方法。
 
 
-1）一元聚类算法。它根据词频对词汇进行排序，并根据单词统计从底端到顶端进行合并，也称为霍夫曼编码~\upcite{DBLP:conf/nips/MikolovSCCD13}。
+1）一元单词聚类算法。它根据词频对词汇进行排序，并根据单词统计从底端到顶端进行合并，也称为霍夫曼编码~\upcite{DBLP:conf/nips/MikolovSCCD13}。
 
 霍夫曼编码的构造过程。1） 根据$\mathcal{|V|}$个权值$\{w_1,w_2,\cdots,w_{\mathcal{|V|}}\}$，生成$\mathcal{|V|}$棵只有单个结点的树，没有左右子树的二叉树的集合$F\{T_1,T_2,\cdots,T_{\mathcal{|V|}}\}$，其中每颗树的根节点都有一个权值$w_i$；2） 在~$F$~中选取两颗根节点的权值最小的树作为左右子树构造一颗新的二叉树。对于这两颗子树，权值小的作为左子树，权值大的作为右子树。新的二叉树的权值是两颗子树的权值之和；3）将2步选取的两颗树在$F$中删除，并将新二叉树加入$F$中。4）重复2，3步，直到~$F$~中只有一颗树为止。
 
 \begin{algorithm}[!ht]
 \SetAlgoLined
 \KwData{单词和对应的频度词典 frequenties;}
-{Q=PriorityQueue()} \tcp*[r]{初始化优先队列$Q$}
-\For(\tcp*[h]{((freq,word),index)}){$v \gets frequenties$}{
+{初始化优先队列$Q$}\;
+{Q=PriorityQueue()} \;
+{((freq,word),index)}\;
+\For{$v \gets frequenties$}{
 {Q.put(v)}\;
 }
 {$idx=0$}\;
@@ -194,11 +208,18 @@ $w=\Gamma(\mathtt{path})$\;
 \caption{基于单词频率的霍夫曼建树策略}\label{code:huffman}
 \end{algorithm}
 
-当我们构造完霍夫曼二叉树后，我们需要遍历这棵树来获取所有单词的极性编码霍夫曼编码：1）计算待压缩数据中所有的字符及其出现次数，根据次数的不同对没个字符分配不同的权值（一般用出现频率/总字符数）。2）对所有带压缩字符按起权值，构造一颗霍夫曼树。3）对这棵树所有子树的左支用$-1$编码，右支用$+1$编码。每个位于叶子节点的字符的编码为从根节点到该叶子节点路径上的$-1,+1$编码值,这个在这棵树上重新得到的编码叫霍夫曼编码。这样可以得到每个字符的极性编码。
+当我们构造完霍夫曼二叉树后，我们需要遍历这棵树来获取所有单词的极性编码霍夫曼编码：
+\begin{enumerate}
+  \item 计算待压缩数据中所有的字符及其出现次数，根据次数的不同对没个字符分配不同的权值（一般用出现频率/总字符数）;
+  \item 对所有带压缩字符按起权值，构造一颗霍夫曼树;
+  \item 对这棵树所有子树的左支用$-1$编码，右支用$+1$编码。每个位于叶子节点的字符的编码为从根节点到该叶子节点路径上的$-1,+1$编码值,这个在这棵树上重新得到的编码叫霍夫曼编码。这样可以得到每个字符的极性编码.
+\end{enumerate}
 \begin{algorithm}[!ht]
 \SetAlgoLined
 \KwData{单词和对应的频度词典 frequenties;}
-collector=[], polarity=[], param=[]\;
+collector=[]\;
+polarity=[]\;
+ param=[]\;
 \If{self.left}{
     \eIf{isinstance(self.left[1],Node)}{
           {self.left[1].preorder(polarity+[-1],param+[self.index],collector)}\;
@@ -207,7 +228,8 @@ collector=[], polarity=[], param=[]\;
     }
     }
     \If{self.right}{
-        \eIf(\tcp*[h]{右子树存在}){isinstance(self.right[1],Node)}{
+    {右子树存在}\;
+        \eIf{isinstance(self.right[1],Node)}{
           self.right[1].preorder(polarity+[1],param+[self.index],collector)
         }{\tcp*[h]{左子树存在}\;
           collector.append((self.right[1],param+[self.index], polarity + [1]))
@@ -219,12 +241,12 @@ collector=[], polarity=[], param=[]\;
 如图~\ref{fig:zipf}~所示，我们算法中用到输入信息$frequenties$指的是单词的词频分布。
 \begin{figure}[!ht]
   \centering
-\includegraphics[width=0.6\linewidth]{./figures/zipf.png}
+\includegraphics[width=1\linewidth]{./figures/zipf.png}
 \caption{单词 Unigram分布示意图}\label{fig:zipf}
 \end{figure}
 
 其对应的二叉树的数据结构采用基于数组的方式管理和访问。如下所示，每个节点（Node）包含信息为：左子树，右子树，节点编号。同时我们还定义了节点的打印字符串函数（即``\_\_repr\_\_''），方便我们检查数据结构是否正确实现。
-\begin{minted}[mathescape,linenos=False,gobble=1,frame=lines,baselinestretch=1.0,fontsize=\footnotesize,framesep=1mm]{python}
+\begin{minted}[mathescape,linenos=False,gobble=1,frame=lines,baselinestretch=1.0,framesep=1mm]{python}
  class Node(object):
   def __init__(self,left=None,right=None,index=None):
    self.left=left
@@ -244,7 +266,7 @@ collector=[], polarity=[], param=[]\;
 2）二元聚类算法\footnote{布朗聚类：https://github.com/percyliang/brown-cluster}。它是一个层次聚类算法，使用bigram上下文来确定单词的分布相似性，将相似的单词放置在二叉树的附近位置~\upcite{DBLP:journals/coling/BrownPdLM92,liang2005semi}。在将簇大小指定为1之后，它从底部到顶部合并具有一个节点的单词。生成的单词二进制路由正是分层二进制结构的分布。
 \begin{figure}[!ht]
   \centering
-\includegraphics[width=0.6\linewidth]{./figures/brown.png}
+\includegraphics[width=1\linewidth]{./figures/brown.png}
 \caption{布朗聚类分布示意图}\label{fig:brown}
 \end{figure}
 
