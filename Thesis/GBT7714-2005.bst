@@ -52,7 +52,7 @@ ENTRY                                             % class Entry {
   series                                          %   String series;
   volume                                          %   String volume;
   number                                          %   String number;
-  version 										  %	  String version;
+  version 										                    %	  String version;
   month                                           %   String month;
   school                                          %   String school;
   institution                                     %   String institution;
@@ -121,7 +121,7 @@ FUNCTION {cap.space}      {" "}
 FUNCTION {cap.period} 		{"\@. "}
 FUNCTION {cap.comma} 			{"\@, "}
 FUNCTION {cap.colon} 			{"\thinspace{}\textnormal{: }"}
-FUNCTION {cap.double.slash} 	{" //\thinspace{}"}
+FUNCTION {cap.double.slash} 	{" .\thinspace{}"}
 FUNCTION {cap.dash} 			{"\thinspace{}\textnormal{--}\thinspace{}"}
 
 % Predefined latex command used to format the style of bibitems
@@ -623,9 +623,9 @@ FUNCTION {format.names} {                         % String Entry::format_names(S
     remove.dots 'jrname :=                        %     jrname = remove_dots(tmp);
     namelist nameindex "{f}" format.name$         %     tmp = format_name(namelist, nameindex, "{f}");
     remove.dots                                   %     tmp = remove_dots(tmp);
-    "u" change.case$ 'firstname :=                %     firstname = change_case(tmp, "u");
+    'firstname :=                                 %     firstname = change_case(tmp, "u");
     namelist nameindex "{ll}" format.name$        %     tmp = format_name(namelist, nameindex, "{ll}");
-    "u" change.case$ 'lastname :=                 %     lastname = change_case(tmp, "u");
+    'lastname :=                                  %     lastname = change_case(tmp, "u");
     jrname empty$ not {                           %     if (! empty(jrname)) {
       jrname * " " *                              %       result = result + jrname + " "
     } 'skip$ if$                                  %     }
@@ -1748,6 +1748,8 @@ FUNCTION {inbook.impl} {                          % void Entry::inbook_impl() {
   cap.double.slash write$                         %   write(cap_double_slash);
   false output.editor                             %   output_editor(false);
   true output.series.volume.booktitle             %   output_series_volume_booktitle(true);
+  "C" set.mark
+  true output.mark
   false output.edition                            %   output_edition(false);
   publisher empty$ not {                          %   if (! empty(this.publisher)) {
     true output.address                           %     output_address(true);
@@ -1780,7 +1782,7 @@ FUNCTION {incollection} {                         % void Entry::incollection() {
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                                                   %
 FUNCTION {inproceedings} {                        % void Entry::inproceedings() {
-  "C" set.mark                                    %   set_mark("C");
+  "A" set.mark                                    %   set_mark("A");
   inbook.impl                                     %   inbook_impl();
 }                                                 % }
                                                   %

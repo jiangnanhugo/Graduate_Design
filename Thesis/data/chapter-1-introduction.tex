@@ -1,20 +1,25 @@
 \chapter{绪论}
 \section{课题来源与意义}
-近几年来，随着互联网（Internet）的兴起和发展，互联网上积累的的数据呈现急剧膨胀的态势。根据国际数据信息公司\footnote{https://www.idc.com/}（International Data Corporation, IDC）的统计和预测，2017 年全球网络数据量已经达到1.8ZB，到2025 年，全球数据累积总量预计还将增长大约 50 倍。随着这类大量无标注数据（Unlabeled Data）的出现，也让研究人员开始考虑，如何利用现有的算法从这些大规模无标注的文本数据中自动挖掘规律和知识，以提取出有用的信息。自从 2006 年，加拿大多伦多大学教授 Geoffrey Hinton 提出的深度学习（Deep Learning, DL）概念以来\upcite{hinton2006reducing}，这一新的想法为解决如何利用爆炸的数据量，以提取有效知识带来了新的思路。在这之后的发展中，基于神经网络（Neural Network，NN）的表示学习技术（Representation Learning）开始在各个研究领域崭露头角。尤其在图像分类(Image Classification)和语音自动识别(Automatic Speech Recognition，ASR)领域的多个任务上，基于表示学习的方法在性能和精确度上均超过了传统基于特征提取（Feature Extraction）的方法。
+近几年来，随着互联网（Internet）的兴起和发展，互联网上积累的的数据呈现急剧膨胀的态势。根据国际数据信息公司\footnote{https://www.idc.com/}（International Data Corporation, IDC）的统计和预测，2017 年全球网络数据量已经达到1.8ZB，预计到2025 年，全球网站数据累积总量预计还将增长大约 50 倍。随着这类大量无标注数据（Unlabeled Data）的出现，也让研究人员开始考虑，如何利用现有的算法从这些大规模无标注的文本数据中自动挖掘规律和知识，以提取出有用的信息。自从 2006 年，加拿大多伦多大学教授 Geoffrey Hinton 提出的深度学习（Deep Learning, DL）概念以来\upcite{hinton2006reducing}，这一新的想法为解决如何利用爆炸的数据量，以提取有效知识带来了新的思路。在这之后的发展中，基于神经网络（Neural Network，NN）的表示学习技术（Representation Learning）开始在各个研究领域崭露头角。尤其在图像分类(Image Classification)和语音自动识别(Automatic Speech Recognition，ASR)领域的多个任务上，基于表示学习的方法在性能和精确度上均超过了传统基于特征提取（Feature Extraction）的方法。
 
 随着应用领域的拓展，深度学习技术（Deep Learning）逐渐在自然语言处理中（Natural Language Processing, NLP）得到广泛应用。 例如，蒙特利尔大学教授 Yousha Bengio 提出用神经网络(Neural Network, NN) 来训练语言模型(Language Mode，。LM)，并对模型中的各个结构细节进行了相关探索\upcite{DBLP:conf/nips/BengioDV00}。因为输入的维度是固定的N个单词的词向量，而不是动态长度，所以该方法不能处理单词的长距离单词依赖问题。
-在语言模型的后续的工作中，基于循环神经网络（Recurrent Neural Network， RNN）的语言模型建模方法由其学生 Tomas Mikolov 进行了极大拓展和完善\upcite{DBLP:conf/interspeech/MikolovKBCK10}。 循环神经网络通过学习和训练能够将当前词的历史信息存储起来，基于单词的整个上下文（Context）作为依据，来预测下一个词出现的概率。因为训练过程中，单词的所有前面出现的上下文都是同时输入的，所以单词的长距离依赖关系也可以被学习到，所以该方法在建模理论上克服了 N-gram 语言模型和最初的神经网络语言模型的无法利用语句中长距离上下文依赖（Long Term Dependency）的缺点。 另外，在模型训练的过程中，由于词的历史信息被映射到低维连续空间，语义相似的单词被聚类到的某一子空间中，满足了单词的语义相似的要求。同时对那些在语料中出现次数较少的词，他们仍然能够得到很好的训练，不再需要额外的数据平滑技术(Smoothing Technology)。
-迄今为止，采用RNN 结构的语言模型在模型困惑度(Perplexity, PPL)和识别系统的识别率（Accuracy）上都取得了最好的效果。
+针对语言模型这个主题的后续的工作中，其学生 Tomas Mikolov提出了采用循环神经网络（Recurrent Neural Network， RNN）\upcite{DBLP:journals/cogsci/Elman90}对上下文信息作为建模策略的方法，并将该理论进行了拓展和简化\upcite{DBLP:conf/interspeech/MikolovKBCK10}。
+循环神经网络主要特点是能够记忆该单词之前的所有出现过的单词的信息，即所谓的全局上下文信息，用来预测下一个单词出现的对数概率分布。
+相比于神经网络语言模型，因为训练过程中，单词的所有前面出现的上下文都是同时输入的，所以单词的长距离依赖关系也可以被学习到，所以该方法在建模理论上克服了最初的神经网络语言模型的无法利用语句中长距离上下文依赖（Long Term Dependency）的缺点。
+另外，在模型训练的过程中，由于词的历史信息被映射到低维连续空间，语义相似的单词被聚类到的某一子空间中，满足了单词的语义相似的要求。相比于Ngram模型，他不需要平滑技术(Smoothing Technology)来对文本中出现次数少的单词做处理。
+到目前为止，RNN已经演变出各种结构，应用在非常多的文本任务上面，并且都能取得了较为满意的结果。
 
-迄今为止，采用RNN 训练的语言模型在模型困惑度(Perplexity, PPL)和识别系统的识别率上都取得了最好的效果。 RNN 建模方法虽然表现出极大的优越性，却以牺牲计算复杂度为代价。 若训练大规模的文本语料，则需要花费很长的时间，这一巨大的时间消耗制约了RNN 语言模型训练效率，并且导致其无法广泛应用到现实场景中去。 为克服这一计算时间消耗巨大的不足，在文献~\cite{DBLP:conf/icassp/MikolovKBCK11}~中，Tomas Mikolov 提出了多种优化策略来降低网络的计算复杂度，例如：缩短模型训练周期、减少训练数据集的规模、降低训练词表（Vocabulary）的大小、减少隐含层的节点数等策略，这些方法都在一定程度上降低了网络的运算量，提高了模型的训练效率，但同时这些策略也牺牲了较多的模型性能和精确度。 另外，在网络结构层面方面，在文献~\cite{DBLP:journals/coling/BrownPdLM92}中，Brown等人~研究了一种基于分类的循环神经网络(Class-based RNN) 结构，该网络的输出层被分解为两部分，增加的一部分称为分类层。该模型从结构上降低了整个网络的计算复杂度，使得模型训练效率有了一定的提升且模型性能没有较大的变化。 然而，在实际大词汇量连续语音识别系统中，采用此结构训练大规模语料语言模型仍需要花费大量时间。 因此，该模型结构的训练效率有待进一步优化。
+由于RNN网络的计算时间与句子的平均长度正相关，所以基于RNN建模的算法计算时间都很大，所以需要更长的时间收敛。若我们实验的采用的训练文本大小超过1GB，那么我们只能采用基于C++语言实现的模型代码，基于Python实现的模型已经需要足足一个多月收敛了。同时，我们需要看到最简单的RNN模型所使用的参数数量是NNLM的两倍多，这也意味着RNN模型需要占用更大的内存空间，消耗了极大的计算资源，导致其无法广泛应用到现实场景中去。
+在文献~\cite{DBLP:conf/icassp/MikolovKBCK11}~中，Tomas Mikolov 提出了多种优化策略来消除该模型的各种缺点，例如：缩短模型求导步数、对表（Vocabulary）做分解~\cite{DBLP:journals/coling/BrownPdLM92}等策略，这些计算策略能保证模型的计算精度，同时极大提高了RNN网络的运算效率。
 
 \section{国内外研究现状}
-语言模型可以用来对一段文本序列的概率进行估计，对该模型信息检索（Information Retrieval）、机器翻译(Machine Translation)、语音识别（Speech Recognition）等任务有着重要的作用。语言模型的发展历史可以主要分为两个阶段：统计语言模型（Statistical Language Model）和神经网络语言模型（Neural Language Model）。其中统计模型主要指的是N-gram 语言模型，而随着深度学习的发展，神经网络语言模型逐渐发展并产生了各种变体。我们接下来会对这两个演化阶段所涉及的算法一一介绍。
+语言模型可以用来对一段文本序列的概率进行估计，该模型在信息检索（Information Retrieval）、机器翻译(Machine Translation)、语音识别（Speech Recognition）等任务上都有着极为重要的作用。考虑到语言模型的漫长的发展历史，我们可以划分为两个主要阶段：统计语言模型（Statistical Language Model）和神经网络语言模型（Neural Language Model）。
+其中，统计模型指代的是~N-gram~语言模型，而随着深度学习的爆发，各种神经网络语言模型变体逐渐发展并占据了主导地位。我们接下来会对这两个演化阶段所涉及的算法一一介绍。
 
 \subsection{N-gram 语言模型}
 首先我们开始介绍传统的~N-gram~语言模型，该算法属于典型的基于稀疏表示（Sparse Representation）的语言模型，因为一个单词表示方式是One-Hot Representation。该传统模型的意义不仅是提供了一种文本建模策略，而且定义了如何评价语言模型的好坏，并且定义了语言模型所涉及的相关拓展问题。
 
-首先我们给出~N-gram~统计语言模型的形式化定义。统计语言模型的作用是为一个长度为$m$ 的字符串确定一个概率分布$p(w_1,w_2,\cdots,w_m)$，以表示其存在或者出现的可能性，其中$w_1$ 到$w_m$ 依次表示这段文本中的各个单词。一般在实际求解过程中，通常采用链式法则（Chain Rules）将计算这个单词序列概率分解成计算各个单词的条件概率值：
+首先我们给出~N-gram~统计语言模型的形式化定义。假设给定一个长度为$m$ 的单词字符串，$w_1$ 到$w_m$ 依次表示这段文本中的各个单词，我们需要求解一个概率分布$p(w_1,\cdots,w_m)$，以表示该字符串存在或者出现的可能性。在求解过程中，我们通常使用链式法则（Chain Rules）将计算这个单词序列概率分解成计算各个单词的条件概率值：
 \begin{equation}
 \label{equ:lm}
 \begin{split}
@@ -27,7 +32,8 @@ p(w_1,\cdots,w_m) &= p(w_1) p(w_2|w_1) p(w_3|w_1,w_2)\cdots p(w_m | w_1,w_2,\cdo
 \label{equ:approx}
 p(w_i | w_1,w_2,\cdots,w_{t-1})  \approx p(w_i | w_{t-(n-1)},\cdots,w_{t-1})
 \end{equation}
-当$n = 1$ 时，该模型称为称一元模型（Uni-gram model），公式~\ref{equ:approx}~右部会退化成$p(w_i)$，此时，整个句子的概率计算公式为：$p(w_1,w_2,\cdots,w_m) = p(w_1)p(w_2) \cdots p(w_m)$。从公式~\ref{equ:approx}~中可以知道，一元语言模型中，文本的概率为其中各单词出现的概率的乘积。也就是说，模型假设了各个单词之间都是相互独立的，文本中的单词的先后顺序信息完全丢失。因此，该模型虽然估算方便，但性能有限而且实际精确度并不高。当$n = 2$ 时又称二元模型（Bi-gram model），代入公式~\ref{equ:approx}~中，右部为 $p(w_t|w_{t-1})$。常用的还有 $n = 3$ 时的三元模型（Tri-gram model），使用$p(w_t |w_{t-2},w_{t-1})$ 作为近似。这些方法均可以保留一定的词序信息。
+当$n = 1$ 时，我们称其为一元模型（Uni-gram model），公式~\ref{equ:approx}~右部将会退化成$p(w_i),i\in [1,n-1]$，此时，整个句子的概率计算公式为：$p(w_1,w_2,\cdots,w_m) = p(w_1)p(w_2) \cdots p(w_m)$。
+从公式~\ref{equ:approx}~中我们可以得知，一元模型中文本的概率是出现的各个单词的词频概率的乘积。也就是说，模型假设了各个单词之间都是相互独立的，文本中的单词的先后顺序信息完全丢失。因此，该模型虽然估算方便，但性能有限而且实际精确度并不高。当$n = 2$ 时又称二元模型（Bi-gram model），代入公式~\ref{equ:approx}~中，右部为 $p(w_t|w_{t-1})$。常用的还有 $n = 3$ 时的三元模型（Tri-gram model），使用$p(w_t |w_{t-2},w_{t-1})$ 作为近似。这些方法均可以保留一定的词序信息。
 
 传统方法采用单词或者n元组的词频来作为n元组的概率计算方法，该方法简单有效能满足线上负载的计算需求。但是随着n的增大，模型的参数呈现指数爆炸式增长、概率计算复杂度也相应上升。目前谷歌有在线存储的最大的~9~元模型（Google Ngram Viewer）\footnote{https://books.google.com/ngrams}，这已经是目前计算机系统存储，数据访问的极限了。
 
@@ -39,7 +45,7 @@ p(w_i | w_1,w_2,\cdots,w_{t-1})  \approx p(w_i | w_{t-(n-1)},\cdots,w_{t-1})
 由于神经网络对参数进行高度共享，因此对低频词具有天然的平滑能力。这里所指的神经网络语言模型(Neural Probabilistic Language Model, NPLM) ，最早由Bengio等人在2001年提出\upcite{DBLP:conf/nips/BengioDV00}， 近年来一些学者开始展开这方面的研究，并取得一系列成果，如~\cite{DBLP:conf/acl/BaroniDK14,DBLP:journals/sigkdd/BellK07,DBLP:journals/pami/BengioCV13,DBLP:journals/tnn/BengioSF94}~。 但总体而言， 对NPLM的研究还处在起步阶段。具体而言，NPLM通过一个多层感知网络(Multi-Layer Perceptron, MLP)来计算公式.~\ref{equ:approx} 中概率。
 \begin{figure}
   \centering
-  \includegraphics[width=1\linewidth]{./figures/nplm.pdf}
+  \includegraphics[width=.85\linewidth]{./figures/nplm.pdf}
   \caption{前馈神经网络语言模型}\label{fig:nplm}
 \end{figure}
 
@@ -54,10 +60,10 @@ h =& \tanh(Hx+b) \\
 y =&Wx + Uh +b'
 \end{split}
 \end{equation}
-其中 $H \in \mathbb{R}^{|h| \times (n-1)|e|}$ 为输入层到隐藏层的权重矩阵，$U \in \mathbb{R}^{|\mathrm{V}|\times (n-1)|h|}$ 为隐藏层到输出层的权重矩阵，$ |\mathrm{V}|$表示词表的大小，$|e|$ 表示词向量的维度，$|h|$ 为隐藏层的维度。$b,b'$ 均为模型中的偏置项。矩阵$W \in \mathbb{R}^{|\mathcal{V}|\times (n-1)|e|}$ 表示从输入层到输出层的直连边权重矩阵。由于直连边 $W$ 的存在，该模型可能会从非线性的神经网络退化成为线性分类器。因此，Bengio 等人在文中指出，如果使用该直连边，可以减少一半的迭代次数；但如果没有直连边，可以生成性能更好的语言模型。因此在后续工作中，很少有使用输入层到输出层直连边的工作，下文也直接忽略这一项。如果不考虑$W$ 矩阵，整个模型计算量最大的操作，就是从隐藏层到输出层的矩阵运算$Uh$，后续的模型均有对这一操作的优化。
+其中参数矩阵~$H$~指代输入层到隐藏层的权重，参数矩阵~$U$~表示隐藏层到输出层的权重\upcite{赵林2007一种新的基于结构的神经网络规则抽取方法}，参数向量~$b,b'$~均为模型中的偏置项（Bias）。另外，矩阵~$W$~表示直接从输入层到输出层的边所对应的权重。如果存在$W$，那么模型能直接学习一个线性模型，需要训练的时间减少；如果不存在$W$，模型学习到非线性的网络模型，具有更好的泛化性（Generalization Error）。因此在后续工作中，很少有使用输入层到输出层直连边的工作，下文我们也直接忽略这一种直连的操作。假设不考虑$W$ 矩阵，整个模型计算量最大的操作，就是从隐藏层到输出层的矩阵运算$Uh$，后续的模型均有对这一矩阵乘法计算做优化。
 
 \subsection{对数双线性语言模型}
-2007 年，Mnih 和Hinton 在神经网络语言模型（NNLM）的基础上提出了对数双线性语言模型（Log-Bilinear Language Model, LBL）~\upcite{DBLP:conf/icml/MnihH07}。LBL~模型与~NNLM~模型的区别正如它们的名字所示，其中~LBL~的模型结构是一个对数双线性结构；然而~NNLM~的模型结构为前馈神经网络结构。具体来讲，LBL 模型的代价函数为：
+2007 年，Mnih 和 Hinton 在神经网络语言模型（NNLM）的基础上提出了对数双线性语言模型（Log-Bilinear Language Model, LBL）~\upcite{DBLP:conf/icml/MnihH07}。LBL~模型与~NNLM~模型的区别正如它们的名字所示，其中~LBL~的模型结构是一个对数双线性结构；~NNLM~的结构是简单的前馈网络。具体来讲，LBL 模型的代价函数为：
 \begin{equation}
 \label{equ:lbl}
 \begin{split}
@@ -69,7 +75,7 @@ y =&Wx + Uh +b'
 
 LBL 模型的代价函数（公式~\ref{equ:lbl}） 与NNLM 的代价函数（公式~\ref{equ:nplm}）主要有两个区别。1) LBL 模型中，没有非线性的激活函数$\tanh$，而由于NNLM 是非线性的神经网络结构，激活函数必不可少；2) LBL 模型中，只有一份词向量$e$，也就是说，无论一个词是作为上下文，还是作为目标词，使用的是同一份词向量。其中第二点（只有一份词向量），只在原版的LBL 模型中存在，后续的改进工作均不包含这一特点。
 
-后来的几年中，Mnih 等人在LBL 模型的基础上做了一系列改进工作。其中最重要的模型有两个：层次对数双线性语言模型（Hierarchical LBL，HLBL）~\upcite{DBLP:conf/icml/MnihT12} 和基于向量的逆语言模型(inverse vector LBL，ivLBL)~\upcite{DBLP:conf/nips/MnihK13}。
+后来，Mnih~等人以~LBL~模型为基础，并对其所存在缺点做了一系列改进工作。其中最重要的模型有两个：层次对数双线性语言模型（Hierarchical LBL，HLBL）~\upcite{DBLP:conf/icml/MnihT12} 和基于向量的逆语言模型(inverse vector LBL，ivLBL)~\upcite{DBLP:conf/nips/MnihK13}。
 
 \subsection{循环神经网络语言模型}
 对于循环神经网络语言模型(RNNLM)来说，它则直接对$p(w_t | w_1,w_2,\cdots,w_{t-1}) $ 进行建模，而不使用公式~\ref{equ:approx}~对其进行简化~\upcite{mikolov2012statistical,DBLP:conf/interspeech/MikolovKBCK10} 。因此，RNNLM 可以利用所有的上文信息，预测下一个词，其模型结构如图~\ref{fig:rnnlm}~所示。
@@ -82,7 +88,7 @@ RNNLM 的核心在于其隐藏层的计算公式:
 
 \begin{figure}
   \centering
-  \includegraphics[width=1\linewidth]{./figures/rnnlm.pdf}
+  \includegraphics[width=.8\linewidth]{./figures/rnnlm.pdf}
   \caption{循环神经网络语言模型结构图}\label{fig:rnnlm}
 \end{figure}
 
@@ -97,9 +103,7 @@ RNNLM 的核心在于其隐藏层的计算公式:
 
 语言模型的大词表问题是目前理论应用到实际过程中必须要克服的问题，我们当然可以通过配置高性能服务器来暂时延缓该问题的后果。但是一旦应用到大数据集上，即使是目前最好的中央处理器（CPU）或者图形处理器通用计算（GPU），仍然需要一个多月时间才能训练完善。因此，在保证原有模型的准确率和精度的前提下，如何提高模型的训练速度是我们主要讨论和研究的内容。为此我们讨论了两个不同的内容：上下文信息建模效率和精度对比和大词表问题的优化和研究。
 
-针对上下文信息建模手段，目前主要采用的方案有以下几种：
-
-一种是采用子词(Subword)或者字符级别的词（Character-level）来直接缩小词表大小；一种是通过采样技术(Sampling-based Approximation)来减少必要的训练时间；一种是通过基于分类的多元分类(class-based hierarchical softmax, cHSM)来加速模型和采用基于树模型的多层二元分类模型(tree-based hierarchical softmax, tHSM)。
+针对上下文信息建模手段，目前主要采用的方案有以下几种：一种是采用子词(Subword)或者字符级别的词（Character-level）来直接缩小词表大小；一种是通过采样技术(Sampling-based Approximation)来减少必要的训练时间；一种是通过基于分类的多元分类(class-based hierarchical softmax, cHSM)来加速模型和采用基于树模型的多层二元分类模型(tree-based hierarchical softmax, tHSM)。
 
 同时，我们还需要针对CPU 和GPU设备分别进行探讨。因为传统的线性运算模型在流行的GPU并行运算方案中并不适用，所欲需要结合不同的运算设备分别讨论可行的方案。
 

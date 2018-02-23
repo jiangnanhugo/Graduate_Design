@@ -1,13 +1,5 @@
-\documentclass[master,openright,twoside,color]{buaathesis}
+\documentclass[master,openright,oneside,color]{buaathesis}
 \usepackage{booktabs}
-\usepackage{courier}
-\usepackage{minted}
-\usemintedstyle{pastie}
-\setmonofont{Courier}
-\renewcommand{\theFancyVerbLine}{\sffamily
-\textcolor[rgb]{0.5,0.5,1.0}{\scriptsize
-\oldstylenums{\arabic{FancyVerbLine}}}}
-
 \usepackage{graphicx}
 \usepackage[ruled]{algorithm2e} % For algorithms
 \renewcommand{\algorithmcfname}{算法}
@@ -62,7 +54,7 @@ Finally, Our experiments were carried out on language modelling tasks with stand
 \phantomsection
 \addcontentsline{toc}{chapter}{参考文献}
 \nocite{*}
-\bibliographystyle{GBT7714-2005}
+\bibliographystyle{GBT7714-2005}%ZJUthesis}
 \bibliography{thesis_reference}
 \cleardoublepage
 

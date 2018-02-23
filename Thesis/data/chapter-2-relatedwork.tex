@@ -1,18 +1,22 @@
 \chapter{相关技术介绍}
-\section{引言}
-在自然语言处理研究领域中，基于神经网络的分布式表示（Distributional Representation）一般统称为词向量（Word Vector）、词嵌入（Word Embedding）或者分布式表示（Distributed Representation）~\upcite{DBLP:conf/nips/MikolovSCCD13}。神经网络词向量表示技术，是通过神经网络技术对：1）单词的语境，即上下文（Context）；2）以及上下文与下一步的目标单词之间的关系（Next-Utterance Prediction），这两个主要的部分进行建模。
-由于神经网络结构或各种组合较为灵活，这类方法的最大优势在于可以表示复杂的上下文语义（Complex Context）。历史上的方法主要是基于单词共现矩阵（Co-occurrence Matrix）的分布表示方法，最常用的上下文仅仅是利用了单词的顺序信息。单词的语义向量是通过给这个单词共现矩阵进行矩阵分解，例如奇异值分解（Singular Value Decomposition，SVD），潜在语义分析（Latent Semantic Analysis，LSA），也可以写成潜在语义索引（Latent Semantic Indexing，LSI)分解算法。其中对于SVD分解算法，第一个分解获得的矩阵就是我们模型输出的单词的词向量矩阵。然而，如果使用包含词序信息的~N-gram~作为上下文，当~$N$~增加时，N-gram 的所需要存储的单词序列总数会呈指数级增长，此时会遇到维数灾难问题（Curse of Dimensionality）\footnote{https://en.wikipedia.org/wiki/Curse\_of\_dimensionality}。这一瓶颈深深限制了~N-gram~模型的实际应用。而用神经网络替代表示~N-gram~的单词概率分布时，可以通过一些组合方式对~N~个词进行组合，其优点显而易见：神经网络语言模型所需要的参数数量仅以线性速度增长。有了这一优势，神经网络模型可以对更复杂的上下文进行建模，在从训练后的模型提取出来的词向量中包含更丰富的语义信息。
+在自然语言处理研究领域中，基于神经网络的分布式表示（Distributional Representation）一般统称为词向量（Word Vector）、词嵌入（Word Embedding）或者分布式表示（Distributed Representation）~\upcite{DBLP:conf/nips/MikolovSCCD13}。基于神经网络的词向量表示技术是通过对语言模型的组成部分：1）单词的语境，即上下文（Context）；2）以及上下文与下一步的目标单词之间的关系（Next-Utterance Prediction），这两个主要的部分进行建模。
+由于神经网络结构或各种组合更为灵活，它可以表示更加复杂的上下文语义结构（Complex Context）。历史上的方法主要是基于单词共现矩阵（Co-occurrence Matrix）的分布表示方法，最常用的上下文仅仅是利用了单词的顺序信息。
+单词的语义向量是通过给这个单词共现矩阵进行矩阵分解，例如奇异值分解（Singular Value Decomposition，SVD），潜在语义分析（Latent Semantic Analysis，LSA），也可以写成潜在语义索引（Latent Semantic Indexing，LSI)分解算法。其中对于SVD分解算法，第一个分解获得的矩阵就是我们模型输出的单词的词向量矩阵。
+然而，如果使用~N-gram~算法作为上下文信息建模策略，当~$N$~线性增加时，N-gram 的所需要存储的单词序列组合总数会呈指数爆炸增加，此时会遇到维数灾难问题（Curse of Dimensionality）\footnote{https://en.wikipedia.org/wiki/Curse\_of\_dimensionality}。
+这一瓶颈深深限制了~N-gram~模型的实际应用。
+然而，假若使用用神经网络替代~N-gram~模型来表示单词概率分布，它的最主要的优点：神经网络语言模型所需要的参数数量仅以线性速度增长。
+这样我们就可以利用神经网络模型可以对更复杂的文本结构进行建模，从而在从训练后的模型获得的词向量中，能包含更多的语义信息、结构信息。
 
-到目前为止，在语言模型的研究领域中，所应用到的神经网络模型主要包括： 传统前向传递神经网络（Feed Forward Neural Network, FFNN）、循环神经网络（Recurrent Neural Network, RNN）三种基本的建模方案。当然基于这些基本组件，我们还可以构造更复杂的模型结构，但是我们无法保证复杂模型一定在效率和精确度上优于简洁的模型结构。复杂的模型可以表征更复杂的本文语义信息，例如句子的依存关系结构或者句子的句法分析树结构，但是这样的效果不一定能保证模型的泛化性能（Generalization）会很好，因为日常聊天文本的语序是混乱的，很难找到学者良好定义的句子关系，所以也无法让模型从混乱的文本分布中学习到有效的句子结构，以提升模型的精度。最好的模型，显然是假设越弱越合适，因为针对复杂的网络文本数据，我们模型训练所需要的要求越弱，模型越容易收敛并获得我们想要的结果。模型假设越强，模型所需要的数据质量越高，实际稳定性就会降低，产生得不偿失的后果。
+到目前为止，在语言模型的研究领域中，所应用到的神经网络模型主要包括： 传统前向传递神经网络（Feed Forward Neural Network, FFNN）、循环神经网络（Recurrent Neural Network, RNN）三种基本的建模方案。当然基于这些基本组件，我们还可以构造更复杂的模型结构，但是我们无法保证复杂模型一定在效率和精确度上优于简洁的模型结构。复杂的模型可以表征更复杂的本文语义信息，例如句子的依存关系（Dependency）结构或者句子的句法分析树（Syntactic Structure）结构，但是这样的效果不一定能保证模型的泛化性能（Generalization）会很好，因为日常聊天文本的语序是混乱的，很难找到学者良好定义的句子关系，所以也无法让模型从混乱的文本分布中学习到有效的句子结构，以提升模型的精度。最好的模型，显然是假设越弱越合适，因为针对复杂的网络文本数据，我们模型训练所需要的要求越弱，模型越容易收敛并获得我们想要的结果。模型假设越强，模型所需要的数据质量越高，实际稳定性就会降低，产生得不偿失的后果。
 
 语言模型的历史发展
-除此以外，针对在本论文所讨论的语言模型的大规模应用过程中所遇到的大词表问题，目前现有的主要解决方法主要可以分为以下三种种策略：单词拆分算法（Vocabulary Truncation）、采样估计模型（Sampling-based Approximation）和层次分解模型（Vocabulary Factorisation），我们会在接下来的章节陆续介绍。其中本论文重点是研究基于类别的多元分类模型(class-based hierarchical softmax， cHSM）和基于二叉树的二元分类模型（class-based hierarchical softmax，tHSM），这两种算法我们分别在下一章更详细讨论和介绍。
+除此以外，针对在本论文所讨论的语言模型的大规模应用过程中所遇到的大词表问题，目前已有的解决方法，主要可以分为以下三种策略：单词拆分算法（Vocabulary Truncation）、采样估计模型（Sampling-based Approximation）和层次分解模型（Vocabulary Factorisation），我们会在接下来的章节陆续介绍。其中本论文重点是研究基于类别的多元分类模型(class-based hierarchical softmax， cHSM）和基于二叉树的二元分类模型（class-based hierarchical softmax，tHSM），这两种算法我们分别在下一章更详细讨论和介绍。
 
 \section{语言模型}
-在这一节中，我们将首先从语言模型提出的实际任务的形式化定义开始，以阐述语言模型的训练目标和实际应用场景~\upcite{DBLP:journals/tnn/ChienK16}。一个好的语言模型应当考虑对文本的两种特征进行建模：语法特征（Syntactics）和语义特征（Semantics）。为了保证语法的正确性，我们往往只需要考虑生成的单词的前面的上下文（Previous Context），这也就意味着语法特性往往只对局部特征（Local Representation）进行建模。而语义特征的一致性则复杂了许多，它意味着我们需要考虑更大、更完善的上下文信息乃至整个文档语料，来获取正确的全局语义（Global Context）而不仅仅是局部语义信息（Local Context）。
+在这一节中，我们将首先从语言模型提出的实际任务的形式化定义开始，以阐述语言模型的训练目标和实际应用场景~\upcite{DBLP:journals/tnn/ChienK16}。一个好的语言模型应当考虑对文本的两种特征进行建模：语法特征（Syntactics）和语义特征（Semantics）。为了保证句子的语法正确，我们需要考虑的是所生成的单词的前面的上下文（Previous Context），这也就意味着语法特性往往只对局部特征（Local Representation）进行建模。而语义特征的一致性则复杂了许多，它意味着我们需要考虑更大、更完善的上下文信息乃至整个文档语料，来获取正确的全局语义（Global Context）而不仅仅是局部语义信息（Local Context）。
 
 
-具体地来说，给定一个包含$T$个单词的序列：$w_1,w_2,\cdots,w_T$，这个序列的对数概率（Log-probability），即描述该序列作为一个合理且合法的句子的流畅性（Fluency）概率和出现该单词组合的句子的可能性（ Likelihood），可以使用马尔可夫链规则分解成一系列的条件概率的联合分布：
+具体地来说，给定一个包含$T$个单词的序列：$w_1,w_2,\cdots,w_T$，这个序列的对数概率（Log-probability），即描述该序列作为一个合理且合法的句子的流畅性（Fluency）概率和出现该单词组合的句子的可能性（ Likelihood）。由于直接求解整个序列的概率比较复杂，所以我们将采用马尔可夫链规则（Markov Chain）~\footnote{https://en.wikipedia.org/wiki/Markov\_chain}，分解成一系列的条件概率（Conditional Probability）的联合分布（Joint Distribution）：
 \begin{equation}
 \label{laguage_model}
  \log p(w_1,\cdots, w_T ) = \sum_{t=1}^T \log p(w_t | w_{1:t-1}),
@@ -21,13 +25,13 @@
 \begin{equation}\label{equ:losses2}
   \ell=\sum_{t=1}^{T}\ell_t=\sum_{t=1}^{T}\log p(w_t | w_{1:t-1})
 \end{equation}
-其中文本或者句子的交叉熵的代价函数$\ell$ 的实际定义为：是当编码方案不一定完美时（由于对概率分布的估计不一定正确），平均编码长度的是多少。这里的编码长度就是指的是如何用01字节对所有的单词进行最短的编码，保证单词之间两两不互相冲突。交叉熵代价函数是由$\texttt{KL}$散度（Kullback–Leibler Divergence），也叫做相对熵（Relative Entropy），推导而获得的。这里我们需要注意的是，$  \texttt{KL}$散度的计算公式是：
+其中文本或者句子的交叉熵的代价函数$\ell$ 的实际定义为：是当编码方案不一定完美时，平均编码长度的是多少（最优的编码长度就是1）。这里的编码长度就是指的是如何用01字节对所有的单词进行最短的编码，保证单词之间两两不互相冲突。交叉熵代价函数是由$\texttt{KL}$散度（Kullback–Leibler Divergence），也叫做相对熵（Relative Entropy），推导而获得的。这里我们需要注意的是，$  \texttt{KL}$散度的计算公式是：
 \begin{equation}\label{equ:losses}
   \texttt{KL}(p||q)=-\sum_{t=1}^{T}p(x)\log q(x) - (\sum_{t=1}^{T}p(x)\log p(x))
 \end{equation}
 其中$p(x)$ 指的是文本数据的真实概率分布，$q(x)$ 是由模型从数据中计算得到的预测概率分布。需要注意的是，由于$p(x)$ 和$q(x)$ 在公式中的地位不是相等的，所以$\texttt{KL} (p\parallel q)\not\equiv  \texttt{KL}  (q\parallel p)$。对于特定的文本语料训练数据集，第二项的计算值是常数，由此可知其导数是0，它不会对模型中的参数更新产生任何影响，所以在通常情况下，我们采用交叉熵函数作为模型的代价函数而不是相对熵代价函数，但其实我们希望模型优化的目标是使得模型的分布拟合实际的分布。
 \subsection{语言模型的应用}
-语言模型的作用主要分为以下三种：1） 为句子打分（Sentence Scoring）。给定一个未知的单词序列，我们需要计算其作为一个句子的流畅性和出现的可能性；2） 挑选最佳的候选词（Next-utterance Prediction）。给定上下文，选择概率最高的单词。这里所指的上下文的形式是广义的，它可能是：前面的句子给定，选择下一个最佳单词；前面和后面的句子给出，选择中间最适配的单词；后面的句子给定，选择上一个最佳单词（逆序文本建模也是有其独特应用地位的）。3） 训练词向量（Pretrained Word Embedding）。语言模型的输入，在经过大规模数据集训练之后，可以作为词向量输出，从而为其他文本任务提供有效的单词预训练特征。
+这里我们想强调的是语言模型实际用途，而不是他能应用的各种领域。我们对各个应用进行抽象概括之后，可以将该模型的主要作用分为以下三种情况：1） 为句子打分（Sentence Scoring）。给定一个未知的单词序列，我们需要计算其作为一个句子的流畅性和出现的可能性；2） 挑选最佳的候选词（Next-utterance Prediction）。给定上下文，选择概率最高的单词。这里所指的上下文的形式是广义的，它可能是：前面的句子给定，选择下一个最佳单词；前面和后面的句子给出，选择中间最适配的单词；后面的句子给定，选择上一个最佳单词（逆序文本建模也是有其独特应用地位的）。3） 训练词向量（Pretrained Word Embedding）。语言模型的输入，在经过大规模数据集训练之后，可以作为词向量输出，从而为其他文本任务提供有效的单词预训练特征。
 
 \subsection{长距离依赖}
 
@@ -46,7 +50,7 @@ She doesn't have very much confidence in herself
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=.8\columnwidth]{./figures/lm.pdf}
+  \includegraphics[width=.9\columnwidth]{./figures/lm.pdf}
   \caption{循环神经网络语言模型图例}
   \label{fig:lm}
 \end{figure}
@@ -184,10 +188,11 @@ p(w_i) =& \frac{\exp(\theta^w_i h)}{\sum_{w_i \sim p(w)} \exp(\theta^w_i h)}.
 目前主要的分解策略可以分为： 基于类别的多元分类模型（Class-based Hierarchical Softmax, cHSM）和基于二叉树的二元分类模型（Tree-based Hierarchical Softmax, tHSM）。接下来我们将这两种算法的详细计算过程进行描述。
 
 首先我们考虑基于类别的分解策略。假设语料中的每一个词样本属于且只属于一个类（class或者group），在此基础上计算词样本在语料中的分布时，可以先计算类的概率分布，然后在所属类上计算当前词的概率分布\upcite{王龙2015基于循环神经网络的汉语语言模型并行优化算法}~，于是可将公式~\ref{eq:softmax}~转化为如下形式：
-  \begin{equation}
-  \begin{split}
-p(w|h)=&p^c(\mathcal{C}(w)|h)\cdot p^w(w|\mathcal{C}(w),h) , w\in \mathcal{C}(w),\\
-&\mathcal{V}=\bigcup _{i = 1}^\mathcal{C}{c_i},\quad  c_i \bigcap c_j=\phi, \text{若}\quad i\ne j, \\
+\begin{equation}
+\begin{split}
+p(w|h)=&p^c(\mathcal{C}(w)|h)\cdot p^w(w|\mathcal{C}(w),h) ,\\
+ & w\in \mathcal{C}(w),\mathcal{V}=\bigcup _{i = 1}^\mathcal{C}{c_i},\\
+ & \quad  c_i \bigcap c_j=\phi, \text{若}\quad i\ne j, \\
 \end{split}
 \end{equation}
 其中第一项概率~$p^c(\mathcal{C}(w)|h)$~表示每个类别的概率，第二项概率~$p^w(w|\mathcal{C}(w),h)$~表示在类别$\mathcal{C}(w)$中所有单词的局部概率。
