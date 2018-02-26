@@ -1,16 +1,15 @@
 \chapter{相关技术介绍}
 在自然语言处理研究领域中，基于神经网络的分布式表示（Distributional Representation）一般统称为词向量（Word Vector）、词嵌入（Word Embedding）或者分布式表示（Distributed Representation）~\upcite{DBLP:conf/nips/MikolovSCCD13}。基于神经网络的词向量表示技术是通过对语言模型的组成部分：1）单词的语境，即上下文（Context）；2）以及上下文与下一步的目标单词之间的关系（Next-Utterance Prediction），这两个主要的部分进行建模。
 由于神经网络结构或各种组合更为灵活，它可以表示更加复杂的上下文语义结构（Complex Context）。历史上的方法主要是基于单词共现矩阵（Co-occurrence Matrix）的分布表示方法，最常用的上下文仅仅是利用了单词的顺序信息。
-单词的语义向量是通过给这个单词共现矩阵进行矩阵分解，例如奇异值分解（Singular Value Decomposition，SVD），潜在语义分析（Latent Semantic Analysis，LSA），也可以写成潜在语义索引（Latent Semantic Indexing，LSI)分解算法。其中对于SVD分解算法，第一个分解获得的矩阵就是我们模型输出的单词的词向量矩阵。
-然而，如果使用~N-gram~算法作为上下文信息建模策略，当~$N$~线性增加时，N-gram 的所需要存储的单词序列组合总数会呈指数爆炸增加，此时会遇到维数灾难问题（Curse of Dimensionality）\footnote{https://en.wikipedia.org/wiki/Curse\_of\_dimensionality}。
-这一瓶颈深深限制了~N-gram~模型的实际应用。
+单词的语义向量是通过给这个单词共现矩阵（Word Co-occurrence Matrix）进行矩阵分解（Matrix Decomposition），例如奇异值分解算法（Singular Value Decomposition，SVD），潜在语义分析模型（Latent Semantic Analysis，LSA），也可以写成潜在语义索引（Latent Semantic Indexing，LSI)分解算法。其中对于SVD分解算法，第一个分解获得的矩阵就是我们模型输出的单词的词向量矩阵。
+如果使用~N-gram~算法作为上下文信息建模策略，当~$N$~线性增加时，N-gram 的所需要存储的单词序列组合总数会呈指数爆炸增加。此时会遇到维数灾难问题（Curse of Dimensionality）\footnote{https://en.wikipedia.org/wiki/Curse\_of\_dimensionality}，深深限制了~N-gram~模型的实际应用。
 然而，假若使用用神经网络替代~N-gram~模型来表示单词概率分布，它的最主要的优点：神经网络语言模型所需要的参数数量仅以线性速度增长。
 这样我们就可以利用神经网络模型可以对更复杂的文本结构进行建模，从而在从训练后的模型获得的词向量中，能包含更多的语义信息、结构信息。
 
-到目前为止，在语言模型的研究领域中，所应用到的神经网络模型主要包括： 传统前向传递神经网络（Feed Forward Neural Network, FFNN）、循环神经网络（Recurrent Neural Network, RNN）三种基本的建模方案。当然基于这些基本组件，我们还可以构造更复杂的模型结构，但是我们无法保证复杂模型一定在效率和精确度上优于简洁的模型结构。复杂的模型可以表征更复杂的本文语义信息，例如句子的依存关系（Dependency）结构或者句子的句法分析树（Syntactic Structure）结构，但是这样的效果不一定能保证模型的泛化性能（Generalization）会很好，因为日常聊天文本的语序是混乱的，很难找到学者良好定义的句子关系，所以也无法让模型从混乱的文本分布中学习到有效的句子结构，以提升模型的精度。最好的模型，显然是假设越弱越合适，因为针对复杂的网络文本数据，我们模型训练所需要的要求越弱，模型越容易收敛并获得我们想要的结果。模型假设越强，模型所需要的数据质量越高，实际稳定性就会降低，产生得不偿失的后果。
+到目前为止，在语言模型的研究领域中，所应用到的神经网络模型主要包括： 传统前向传递神经网络（Feed Forward Neural Network, FFNN）、循环神经网络（Recurrent Neural Network, RNN）三种基本的建模方案。当然基于这些基本组件，我们还可以构造更复杂的模型结构，但是我们无法保证复杂模型一定在效率和精确度上优于简洁的模型结构。复杂的模型可以表征更复杂的本文语义信息，例如句子的依存关系（Dependency）结构或者句子的句法分析树（Syntactic Structure）结构，但是这样的效果不一定能保证模型的泛化性能（Generalization）会很好，因为日常聊天文本的语序是混乱的，很难找到良好定义的句子关系，所以也无法让模型从混乱的文本分布中学习到有效的句子结构，以提升模型的精度。最好的模型，显然是假设越弱越合适，因为针对复杂的网络文本数据，我们模型训练所需要的要求越弱，模型越容易收敛并获得我们想要的结果。模型假设越强，模型所需要的数据质量越高，实际稳定性就会降低，产生得不偿失的后果。
 
 语言模型的历史发展
-除此以外，针对在本论文所讨论的语言模型的大规模应用过程中所遇到的大词表问题，目前已有的解决方法，主要可以分为以下三种策略：单词拆分算法（Vocabulary Truncation）、采样估计模型（Sampling-based Approximation）和层次分解模型（Vocabulary Factorisation），我们会在接下来的章节陆续介绍。其中本论文重点是研究基于类别的多元分类模型(class-based hierarchical softmax， cHSM）和基于二叉树的二元分类模型（class-based hierarchical softmax，tHSM），这两种算法我们分别在下一章更详细讨论和介绍。
+除此以外，针对在本论文所讨论的语言模型的大规模应用过程中所遇到的大词表问题，目前已有的解决方法，主要可以划分为以下三种流派：单词拆分算法（Vocabulary Truncation）、采样估计模型（Sampling-based Approximation）和词表层次分解（Vocabulary Factorisation），我们会在接下来的章节陆续介绍。其中本论文重点是研究基于类别的多元分类模型(class-based hierarchical softmax， cHSM）和基于二叉树的二元分类模型（class-based hierarchical softmax，tHSM），这两种算法我们分别在下一章更详细讨论和介绍。
 
 \section{语言模型}
 在这一节中，我们将首先从语言模型提出的实际任务的形式化定义开始，以阐述语言模型的训练目标和实际应用场景~\upcite{DBLP:journals/tnn/ChienK16}。一个好的语言模型应当考虑对文本的两种特征进行建模：语法特征（Syntactics）和语义特征（Semantics）。为了保证句子的语法正确，我们需要考虑的是所生成的单词的前面的上下文（Previous Context），这也就意味着语法特性往往只对局部特征（Local Representation）进行建模。而语义特征的一致性则复杂了许多，它意味着我们需要考虑更大、更完善的上下文信息乃至整个文档语料，来获取正确的全局语义（Global Context）而不仅仅是局部语义信息（Local Context）。
@@ -29,95 +28,94 @@
 \begin{equation}\label{equ:losses}
   \texttt{KL}(p||q)=-\sum_{t=1}^{T}p(x)\log q(x) - (\sum_{t=1}^{T}p(x)\log p(x))
 \end{equation}
-其中$p(x)$ 指的是文本数据的真实概率分布，$q(x)$ 是由模型从数据中计算得到的预测概率分布。需要注意的是，由于$p(x)$ 和$q(x)$ 在公式中的地位不是相等的，所以$\texttt{KL} (p\parallel q)\not\equiv  \texttt{KL}  (q\parallel p)$。对于特定的文本语料训练数据集，第二项的计算值是常数，由此可知其导数是0，它不会对模型中的参数更新产生任何影响，所以在通常情况下，我们采用交叉熵函数作为模型的代价函数而不是相对熵代价函数，但其实我们希望模型优化的目标是使得模型的分布拟合实际的分布。
+其中$p(x)$ 指的是文本数据的真实概率分布，$q(x)$ 是由模型从数据中计算得到的预测概率分布。需要注意的是，由于$p(x)$ 和$q(x)$ 在公式中的地位不是相等的，所以$\texttt{KL} (p\parallel q)\not\equiv \texttt{KL}(q\parallel p)$。对于特定的文本语料训练数据集，第二项的计算值是常数，由此可知其导数是0，它不会对模型中的参数更新产生任何影响，所以在通常情况下，我们采用交叉熵函数作为模型的代价函数而不是相对熵代价函数，但其实我们希望模型优化的目标是使得模型的分布拟合实际的分布。
 \subsection{语言模型的应用}
 这里我们想强调的是语言模型实际用途，而不是他能应用的各种领域。我们对各个应用进行抽象概括之后，可以将该模型的主要作用分为以下三种情况：1） 为句子打分（Sentence Scoring）。给定一个未知的单词序列，我们需要计算其作为一个句子的流畅性和出现的可能性；2） 挑选最佳的候选词（Next-utterance Prediction）。给定上下文，选择概率最高的单词。这里所指的上下文的形式是广义的，它可能是：前面的句子给定，选择下一个最佳单词；前面和后面的句子给出，选择中间最适配的单词；后面的句子给定，选择上一个最佳单词（逆序文本建模也是有其独特应用地位的）。3） 训练词向量（Pretrained Word Embedding）。语言模型的输入，在经过大规模数据集训练之后，可以作为词向量输出，从而为其他文本任务提供有效的单词预训练特征。
 
 \subsection{长距离依赖}
+不同于前馈神经网络语言模型，循环神经网络语言模型使用隐藏层状态（Hidden State）来记录单词的顺序性信息（Sequence Order），它能够捕捉句子中存在的长距离依赖关系（Long-term Dependency）。这里的长距离依赖主要指下面的两方面。
 
-不同于前馈神经网络语言模型，循环神经网络语言模型使用隐藏层状态（Hidden State）来记录单词的顺序性信息（Sequence Order），能够捕捉句子中的长距离依赖（Long-term Dependency）。这里的长距离依赖主要指下面的两方面。
-
-一方面，在自然语言中，往往在句式中相隔较远的两个词却具备一定的语法与语义关联。譬如:
+一方面，在文本中，两个单词距离较远但是存在很强的相关性关系。这里的所指的相关性，包括两个单词具有语义对应关系（Semantic Correspondence），或者他们需要满足句子的语法结构（Grammatical Structure）。举例来说，下面两个句子节选自网络文本数据：
 \begin{verbatim}
 He doesn't have very much confidence in himself
 She doesn't have very much confidence in herself
 \end{verbatim}
-这两句话中的``（He， himself）'' 与 ``（She， herself）'' 这两个单词对中两个词之间的对应关系却是固定的，尽管句子中间的词可能会发生变化。但是这两个单词的对应关系中间相隔很长的距离（6个单词）。这种单词的长距离依赖关系也不仅仅出现在英语中，在汉语、俄罗斯语中也都存在有大量此类型的词对组合。如果采用传统的Ngram建模策略，我们必须要建模6-gram及以上的单词概率分布，才能保证模型能学习到这种对应关系。
+这两句话中的``（He， himself）'' 与 ``（She， herself）'' 这两个单词对中两个词之间的对应关系却是固定的，尽管句子中间的词可能会发生变化。但是这两个单词的对应关系中间相隔很长的距离（6个单词）。这种单词的长距离依赖关系也不仅仅只出现在英语语言中，在汉语、法语中，也都存在有此类型的单词词组之间的组合对应关系。如果采用传统的~N-gram~建模策略，我们必须要建模6-gram及以上的单词概率分布，才能保证模型能学习到这种对应关系。
 
-而另一种长期依赖指代的就是指选择限制（Selectional Preferences）。简而言之，选择限制主要基于已知的某人会去做某事这样的信息。譬如：``我要用叉子吃沙拉''与``我要和我的朋友一起吃沙拉''这两句话中，``叉子''指代的是某种工具，而``我的朋友''则是伴侣的意思。如果有人说:``我要用双肩背包来吃沙拉''就觉得很奇怪了，``双肩背包''并不是工具也不是伴侣。如果我们破坏了这种选择限制就会生成大量的无意义句子。
+另一方面，文本中存在的依赖关系将会限制我们选择接下来的单词候选集，我们称这种关系为选择限制（Selectional Preferences）。简而言之，选择限制主要基于已知的某人会去做某事这样的信息。
+譬如：``我要用叉子吃沙拉''和``我要和我的朋友一起吃沙拉''这两句句子中，`叉子'所指代的是一种工具，但是``我的朋友''则表明是伴侣的意思。如果有人说:``我想要用`双肩背包'来吃`沙拉'''就会觉得非常奇怪，因为这里的``双肩背包''既不是一种工具更不是伴侣的含义。假若我们人为地破坏了这种选择限制，那就就会生成大量的无意义的文本。
 
-如图~\ref{fig:lm}所示，模型在预测过程中，在每一步都需要对词表中所有单词做预测，实际我们需要将每一步都做选择限制，减少模型的预测分支，这样才能保证模型生成的结果尽可能的语义一致且连贯。每次开放式的对所有单词做预测所带来的后果可能是，那些高频单词会不断出现在预测序列里面，因为训练语聊里面这些单词出现频率就非常高，所以模型将这些高频词预测概率大也是合乎情理的。但问题出现在，一旦我们模型不断预测高频词，我们生成的这句句子将``平平无奇''，很难包含特殊的语义信息。
+如图~\ref{fig:lm}~所示，模型在预测过程中，在每一步都需要对词表中所有单词做预测，实际我们需要将每一步都做选择限制，减少模型的预测分支，这样才能保证模型生成的结果尽可能的语义一致且连贯。每次开放式的对所有单词做预测所带来的后果可能是，那些高频单词会不断出现在预测序列里面，因为训练语聊里面这些单词出现频率就非常高，所以模型将这些高频词预测概率大也是合乎情理的。但问题出现在，一旦我们模型不断预测高频词，我们生成的这句句子将``平平无奇''，很难包含特殊的语义信息。
 
-\begin{figure}[!ht]
+\begin{figure}[!t]
   \centering
-  \includegraphics[width=.9\columnwidth]{./figures/lm.pdf}
+  \includegraphics[width=.8\columnwidth]{./figures/lm.pdf}
   \caption{循环神经网络语言模型图例}
   \label{fig:lm}
 \end{figure}
 
 \subsection{循环神经网络}
-所以，考虑到上述长距离依赖问题，本实验采用的基准模型就是基于循环神经网络的语言模型。最近，利用序列的时间序列信息的循环神经网络已经非常流行，如图~\ref{fig:lm}~所示。 为了清楚起见，由于在当前时间步 $ t $的输出$ w_ {t + 1} $正好是下一个时间步的输入$ w_ {t + 1} $，所以没有输出的自动关联连接（Auto-associative Connection）的前一次步骤$ t $回到下一个时间步骤$ t + 1 $中的循环神经网络。每个句子都需要用开始词（即，$ \langle s \rangle $）和结束词（即$ \langle / s \rangle $）标记进行封装。 在预测下一个单词 $ w_ {t + 1} $ 之前，从最后一个隐藏状态$ h_ {t-1} $和当前字$ w_t $接收到循环网络单元的输入。
+考虑到上面描述长距离依赖问题，在本实验中，我们将采用的基准模型，就是循环神经网络语言模型。最近，利用序列的时间序列信息的循环神经网络已经非常流行，如图~\ref{fig:lm}~所示。 为了清楚起见，由于在当前时间步 $ t $的输出$ w_{t + 1} $正好是下一个时间步的输入$ w_ {t + 1} $，所以没有输出的自动关联连接（Auto-associative Connection）的前一次步骤$ t $回到下一个时间步骤$ t + 1 $中的循环神经网络。每个句子都需要用开始词（即，$ \langle s \rangle $）和结束词（即$ \langle / s \rangle $）标记进行封装。 在预测下一个单词 $ w_ {t + 1} $ 之前，从最后一个隐藏状态$ h_ {t-1} $和当前字$ w_t $接收到循环网络单元的输入。
 
 从形式上讲，循环神经网络是一个参数化的非线性函数$ \mathtt{RNN} $，循环地将一系列向量映射到一系列隐藏状态。 将$ \mathtt{RNN} $应用于任何这样的序列，在每个时间步骤$ t $产生隐藏状态$ h_t $，如下所示：
 \begin{equation}
   h_t \leftarrow  \mathtt{RNN}(W\theta^w_t + U h_{t-1} +c),
 \end{equation}
-其中$ W,U $是模型参数的集合，而$ U $是随时间共享的，向量$ \theta^w_t$ 对应于源词的嵌入$ w_t $。
+其中$ W,U $是模型参数，向量$ \theta^w_t$ 对应于源词的嵌入$ w_t $。但是参数~$U$~是随时间共享的，即：当我们需要计算 $h_t$，我们需要用到上一步的隐藏层的输出$h_{t-1}$。
 
-自Elman提出基本循环网络模型~\upcite{DBLP:journals/cogsci/Elman90}~以来，已经有许多扩展模型提出了克服长距离依赖，梯度消失（Gradient Vanishing）和梯度爆炸（Gradient Exploding）等问题， 如长期短期记忆网络（LSTM）~\upcite{7508408}，门限记忆单元（GRU）~\upcite{DBLP:conf/nips/ChungKDGCB15}和近似递归神经网络（Quasi-RNNs）\upcite{DBLP:journals/corr/BradburyMXS16}。
+自Elman提出基本循环网络模型~\upcite{DBLP:journals/cogsci/Elman90}~以来，已经有许多扩展模型能克服长距离依赖，梯度消失（Gradient Vanishing）和梯度爆炸（Gradient Exploding）等问题， 如长短期记忆网络（LSTM）~\upcite{7508408}，门限记忆单元（GRU）~\upcite{DBLP:conf/nips/ChungKDGCB15}和近似递归神经网络（Quasi-RNNs）\upcite{DBLP:journals/corr/BradburyMXS16}。
 
-\begin{figure}[!ht]
+\begin{figure}[!t]
   \centering
-  \includegraphics[width=.8\linewidth]{./figures/lstm.pdf}
+  \includegraphics[width=.79\linewidth]{./figures/lstm.pdf}
   \caption{LSTM 模型示意图}\label{fig:lstm}
 \end{figure}
 
-{长距离短期记忆网络}。LSTM的计算公式定于如下 \upcite{DBLP:journals/neco/HochreiterS97}：
-\begin{itemize}
-\item 输入门。控制当前输入 $x_t$ 和前一步输出 $h_{t−1}$ 进入新的 cell 的信息量：$i_t=\sigma(W^i x_t+U^i h_{t-1}+b^i)$
-\item  遗忘门。决定是否清楚或者保持单一部分的状态$f_t=\sigma(W^f x_t+U^f h_{t-1}+b^f)$
-\item  变换输出和前一状态到最新状态$g_t=\phi(W^g x_t+U^g h_{t-1}+b^g)$
-\item  输出门。计算 cell 的输出$o_t=\sigma(W^o x_t+U^o h^{t-1}+b^o)$
-\item  cell 状态更新。步骤：计算下一个时间戳的状态使用经过门处理的前一状态和输入：$s_t=g_t\odot i_t+s_{t-1}\odot f_t$
-\item 最终 LSTM 的输出：使用一个对当前状态的 $\tanh$ 变换进行重变换：$h_t=s_t\odot \phi(o_t)$
-\end{itemize}
+长距离短期记忆网络是根据RNN所改进的最著名的模型之一。LSTM的计算公式定于如下\upcite{DBLP:journals/neco/HochreiterS97}： 1）输入门$i_t$。控制当前输入 $x_t$ 和前一步输出 $h_{t−1}$ 进入新的 cell 的信息量；2） 遗忘门$f_t$ 。决定是否清除或者保持单一部分的状态；3） 变换输出和前一状态到最新状态~$g_t$；4） 输出门$o_t$。计算 cell 的输出 ；5） cell 状态更新$s_t$。其计算步骤是，计算下一个时间戳的状态使用经过门处理的前一状态和输入；6） 最终 LSTM 的输出$h_t$。使用一个对当前状态进行 $\tanh$ 变换。其计算公式如下：
+\begin{equation}\label{equ:lstm}
+\begin{split}
+   i_t&=\sigma(W^i x_t+U^i h_{t-1}+b^i) \\
+   f_t&=\sigma(W^f x_t+U^f h_{t-1}+b^f) \\
+   g_t&=\phi(W^g x_t+U^g h_{t-1}+b^g) \\
+   o_t&=\sigma(W^o x_t+U^o h^{t-1}+b^o) \\
+   s_t&=g_t\odot i_t+s_{t-1}\odot f_t, h_t=s_t\odot \phi(o_t)
+\end{split}
+\end{equation}
+
 \noindent 其中$\odot$ 代表对应元素相乘(Element-wise Matrix Multiplication)， 函数 $\phi(x), \sigma(x)$ 的定义如下：
 \begin{equation}\label{equ:tanh}
   \phi(x)=\frac{e^x-e^{-x}}{e^x+e^{-x}},\sigma(x)=\frac{1}{1+e^{-x}}
 \end{equation}
 
-{并行计算实现方法}。输入门、遗忘门、输出门和状态更新门矩阵乘法可以并行实现，从而提高LSTM模型的计算效率。因为LSTM的计算模型更容易并行，所以他与GRU的计算时间相差无几，尽管LSTM的模型需要的参数量是GRU模型的1.5倍。
+在具体算法实现过程中，LSTM模型由于参数之间相似性和独立性，我们可以并行计算实现该模型。具体来说，模型的输入门、遗忘门、输出门和状态更新门所涉及的矩阵乘法操作，我们可以同时计算，从而提高LSTM模型的计算效率\upcite{陈凯2016深度学习模型的高效训练算法研究}。因为LSTM的计算模型更容易并行，所以他与GRU的计算时间相差无几，尽管LSTM的模型需要的参数量是GRU模型的1.5倍。
 \begin{equation}\label{equ:lstm}
-\begin{bmatrix} i^t\\ f^t\\g^t\\o^t \end{bmatrix} =\begin{bmatrix}\sigma\\ \sigma\\\phi\\\sigma\end{bmatrix}\times W\times[x_t,h_{t-1}]
+[i^t,f^t,g^t,o^t ]=[\sigma, \sigma,\phi,\sigma]\times W\times[x_t,h_{t-1}]^\top
 \end{equation}
-其中 $W$ 指的是四个小矩阵互相层叠起来 $[W^i,W^f,W^g,W^o]$。
+其中 $W$ 指的是8个小矩阵互相层叠起来，即 $[[W^i,W^f,W^g,W^o],[U^i,U^f,U^g,U^o]]$。
 
 
-
-
-{门限记忆单元。} GRU 可以看成是 LSTM 的变种，GRU 把 LSTM中的 遗忘门和输入门用更新门来替代。 把 cell state 和隐状态 $h_t$ 进行合并，在计算当前时刻新信息的方法和 LSTM 有所不同。 下图是GRU更新 $h_t$ 的过程\upcite{DBLP:journals/corr/Pezeshki15}, 具体定义如下：
-\begin{figure}[!h]
+\begin{figure}[!t]
   \centering
-  \includegraphics[width=0.45\linewidth]{./figures/gru.png}
+  \includegraphics[width=0.6\linewidth]{./figures/gru.pdf}
   \caption{GRU模型示意图}\label{fig:gru}
 \end{figure}
 
-\begin{itemize}
-\item 更新门 $z_t$。定义保存多少以前的信息： $z_t = \sigma ( W^z x_t+ U^z h_{t-1}  )$
+接下来我们介绍基于LSTM简化的模型，门限记忆单元（GRU）把 LSTM模型中的遗忘门$f_t$和输入门$o_t$用更新门$z_t$ 替代。同时，它把 cell的状态值和隐状态 $h_t$ 进行了合并。 图~\ref{fig:gru}~是GRU更新 $h_t$ 的过程\upcite{DBLP:journals/corr/Pezeshki15}, 主要包括：更新门 $z_t$、 重置门 $r_t$ 和节点内部更新值$\tilde h_t$和隐藏层输出值$h_t$， 这里与LSTM的区别是GRU中没有输出门，其计算公式如下：
+\begin{equation}\label{equ:gru}
+\begin{split}
+   z_t &= \sigma ( W^z x_t+ U^z h_{t-1}) \\
+   r_t &= \sigma(W^r x_t  + U^r h_{t-1}  )\\
+   \tilde h_t  &= \tanh (W^h x_t  + U^h(h_{t-1} \odot r_t) ) \\
+   h_t &= (1-z_t)\odot \tilde h_t  + z_t \odot h_{t-1}
+\end{split}
+\end{equation}
 
-\item 重置门 $r_t$。 决定保留多少输入信息： $r_t = \sigma(W^r x_t  + U^r h_{t-1}  )$
-
-\item 节点内部更新值$\tilde h_t $。 其次是计算候选隐藏层(Candidate Hidden Layer) $\tilde h_t$，这个候选隐藏层 和LSTM中的$\tilde c_t$是类似，可以看成是当前时刻的新信息，其中$r_t$用来控制需要 保留多少之前的记忆，如果$r_t$为0，那么$\tilde h_t$只包含当前词的信息：$\tilde h_t  = \tanh (W^h x_t  + U^h(h_{t-1} \odot r_t) )$
-
-\item 隐藏层输出值$h_t$。 最后$z_t$控制需要从前一时刻的隐藏层 $h_{t-1}$ 中遗忘多少信息，需要加入多少当前 时刻的隐藏层信息$\tilde h_t$，最后得到$h_t$，直接得到最后输出的隐藏层信息， 这里与LSTM的区别是GRU中没有 输出门：$h_t = (1-z_t)\odot \tilde h_t  + z_t \odot h_{t-1}$
-\end{itemize}
-
-如果重置门接近0，那么之前的隐藏层信息就会丢弃，允许模型丢弃一些和未来无关 的信息；更新门 控制当前时刻的隐藏层输出$h_t$需要保留多少之前的隐藏层信息， 若$z_t$接近1相当于我们之前把之前的隐藏层信息拷贝到当前时刻，可以学习长距离依赖。 一般来说那些具有短距离依赖的单元重置门比较活跃（如果$r_t$为1，而$z_t$为$0$ 那么相当于变成了一个标准的RNN，能处理短距离依赖），具有长距离依赖的单元更新门比较活跃。
+如果重置门$r_t \to 0$，那么之前计算的 $h_t$将会丢弃之前的所有信息，即：$h_{t-1},t>0$，则会丢弃一些无关的信息； 若$z_t\to 1$，直接把前一刻隐藏层输出复制到当前时刻。 一般来说那些具有短距离依赖的单元重置门比较活跃（如果$r_t=1,z_t=0$， 在这种情况下，GRU模型变成了一个最传统的RNN模型，它只能处理短距离依赖问题），具有长距离依赖的单元更新门比较活跃。
 
 
 
 \section{大词表问题}
-通常对于多标签分类（Multi-class Classification）问题中的标准概率归一化（Probability Normalization）方法，我们均通过计算softmax函数和log-softmax函数来解决。然而当我们需要分类的目标变多时，即对于语言模型的大词表问题中，分析其计算瓶颈（ Calculation Bottleneck）就变得至关重要。这里我们首先给出\texttt{softmax}，\texttt{log-softmax} 函数和相应的梯度（Gradient）的定义：
+通常对于多标签分类（Multi-class Classification）问题中的标准概率归一化（Probability Normalization）方法，我们均通过计算softmax函数和log-softmax函数来解决。然而当我们需要分类的目标变多时，即对于语言模型的大词表问题中，分析其计算瓶颈（ Calculation Bottleneck）就变得至关重要。这里我们首先给出 softmax，log-softmax 函数和相应的梯度（Gradient）的定义：
 \begin{equation}\label{eq:softmax}
 \begin{split}
 p(w|h)=&\frac{\exp(h^\top v_{w})}{\sum_{w_j\in \mathcal{V}}{\exp(h^\top v_{w_j} )}} \\
@@ -134,32 +132,33 @@ p(w|h)=&\frac{\exp(h^\top v_{w})}{\sum_{w_j\in \mathcal{V}}{\exp(h^\top v_{w_j} 
 其中~$h$~指代的是隐藏层输出的向量（即上下文表示），$\theta^w$~表示单词$w$的目标单词向量~\upcite{duda2012pattern}。 同样对于公式中出现的克罗内克 $\delta$ 函数$ \delta_{uv}$（Kronecker Function）他的定义为：如果$ u,v $指代的是相同的单词结果是$ 1 $，如果$ u,v $指代的不是相同的单词则是$ 0 $。第一行计算公式指代的是softmax函数，第二行计算公式指代的是softmax函数的导数，第三行计算公式指代的是log-softmax函数，第四行计算公式指代的是log-softmax的导数。
 
 
-如等式~\ref{eq:softmax}~和~\ref{eq:log-softmax}~所示，前向概率传播函数$\log p(w|h) $（即第一行方程）和后向梯度优化函数$\frac{\partial p(w_i|h)}{\partial v_{w_j}}$（即第二行的方程）都需要计算目标词汇表中的所有单词，因此在这个部分上花费的时间会随着词表中包含的单词数量的增加而线性地增长。举个例子来说，假设词表中包含$ \mathcal{| V |} $ 数量的单词来说，总的时间复杂度（Time Complexity）是$\mathcal{O}(\mathcal{|H ||V|})$，其中$\mathcal{|H|}$表示的是隐藏层输出的维度。对于基于CPU设备的线性计算设备来说，该部分计算占用总计算时间也是足够大的。若我们将该部分计算迁移到GPGPU设备上，他将求解过程分解为：计算矩阵乘法（Multiply），计算求和函数（Sum），计算概率归一化的除法函数（Divide）。第一步求解操作占用了主要的计算消耗，即使对于采用现代通用计算体系结构的GPGPU来说， 尽管其非常适合于具有高计算并行的矩阵乘法，这种计算负担也是相当高的。因此，采用现代硬件体系结构的训练和推理中，输出词向量矩阵的超大尺寸仍然是一个计算瓶颈。而且，目前的GPGPU设备的显存（Graphical Memory）是有限的，通常Nvidia提供的设备为12GB显存，目前最大的计算设备Nvidia-K80显存为24GB，然而这个设备造价相当昂贵\footnote{https://www.nvidia.com/zh-cn/data-center/tesla/}。因为我们不能任意增大显存大小，所以对词表大小有一个天然的上限。
+如公式~\ref{eq:softmax}~和~\ref{eq:log-softmax}~所示，前向概率传播函数$\log p(w|h) $（即第一行方程）和后向梯度优化函数${\partial p(w_i|h)}/{\partial v_{w_j}}$（即第二行的方程）都需要计算目标词汇表中的所有单词，因此在这个部分上花费的时间会随着词表中包含的单词数量的增加而线性地增长。举个例子来说，假设词表中包含$ \mathcal{| V |} $ 数量的单词来说，总的时间复杂度（Time Complexity）是$\mathcal{O}(\mathcal{|H ||V|})$，其中$\mathcal{|H|}$表示的是隐藏层输出的维度。对于基于CPU设备的线性计算设备来说，该部分计算占用总计算时间也是足够大的。若我们将该部分计算迁移到GPGPU设备上，他将求解过程分解为：计算矩阵乘法（Multiply），计算求和函数（Sum），计算概率归一化的除法函数（Divide）。第一步求解操作占用了主要的计算消耗，即使对于采用现代通用计算体系结构的GPGPU来说， 尽管其非常适合于具有高计算并行的矩阵乘法，这种计算负担也是相当高的。因此，采用现代硬件体系结构的训练和推理中，输出词向量矩阵的超大尺寸仍然是一个计算瓶颈。而且，目前的GPGPU设备的显存（Graphical Memory）是有限的，通常Nvidia 公司提供的设备为12GB显存，目前最大的计算设备Nvidia-K80显存为24GB，然而这个设备造价相当昂贵\footnote{https://www.nvidia.com/zh-cn/data-center/tesla/}。因为我们不能任意增大显存大小，所以对词表大小有一个天然的上限。
 
-这里我们需要说清楚一点，softmax概率计算瓶颈是求和函数还是矩阵乘法函数？\texttt{softmax} 算法的瓶颈不能归因于``for''循环函数（即方程~\ref{eq:softmax}~）中的$ \sum_ {u \in \mathcal {V}} $，尽管它随着词汇量的增长而线性增长，但是矩阵张量的乘法计算的规模更大。因为矩阵计算需要更多的时间来获得结果，但线性求和可以更快地计算完成。所以，相比于``for''循环函数而言，主要的计算时间用于矩阵乘法计算。我们在这里说明的目的是：只有那些避免大矩阵乘法运算，即避免计算其他冗余字的计算概率才能达到边际加速比的方法，而那些仍然涉及全局概率规一化的方法，实际上并不能真正改善这个部分的计算占用的时间。那些试图优化求和函数的计算效率所获得的收益更是微乎其微。
+这里我们需要说清楚一点，softmax 概率计算瓶颈是求和函数还是矩阵乘法函数？ softmax 算法的瓶颈不能归因于``for''循环函数（即方程~\ref{eq:softmax}~）中的$ \sum_ {u \in \mathcal {V}} $，尽管它随着词汇量的增长而线性增长，但是矩阵张量的乘法计算的规模更大。因为矩阵计算需要更多的时间来获得结果，但线性求和可以更快地计算完成。所以，相比于``for''循环函数而言，主要的计算时间用于矩阵乘法计算。我们在这里说明的目的是：只有那些避免大矩阵乘法运算，即避免计算其他冗余字的计算概率才能达到实际最大的边际加速比，而那些仍然涉及全局概率规一化的方法，实际上并不能真正改善这个部分的计算占用的时间，那些试图优化求和函数的计算效率所获得的收益更是微乎其微。
 
 
 
-因此，在保证模型计算准确度不下降的情况下，我们期望能缓概率归一化函数的计算瓶颈并且提高模型的训练速度。 目前能有效缓解大词表问题的算法，主要分为以下三类： 单词拆分算法（Vocabulary Truncation）、采样估计模型（Sampling-based Approximation）和层次分解模型（Vocabulary Factorisation）。下面我们将对三种不同思路的算法进行一一详述。
+因此，在保证模型计算准确度不下降的情况下，我们期望能缓概率归一化函数的计算瓶颈并且提高模型的训练速度。 目前能有效缓解大词表问题的算法，主要分为以下三类： 单词拆分算法（Vocabulary Truncation）、采样估计模型（Sampling-based Approximation）和词表层次分解（Vocabulary Factorisation）。下面将对三种不同思路的算法进行详述。
 
 
 \subsection{单词拆分算法}
-针对大词表问题的解决方法，最直接、最简单的策略就是我们放弃使用大词表，转而保留一个较小的词表来保证训练和测试的时候模型的内存（Memory Footprint）占用小和计算效率高。当我们使用较小的词表来保留高频词之后，就会剩下很多其他不在词表里面的单词被映射成$unk$。这相当于我们直接丢弃和模型的输入信息，可能使模型的性能变差。那么针对剩余的过多的词表外的单词（Out-Of-Vocabulary，OOV）， Schwenk~等人提出我们可以使用传统的N-gram语言模型来估算其可能的概率分布~\upcite{DBLP:journals/csl/Schwenk07}。这样做一方面保证神经网络模型可以在有限时间内训练完，同时保证模型的最后的测试结果不会很差。
+针对大词表问题的解决方法，最直接、最简单的策略就是我们放弃使用大词表，转而保留一个较小的词表来保证训练和测试的时候模型的内存（Memory Footprint）占用小和计算效率高。当我们使用较小的词表来保留高频词之后，就会剩下很多其他不在词表里面的单词被映射成$unk$。这相当于我们直接丢弃和模型的输入信息，可能使模型的性能变差。那么针对剩余的过多的词表外的单词（Out-Of-Vocabulary，OOV）， Schwenk~等人提出可以使用传统的N-gram语言模型来估算其可能的概率分布~\upcite{DBLP:journals/csl/Schwenk07}。
+这样做一方面保证神经网络模型可以在有限时间内训练完，同时保证模型的最后的测试结果不会很差。
 
-然而我们需要注意到，当我们的词表继续减少并且我们选取的训练样本的词表包含的所有单词数量不断增加的时候，我们会发现训练样本中存在非常多的$\langle$unk$\rangle$ 字符，这直接导致我们转换后的句子变成了无法读或者理解的句子。当我们发现肉眼可见的句子是无法理解的时候，已经导致输入模型的信息噪声非常大，这样使得神经网络的模型训练非常困难，进而导致模型效果变得非常地差，所以这种方案只是一定程度上缓解了大词表问题，但是不失为一种简单且有效的尝试方案。
+然而我们需要注意到，当我们的词表继续减少并且我们选取的训练样本的词表包含的所有单词数量不断增加的时候，我们会发现训练样本中存在非常多的$\langle$unk$\rangle$ 字符，这直接导致我们转换后的句子变成了无法读或者理解的句子。当我们肉眼可见的句子是无法理解的时候，已经导致输入模型的信息噪声非常大，这样使得神经网络的模型训练非常困难，进而导致模型效果变得非常地差。所以这种方案只是一定程度上缓解了大词表问题，但是不失为一种简单且有效的尝试方案。
 
-除了上述直接的建模方案外，目前采用的方案是将单词按照字符级别来划分。英文单词是由多个字符（Character）组成的，可以将一个单词按照字符统计规律划分成任意多个子词（Sub-word）。例如，Tucker等人提出利用二元对编码（byte-pair-encoding，BPE）能将一个单词划分成两部分：前缀（Prefix）和后缀（Suffix）~\upcite{DBLP:conf/icassp/Tucker0P94, DBLP:conf/acl/SennrichHB16a,Gage:1994:NAD:177910.177914}，如图~\ref{fig:subword} 所示。从该图中我们可以看出，单词被划分成前缀和后缀两部分，其中$+$代表是单词的前缀，同时$\langle /w \rangle$是单词的后缀。由于划分规则是从训练数据中学习到的，我们可以指定需要缩减的词表大小，所以该算法的动态适应性很强。最初Kucker等人提出该算法目的是问了方便文本信息压缩（Zip软件），后来Sennrichr等人将该算法应用在目前主流的机器翻译模型中，获得很好的精度和性能收益~\upcite{DBLP:journals/corr/JozefowiczVSSW16}。后续的提出的算法中，直接将单词拆分成字符序列，模型训练得到的将不再是词向量而是子词向量（Sub-word embedding）或者字符向量（Character Embedding）。在测试的时候，我们将通过组合子词或者字符向量来获得这个单词的实际词向量。尽管如此，我们仍然需要看到它这样将单词解构成前缀和后缀的操作依然带来了一定的损失，因为句子的长度加倍了，对循环神经网络的长距离关系学习能力提出了更高的挑战~\upcite{DBLP:conf/aaai/KimJSR16}。
+除了上述直接的建模方案外，目前采用的方案是将单词按照字符级别来划分。英文单词是由多个字符（Character）组成的，可以将一个单词按照字符统计规律划分成任意多个子词（Sub-word）。例如，Tucker等人提出利用二元对编码（Byte Pair Encoding，BPE）能将一个单词划分成两部分：前缀（Prefix）和后缀（Suffix）~\upcite{DBLP:conf/icassp/Tucker0P94, DBLP:conf/acl/SennrichHB16a,Gage:1994:NAD:177910.177914}，如图~\ref{fig:subword} 所示。从该图中我们可以看出，单词被划分成前缀和后缀两部分，其中$+$代表是单词的前缀，同时$\langle /w \rangle$是单词的后缀。由于划分规则是从训练数据中学习到的，我们可以指定需要缩减的词表大小，所以该算法的动态适应性很强。最初Kucker等人提出该算法目的是问了方便文本信息压缩（Zip软件），后来Sennrichr等人将该算法应用在目前主流的机器翻译模型中，获得很好的精度和性能收益~\upcite{DBLP:journals/corr/JozefowiczVSSW16}。后续的提出的算法中，直接将单词拆分成字符序列，模型训练得到的将不再是词向量而是子词向量（Sub-word embedding）或者字符向量（Character Embedding）。在测试的时候，我们将通过组合子词或者字符向量来获得这个单词的实际词向量。尽管如此，我们仍然需要看到它这样将单词解构成前缀和后缀的操作依然带来了一定的损失，因为句子的长度加倍了，对循环神经网络的长距离关系学习能力提出了更高的挑战~\upcite{DBLP:conf/aaai/KimJSR16}。
 
 \begin{figure}[!h]
   \centering
-\includegraphics[width=0.7\linewidth]{./figures/subword.pdf}
+\includegraphics[width=0.58\linewidth]{./figures/subword.pdf}
 \caption{词到子词划分样例}\label{fig:subword}
 \end{figure}
 
 \subsection{采样估计模型}
 第二种策略也是通过减少单词数量从而减少计算量。与上面暴力的将单词拆分成子词不同的是：这种采样算法是在训练的时候，通过采样算法选择少量单词，用来估计softmax函数的可能的概率分布。因为实际只有一个单词是需要我们预测的，其他的单词都是可以认为是一个噪声单词。
 
-目前流行的采样算法（Sampling Algorithm）主要是针对公式~\ref{eq:softmax}~中对所有单词概率规约那一项进行概率估计，其中目前流行的采样算法主要有：重要性采样（Importance Sampling）~\upcite{DBLP:journals/tnn/BengioS08}，噪声差分估计（Noise Contrastive Estimation, NCE）~\upcite{DBLP:conf/icml/MnihT12}和Blackout 采样算法~\upcite{DBLP:journals/iclr/JiVSAD15}。第一种算法在Bengio等人的论文实验中被证明模型无法收敛~\upcite{DBLP:journals/tnn/BengioS08}，因此目前主流模型都使用后面的两种采样算法。接下来，我们将会对这两种方法进行更加详细的描述。
+目前流行的采样算法（Sampling Algorithm）主要是针对公式~\ref{eq:softmax}~中对所有单词概率规约那一项进行概率估计，主要有：重要性采样（Importance Sampling）~\upcite{DBLP:journals/tnn/BengioS08}，噪声差分估计（Noise Contrastive Estimation, NCE）~\upcite{DBLP:conf/icml/MnihT12}和Blackout 采样算法~\upcite{DBLP:journals/iclr/JiVSAD15}。第一种算法在Bengio等人的论文实验中被证明模型无法收敛~\upcite{DBLP:journals/tnn/BengioS08}，因此目前主流模型都使用后面的两种采样算法。接下来，我们将会对这两种方法进行更加详细的描述。
 
 对于NCE噪声差分估计算法来说，模型需要学习将正确的单词 $w_0$ 与随机生成的单词 $\{w_1\cdots w_k\}$做一个二元分类。 其中 $w_0$ 指代的是训练样本中真正的下一个单词， $\{w_1\cdots w_k\}$ 是采用先验分布  $q(w)$产生的随机噪声单词。实际实验中，我们常用的采样的概率分布模型 $q(w)$是单词词频分布（Word Frequency Distribution）。 正例归一化后的概率~$\tilde{p}(y=1|h)$~和所有负例联合概率~$\tilde{p}(y=0|h)$~的公式可以写成：
 \begin{equation}\label{equ:nce}
@@ -168,7 +167,7 @@ p(w|h)=&\frac{\exp(h^\top v_{w})}{\sum_{w_j\in \mathcal{V}}{\exp(h^\top v_{w_j} 
   \tilde{p}(y=0|h)=&\prod_{i=1}^{k}\frac{k *q(w_i)}{\exp( \theta^w_i h)+k *q(w_i)}\\
 \end{split}
 \end{equation}
-需要注意的是噪声概率~$\tilde{p}(y=0|h)$~需要对~$k$~个噪声样本做加和运算而不是对整个词表单词进行的。 这样的话该算法的计算机复杂度就是$\mathcal{O}(k+1)$，和整个词表的大小无关了。从而该算法与简单的softmax算法的加速比是$\mathcal{O}(\mathcal{|V|}/(k+1))$。
+需要注意的是噪声概率~$\tilde{p}(y=0|h)$~需要对~$k$~个噪声样本做加和运算而不是对整个词表单词进行的， 这样的话该算法的计算机复杂度就是$\mathcal{O}(k+1)$，和整个词表的大小无关了，从而该算法与简单的softmax算法的加速比是$\mathcal{O}(\mathcal{|V|}/(k+1))$。
 
 除了上面这种最经典的算法之外，后续又衍生出了其他的从采样算法。最近才提出的~Blackout~采样算法针对噪声概率归一化的时候与当前上下文的相关，对上述的NCE算法进行了进一步优化和修正~\upcite{DBLP:journals/iclr/JiVSAD15}，同时也对模型引入了更多的计算量。其模型的代价函数计算公式定义为：
 \begin{equation}
@@ -178,16 +177,16 @@ p(w_i) =& \frac{\exp(\theta^w_i h)}{\sum_{w_i \sim p(w)} \exp(\theta^w_i h)}.
 \end{split}
 \end{equation}
 
-简短介绍完了两种采样算法，我们来做一个总结。总的来说，这些采样近似算法可以显着加快训练速度，但仍然需要时间来利用单词分布$q(w)$~\upcite{DBLP:conf/naacl/ZophVMK16}来采样大量的噪音单词，采样单词足够多的情况占用的时间仍然很客观，需要进一步手段优化。 另一方面，Softmax函数在推理测试的时候必须要计算，意味着在测试推理的时候该算法失效了。因为候选词是在整个词汇表中预测的，而不仅仅对当前的采样的早噪声单词做预测，而且我们更无法得知正确的单词是什么\upcite{DBLP:journals/jmlr/GutmannH12}。
+简短介绍完了两种采样算法，我们来做一个总结。总的来说，这些采样近似算法可以显着加快训练速度，但仍然需要时间来利用单词分布$q(w)$~\upcite{DBLP:conf/naacl/ZophVMK16}来采样大量的噪音单词，采样单词足够多的情况占用的时间仍然很客观，需要进一步的手段去优化。 另一方面，Softmax函数在推理测试的时候必须要计算，意味着在测试推理的时候该算法失效了。因为候选词是在整个词汇表中预测的，而不仅仅对当前的采样的早噪声单词做预测，而且我们更无法得知正确的单词是什么\upcite{DBLP:journals/jmlr/GutmannH12}。
 
 这里我们需要注意的是，由于我们在做采样估计的时候引入了采样函数$q(w)$，模型将会花费额外时间在采样计算上面。从离散分布采样的初始程序通常需要词汇数量具有线性时间复杂度。因此我们需要寻找一个性能优异的带权重的随机数生成器（Weight Random Number Generator）或者是离散采样函数（Discrete Sampling Function）。
 
 
-\subsection{层次分解模型}
+\subsection{词表层次分解}
 介绍完单词拆分、采样估计算法之后，我们再从模型角度分解优化这个大词表问题。层次分解方法（Factorization）可以大大降低学习和推理过程中表示概率分布的所占用的计算内存，因为它只计算局部概率（Local Probability）并且选择每一层的分数最高的候选路径而不是保存全局计算结果。
-目前主要的分解策略可以分为： 基于类别的多元分类模型（Class-based Hierarchical Softmax, cHSM）和基于二叉树的二元分类模型（Tree-based Hierarchical Softmax, tHSM）。接下来我们将这两种算法的详细计算过程进行描述。
+目前主要的分解策略可以分为： 基于类别的多元分类模型（Class-based Hierarchical Softmax, cHSM）和基于二叉树的二元分类模型（Tree-based Hierarchical Softmax, tHSM）。接下来我们将这两种算法的计算过程进行描述。
 
-首先我们考虑基于类别的分解策略。假设语料中的每一个词样本属于且只属于一个类（class或者group），在此基础上计算词样本在语料中的分布时，可以先计算类的概率分布，然后在所属类上计算当前词的概率分布\upcite{王龙2015基于循环神经网络的汉语语言模型并行优化算法}~，于是可将公式~\ref{eq:softmax}~转化为如下形式：
+首先我们考虑基于类别的分解策略。假设我们将文本所对应的词表中的每一个词划分成各个类簇，每个单词属于且只属于一个类（Class或者Group）。在此假设之上，我们进而来计算单词在在语料中的对数分布时，可以转化为：先计算类的概率分布，然后乘以在所属类上该词的概率分布\upcite{王龙2015基于循环神经网络的汉语语言模型并行优化算法}~，于是可将公式~\ref{eq:softmax}~转化为如下形式：
 \begin{equation}
 \begin{split}
 p(w|h)=&p^c(\mathcal{C}(w)|h)\cdot p^w(w|\mathcal{C}(w),h) ,\\
@@ -197,68 +196,58 @@ p(w|h)=&p^c(\mathcal{C}(w)|h)\cdot p^w(w|\mathcal{C}(w),h) ,\\
 \end{equation}
 其中第一项概率~$p^c(\mathcal{C}(w)|h)$~表示每个类别的概率，第二项概率~$p^w(w|\mathcal{C}(w),h)$~表示在类别$\mathcal{C}(w)$中所有单词的局部概率。
 
-此时，训练一个词样本的计算复杂度正比于: $\mathcal{O =|H||C|}$。 在该计算公式中，$\mathcal{C}$~表示的是该语料中所有词的分类数目，我们可以按照不同策略划分词表，最简单的一种策略就是根据语料中词的词频进行划分。 当$C$ 取$1$ 或取词典大小$|V|$ 时，此结构等同于标准的Softmax 结构，此时词表还是原来的结构，并没有任何优化效果。因此，对于绝大多数情况，我们取$\mathcal{C} \ll \mathcal{V}$并且 $|\mathcal{C}|\ll 1$，这样的结构才能保证有效降低 softmax 的计算复杂度。图~\ref{fig:case_hsm}~展示了类别划分和分步概率计算的示例。从图~\ref{fig:case_hsm}~中我们可以得知，其中词表 [duck,cat,mop,broom,the,am] 被划分成三个类别：$c_1\to$[duck,cat]，$c_2\to$[mop,broom]并且$c_3\to$[the,am]。
-\begin{figure}[!h]
+该模型计算一个词的概率分布所需要的计算复杂度正比于: $\mathcal{O =|H||C|}$。 在该计算公式中，$\mathcal{C}$~表示的是该语料中所有词的分类数目，我们可以按照不同策略划分词表，最简单的一种策略就是根据语料中词的词频进行均匀划分。 当$C$ 取$1$ 或取词典大小$|V|$ 时，此结构等同于标准的Softmax 结构，此时词表还是原来的结构，并没有任何优化效果。因此，对于绝大多数情况，我们取$\mathcal{C} \ll \mathcal{V}$并且 $|\mathcal{C}|\ll 1$，这样的结构才能保证有效降低 softmax 的计算复杂度。图~\ref{fig:case_hsm}~展示了类别划分和分步概率计算的示例。从图~\ref{fig:case_hsm}~中我们可以得知，词表 [duck,cat,mop,broom,the,am] 被划分成三个类别：$c_1\to$[duck,cat]，$c_2\to$[mop,broom]并且$c_3\to$[the,am]。
+\begin{figure}[!t]
   \centering
-\includegraphics[width=1\linewidth]{./figures/case_chsm.pdf}
+\includegraphics[width=.9\linewidth]{./figures/case_chsm.pdf}
 \caption{cHSM算法可视化模型}\label{fig:case_hsm}
 \end{figure}
 
 接下来我们来分析一下基于类别的分层模型计算速度提升效果。假设每个类包含 $\sqrt{\mathcal{|V|}}$ 单词，表示词汇被划分为相同大小的组，这样的话级联概率（Cascaded Probability）只涉及$2\sqrt{\mathcal{|V|}}$ 单词 softmax计算，所以最优时间复杂度可以减少到$\mathcal{O}(\mathcal{|H|}\sqrt{\mathcal{|V|}})$~\upcite{DBLP:conf/icassp/Goodman01}。虽然在更常见的情况下，词表划分算法会产生不同大小的分组，这需要外部的其他结构来建立高效的数据结构，并且这些稍微复杂的算法尚未被完全探索和分析。此外，我们还可以通过不同的类大小和分区算法来调整精度和效率之间的权衡关系。
 
-另一方面，我们再介绍基于二叉树分解词表的建模策略。tHSM方法将一步多类分类分解为多个二元分类步骤。正因为如此，词汇组织为二叉树，其中单词分布在二叉树的叶子节点上，二叉树的所有的中间节点的都是内部参数。如果该二叉树是平衡树（Balanced Binary Tree）的结构情况下，每个词将会被赋予相等长度的01前缀，最优时间复杂度可以减少到$\mathcal{O(|H|\log \mathcal{|V|})}$。图~\ref{fig:case_thsm} 展示了一颗平衡二叉树词表分解和访问路径的示例。关于如何构建这颗二叉树，最早的工作中，单词在二叉树上的分布可以由WordNet与人类专家~\upcite{DBLP:conf/aistats/MorinB05}或单词 unigram 分布~\upcite{DBLP:conf/nips/MikolovSCCD13}的霍夫曼编码构建。然而，在现实世界的大规模文本应用中，专家知识的构建是相当昂贵的。所以，一般人们也不会采用这样的方案来构建单词的二叉树分布。霍夫曼编码方案只考虑单数据统计，而单词的语境，句法或语义信息尚未被考虑和得到彻底的讨论。
+另一方面，我们再介绍基于二叉树分解词表的建模策略。tHSM方法将单步骤多类分类分解为多步骤二元分类步骤。正因为如此，词汇组织为二叉树，其中单词分布在二叉树的叶子节点上，二叉树的所有的中间节点的都是内部参数。在该二叉树是平衡树（Balanced Binary Tree）的结构情况下，每个词将会被赋予相等长度的01前缀，最优时间复杂度可以减少到$\mathcal{O(|H|\log \mathcal{|V|})}$。图~\ref{fig:case_thsm} 展示了一颗平衡二叉树词表分解和访问路径的示例。关于如何构建这颗二叉树，最早的工作中，单词在二叉树上的分布可以由WordNet与人类专家~\upcite{DBLP:conf/aistats/MorinB05}或单词 Unigram 分布~\upcite{DBLP:conf/nips/MikolovSCCD13}的霍夫曼编码构建。然而，在现实世界的大规模文本应用中，专家知识的构建是相当昂贵的。所以，一般人们也不会采用这样的方案来构建单词的二叉树分布。霍夫曼编码方案只考虑单数据统计，而单词的语境，句法或语义信息尚未被考虑和得到彻底的讨论。
 
-\begin{figure}[!h]
+\begin{figure}[!t]
   \centering
-\includegraphics[width=1\linewidth]{./figures/thsm-example.pdf}
+\includegraphics[width=.85\linewidth]{./figures/thsm-example.pdf}
 \caption{tHSM算法可视化模型}\label{fig:case_thsm}
 \end{figure}
 
-Mikolov~等人当年曾提出使用基于二叉树的层级softmax模型来加速的训练方案，加速比能达到理论的最大速度。但是需要注意的是，当时提出的背景是基于CPU计算方案构建的，如今随着应用领域的推广越来越多的算法应用到实际问题中，我们需要在并行度更高的GPU上进行计算，因此基于GPU进行建模的~tHSM~算法和历史上研究众多的cHSM算法尚未被研究提及，因此我们将会需要在本研究中详细研讨。
+Mikolov~等人当年曾提出使用基于二叉树的层级softmax模型来加速的训练方案，加速比能达到理论的最大速度。但是需要注意的是，当时提出的背景是基于CPU计算方案构建的，如今随着应用领域的推广越来越多的算法应用到实际问题中，我们需要在并行吞吐量更高的GPU上进行计算，因此基于GPU进行建模的~tHSM~算法和历史上研究众多的cHSM算法尚未被研究提及，因此我们将会需要在本研究中详细研讨。
 
 \section{离散采样算法}
-前面我们提到在使用基于采样的模型时，我们不可避免的需要使用到离散采样函数，我们在这一个部分来讨论离散采样函数的构建策略。我们首先给出离散采样问题的定义：设一共有$|\mathcal{V}|$个单词，第$i$个单词出现的概率是$p(w_i)$， 如何高效地产生这样的随机变量序列$w_1,w_2,\cdots$?
+前面我们提到在使用基于采样的模型时，我们不可避免地需要使用到离散采样函数，我们在这一个部分来讨论离散采样函数的构建策略。我们首先给出离散采样问题的定义：设一共有$|\mathcal{V}|$个单词，第$i$个单词出现的概率是$p(w_i)$， 如何高效地产生这样的随机变量序列$w_1,w_2,\cdots$?
 
-这问题其实正式来说，可称为模拟离散取样（Simulated Discrete Sampling），跟据有限类别的指定的概率，来模拟取样，生成采样序列输出。其中，要制造指定的概率分布随机变量，关键就是如何通过均匀分布变换获得。因为我们的计算机只能快速产生伪随机数，即均匀分布的采样输出。其他的复杂采样函数均建立在均匀分布的变换之上。
+这个问题在数学、工程领域中，称之为模拟离散取样（Simulated Discrete Sampling），其含义指的是跟据有限类别的非均匀概率分布，来模拟有放回的采样，从而生成我们需要的采样序列。因为我们的计算机只能快速产生伪随机数（Psudo Random Number Generator），即对均匀分布（Uniform Distribution）做采样。其他的复杂采样函数均建立在均匀分布的变换之上。所以该问题的关键就是如何通过将均匀分布变换到我们实际变量的分布，生成指定概率分布的随机噪声。
+
 \subsection{随机采样函数}
-当我们使用概率模型实现推理和学习算法时，通常需要从离散分布进行抽样。 也就是说，从参数$\boldsymbol {\pi} \in \mathbb{R} ^ K$中的多项式分布，使得$\ pi_k \geq 0$和$\sum_{k} \pi_k = 1$。 更常见的情况是我们在$\mathbb{R}^K$中有一个$\boldsymbol {\phi}$ ，其中$\phi_k \geq 0$，但我们不知道规范化常量。 也就是说，$\boldsymbol{\pi}$只与多项式参数$\boldsymbol {\pi}$成正比。 我们希望根据$\boldsymbol{\pi}$快速生成一个变量，给出$\boldsymbol {\pi}$，用（Matlab）代码很容易地完成某些操作：
-\begin{verbatim}
-cdf = cumsum(phi);
-samp_k = sum(cdf < rand()*cdf(end)) + 1;
-\end{verbatim}
-这很好很简单，但是你会注意到它具有每个样本的设置（计算CDF）和$\mathcal {O}(K)$时间复杂度的$\mathcal {O}(K)$时间复杂度。每个样本的复杂度可能被降低到$\mathcal {O}(\log K)$，找到阈值的数据结构更好。事实证明，我们可以做得更好，得到$\mathcal {O}(K)$的抽样，而仍然是$\mathcal {O}(K)$。
+当我们使用概率模型实现推理和学习算法时，通常需要从离散分布进行抽样。 也就是说，从参数$\boldsymbol {\pi} \in \mathbb{R} ^ K$中的多项式分布，使得$\pi_k \geq 0$和$\sum_{\mathcal{V}} \pi_{k} = 1$。 更常见的情况是,我们只知道：$\boldsymbol {\phi}\in \mathbb{R}^{\mathcal{V}}$ ，其中$\phi_k \geq 0$，但我们不知道规范化常量$\sum_{\mathcal{V}} \phi_{k}$。 也就是说，$\boldsymbol{\phi}$只与多项式参数$\boldsymbol {\pi}$成正比。
+然而给定$\boldsymbol {\pi}$分布，我们希望根据$\boldsymbol{\pi}$快速生成变量序列。我们可以使用Matlab代码，很容易地完成这个计算操作，如图~\ref{fig:sample}~所示。
+\begin{figure}[!t]
+  \centering
+\includegraphics[width=1\linewidth]{./figures/cdf.pdf}
+\caption{Matlab实现的离散采样函数}\label{fig:sample}
+\end{figure}
+
+其中 cdf指代的是累积分布函数（Cumulative Distribution Function，CDF）。该计算算法很简单，最容易实现。但是我们注意到该算法初始化需要消耗$\mathcal{O(\mathcal{V})}$时间复杂度。计算每个样本时候的时间复杂度也是$\mathcal{O(V)}$。假如我们能找到阈值的更好的数据结构来完成比较操作$<$，每个样本的复杂度将可能被降低到$\mathcal{O}(\log\mathcal{V})$。
+
+实际上除了二叉搜索算法外，我们发现还有更高效的算法，可以将每个样本产生的复杂度降低到$\mathcal {O}(1)$，并且保证总的采样复杂度是$\mathcal{O}(K)$（假设我们需要采样K个单词）。
 \subsection{基于线性搜索的逆变换方法}
-在上节中，显示了CDF的一些特性，例如CDF的范围是$[0,1]$，而且是一个单调递增的（Monotonic Increasing）函数。逆变换取样算法（Inverse Transform Sampling）就是利用了这些特性，来解决上面提出的问题。其实，逆变换取样方法并不是很复杂，我们接下来详细解释。给一个目标CDF，只要计算其逆函数（Inverse Function），就可以把均匀的随机变数转换为目标CDF:
-\begin{equation}\label{equ:func}
-  X=F_X^{-1}(Y)
-\end{equation}
+累积分布函数的取值范围是$[0,1]$，并且是一个单调递增的（Monotonic Increasing）函数。与累积分布函数息息相关的一个算法叫做，逆变换取样算法（Inverse Transform Sampling），其定义如下：给定一个累积分布函数，我们计算其逆函数（Inverse Function），就可以把均匀随机变量转换成该累积分布函数。逆函数定义如下：$X=F_X^{-1}(Y)$。
 
-这方法能用在所有CDF(包括连续及离散的)。其数学证明可参考维基百科。
-
-下图显示这个方法的直观解读，在Y轴范围$[0,1]$里均匀取样$(y_i)$，之后向右和CDF取交点，求交点的$X$轴位置($x_i$)，$X$则是符合CDF的概率分布。这个方法用在离散的情况就更简单，只需搜寻目标的CDF，找出超过均匀取样的元素即可。
+如图~\ref{fig:cdf}~所示，在Y轴上随机取样获得$y_i$，接下来向右和函数曲线取交点，求解交点的$X$轴位置$x_i$，$X$就是满足条件的概率分布。假若 X的取值不是连续的而是离散的，那么我们只需快速地搜索出超过均匀取样的元素的那个样本。
 \begin{figure}[!h]
   \centering
-\includegraphics[width=0.5\linewidth]{./figures/cdf.png}
+\includegraphics[width=0.6\linewidth]{./figures/inverse.pdf}
 \caption{累计函数采样方法示意图}\label{fig:cdf}
 \end{figure}
-在离散的情况下(本文题目要求)，其时间复杂度是O(N)，其中N为类别数目。
 
-读者可能会注意到，这里用了线性搜寻(Linear Search)，如果targetPdf数组是由大至小排列，平均而言会更快找到结果。另外，也可以用二分搜寻(Binary Search)，那么复杂度会降低为$O(\log |\mathcal{V}|)$，。
-
-
-\subsection{基于二叉树搜索的逆变换方法}
-二分搜索（binary search），也称折半搜索（half-interval search）、对数搜索（logarithmic search），是一种在有序数组中查找某一特定元素的搜索算法。搜索过程从数组的中间元素开始，如果中间元素正好是要查找的元素，则搜索过程结束；如果某一特定元素大于或者小于中间元素，则在数组大于或小于中间元素的那一半中查找，而且跟开始一样从中间元素开始比较。如果在某一步骤数组为空，则代表找不到。这种搜索算法每一次比较都使搜索范围缩小一半。
-
-事实上，这个问题用二分搜寻是标准的方法。那么，还有没有更快的方法呢？答案是肯定的，例如别名方法(alias method)、近似方法等~\upcite{DBLP:journals/cgf/ClineRW09}。当然，在N很小的情况下，线性搜寻和二分搜寻也足够。
+在离散概率分布的情况下，其时间复杂度是$O( |\mathcal{V}|)$。在图~\ref{fig:sample}中，所展示的代码使用了线性搜索算法(Linear Search)。如果目标概率分布的数组是有序的，那我们就可以使用数据结构中的查找算法更快地找到结果。例如，我们可以用二分法(Binary Search)搜索合适的样本结果，其对应的时间复杂度是~$O(\log |\mathcal{V}|)$。在$\mathcal{V}$很小的情况下，使用线性查找算法或者二分搜寻算法也足够得快；当$\mathcal{V}$足够的大，即所谓的大词表问题的时候，我们可以采用别名方法(Alias Method)、近似方法等~\upcite{DBLP:journals/cgf/ClineRW09}。本实验实际用到了别名算法，我们接下来稍作介绍。
 \subsection{别名方法}
 
-设$ Z $为离散的随机变量，它有n个可能的结果$ z_0,z_1,\ldots,z_ {n-1} $。 为了简化下面的讨论，我们研究另一个变量$ Y $，其中$ P \{Y = i \} = P \{Z = z_i \} $。 当$ Y $取值$ i $时，让$ Z $为$ z_i $。 所以$ Z $可以从$ Y $生成。随机变量$ X $被均匀分布在$(0,n)$中，这个概率密度函数是
+设$ Z $为离散的随机变量，它有$\mathcal{V}$个可能的结果$ z_0,z_1,\ldots,z_ {\mathcal{V}-1} $。 为了简化下面的讨论，我们研究另一个变量$ Y $，其中$ P \{Y = i \} = P \{Z = z_i \} $。 当$ Y $取值$ i $时，让$ Z $为$ z_i $。 所以$ Z $可以从$ Y $生成。随机变量$ X $被均匀分布在$(0,\mathcal{V})$中，这个概率密度函数是
 \begin{equation}\label{equ:alias}
- f(x) = \left\{
- \begin{array}{rl}
-  1/n & \text{若 } 0 < x < n\\
-  0 & \text{否则}\\
- \end{array} \right.
+ f(x) = 1/\mathcal{V}, 0 < x < \mathcal{V}
 \end{equation}
 那么我们现在生成的$Y'$是：
 \begin{equation}\label{equ:gen}
@@ -271,19 +260,18 @@ samp_k = sum(cdf < rand()*cdf(end)) + 1;
 其中$ A(i)$是别名函数。 当$ x $落入范围$ [i,i + 1)$（$ i $是一个整数）时，$ y $的概率$ F(i)$为$ i $，概率$ 1 - F(i )$是$ A(i)$。 由于$ x $是均匀分布的，
 \begin{equation}
   \begin{split}
-P\{x \in [i, i + F(i))\}     &= \int_i^{i+F(i)}\frac{1}{n}dx= (i + F(i) - i) \times 1/n= F(i)/n,\\
-P\{x \in [i + F(i), i + 1)\} &= \int_{i+F(i)}^{i+1}\frac{1}{n}dx= (i + 1 - (i + F(i))) \times 1/n= (1-F(i))/n
+P\{x \in [i, i + F(i))\}     &= \int_i^{i+F(i)}\frac{1}{\mathcal{V}}dx= (i + F(i) - i) \times 1/\mathcal{V}= F(i)/\mathcal{V},\\
+P\{x \in [i + F(i), i + 1)\} &= \int_{i+F(i)}^{i+1}\frac{1}{\mathcal{V}}dx= (i + 1 - (i + F(i))) \times 1/\mathcal{V}= (1-F(i))/\mathcal{V}
 \end{split}
 \end{equation}
-
-让我们将满足$ A(j)= i $的值集合$ j $表示为$ A ^ { - 1}(i)$。 生成的变量$ Y'$具有以下概率质量函数：
+我们将满足$ A(j)= i $的值集合$ j $表示为$A^{- 1}(i)$。 生成的变量~$Y'$~具有以下概率质量函数：
 \begin{equation}
-  P\{Y' = i\} = F(i)/n + \sum_{j \in A^{-1}(i)}\frac{1-F(j)}{n}
+  P\{Y' = i\} = F(i)/n + \sum_{j \in A^{-1}(i)}\frac{1-F(j)}{\mathcal{V}}
 \end{equation}
-Alias方法是构造$ A $和$ F $的算法，所以$ P \{Y'= i \} $等于$ P\{Y = i \} $。 由于$ A $和$ F $的域都是整数$ 0,1,\ldots, n-1 $，所以它们可以存储在数组中，并且可以在$O(1)$中查找值，其中空间效率是 $\mathcal{O}(n)$。
+别名方法是构造$ A $和$ F $的算法，所以$ P \{Y'= i \} $等于$ P\{Y = i \} $。 由于$ A $和$ F $的域都是整数$ 0,1,\ldots, \mathcal{V}-1 $，所以它们可以存储在数组中，并且可以在$O(1)$中查找值，其中空间效率是 $\mathcal{O}(\mathcal{V})$。虽然别名方法可用于生成丰富的噪声字，但是它需要线性建立时间和恒定的采样时间~\upcite{10.2307/2683739,DBLP:conf/emnlp/VaswaniZFC13}。
 
-虽然别名方法可用于生成丰富的噪声字，因为它需要线性建立时间和恒定的采样时间~\upcite{10.2307/2683739,DBLP:conf/emnlp/VaswaniZFC13}。
-
-大词表问题，主要是对softmax如何建模的问题。在本课题中，我们探讨 cHSM 和 tHSM 两种不同的方案所带来的影响和优劣。
+%大词表问题，主要是对softmax如何建模的问题。在本课题中，我们探讨 cHSM 和 tHSM 两种不同的方案所带来的影响和优劣。
 \section{本章小结}
-本章对国内外学者在语言模型的任务上相关工作进行了介绍。首先，介绍了语言模型的建模策略和对应的应用方案。并详细讨论了循环神经网络的语言模型的建模方式，并讨论了其结构的优缺点。同时为了解决使用循环网络所带来的梯度爆炸的问题，我们进而引入了长距离短期神经网络和门限记忆节点两种基于门限机制的循环网络；另一方面，我们还考虑了语言模型大规模应用所带来的大词表问题，并作了详细分析其原因。为了解决该问题，我们还讨论了历史上所提出的方案，并做了分类讨论。主要涉及三种思路：缩减词表大小，用采样算法近似估计和模型层次分解。针对各种模型提出的结果做了详细介绍，并分析了各种算法的优劣处。最后我们分析了实验中需要用到的高效采样函数的构造算法。
+本章对国内外学者在语言模型的任务上相关工作进行了介绍。首先，我们介绍了语言模型的建模策略和对应的应用方案。其次详细讨论了循环神经网络的语言模型的建模方式，并讨论了其结构的优缺点。同时为了解决使用循环网络所带来的梯度爆炸问题，我们进而引入了长距离短期神经网络和门限记忆节点两种基于门限机制的循环网络；另一方面，我们还考虑了语言模型大规模应用所带来的大词表问题，并作了详细分析原因。
+具体来说，我们还讨论了历史上所提出的解决方案，并做了分类讨论。
+主要涉及三种思路：缩减词表大小，用采样算法近似估计和模型层次分解。针对各种模型提出的结构做了介绍，并分析了各种算法的优劣处。最后我们分析了实验中需要用到的高效采样函数的构造算法。
