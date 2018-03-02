@@ -31,8 +31,8 @@
 \end{table}
 
 其中，对于~Wikitext-2和Wikitext-103~数据集，训练、验证和测试集都是预先划分固定的，并且其词汇表大小也已经被定义\footnote{https://metamind.io/research/the-wikitext-long-term-dependency-language-modeling-dataset/}。
-这两个数据集拥有相同的验证和测试集，而Wikitext-103的训练集则比Wikitext-2的训练集大得多。所以我们还可以间接测算出增大训练集对测试集上的提升效果表现。对于第三个``One Billion Word''数据集\footnote{http://www.statmt.org/lm-benchmark/}，它是由之前机器翻译数据集里面的的文本融合而成，文本数据也取自维基百科（Wikipedia）\footnote{英文维基百科主页：https://en.wikipedia.org/wiki/Main\_Page/}。
-为了评价的标准性和实验的可互相比较性，官方还提供了一套数据预处理脚本，同时指定了该脚本所需要的~Perl~语言版本，可见要求极为严苛。因为对于语言模型来说，Perl~内置函数处理出来的文本也略有不同，语言模型之间的结果相互比较就会变得没有意义的。通常来说，词表小的模型更占优势。当我们用官方提供的脚本处理完数据后，我们将``./train/''目录中的所有数据视为训练集，选择``./holdout/''目录下面的第一和第二个数据集作为相应的验证和测试集。这些数据集的详细统计指标在表~\ref{tab:dataset}~中进行了详细说明。
+这两个数据集拥有相同的验证和测试集，而Wikitext-103的训练集则比Wikitext-2的训练集大得多。所以我们还可以间接测算出增大训练集对测试集上的提升效果表现。对于第三个``One Billion Word''数据集\footnote{http://www.statmt.org/lm-benchmark/}，它是由之前机器翻译数据集里面的文本融合而成，文本数据也取自维基百科（Wikipedia）\footnote{英文维基百科主页：https://en.wikipedia.org/wiki/Main\_Page/}。
+为了评价的标准性和实验的可互相比较性，官方还提供了一套数据预处理脚本，同时指定了该脚本所需要的~Perl~语言版本，可见要求极为严苛。因为对于语言模型来说，Perl~内置函数处理出来的文本也略有不同，语言模型之间的结果相互比较就会变得没有意义的。通常来说，词表小的模型更占优势。当我们用官方提供的脚本处理完数据后，我们将``./train/''目录中的所有数据视为训练集，选择``./holdout/''目录下面的第一和第二个数据集作为相应的验证和测试集。这些数据集的详细统计指标在表~\ref{tab:dataset}~中进行了说明。
 
 \subsection{实验评价指标}
 在本次实验研究中，当我们将各种实验模型在训练数据集上训练到收敛之后，我们就需要评价不同模型的性能差异，针对语言模型的两个标准评估度量标准来揭示针对不同的优化方法的优劣：困惑度（Perplexity，$ \mathrm{PPL} $）和单词误差率（Word Error Rate，$\mathrm{WER} $）。

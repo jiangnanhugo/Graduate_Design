@@ -37,6 +37,8 @@ $\Gamma'$ &路径查找表，给定单词元祖序列，可以获得对应的单
 
 更重要的是，我们将一维的单词索引替换成一个元组单词索引$(w ^ c,w ^ o)$，可以利用该元组从我们预先定预先定义的查找表$\Gamma $中检索给定单词索引$ w $。除此之外，$ w ^ c $指代的是单词的类别编号，$ w^c $表示该组内的本地单词索引。
 \begin{equation}\label{equ:partition}
+\setlength{\abovedisplayskip}{6pt}
+\setlength{\belowdisplayskip}{6pt}
  \theta^m=
 \begin{cases}
     \text{单位矩阵} ,& \text{若均匀划分} \\
@@ -52,6 +54,8 @@ $\Gamma'$ &路径查找表，给定单词元祖序列，可以获得对应的单
 当我们定义了单词基于类别的二元编码后，我们接下来讨论基于这种编码的代价函数和导数计算公式。
 给定最后一个隐藏层输出$ h $，那么这个分区组中的每个组和每个单词的概率可以被定义为:
 \begin{equation}
+\setlength{\abovedisplayskip}{6pt}
+\setlength{\belowdisplayskip}{6pt}
 \begin{split}
 \log p^c(c|h) &= \theta^c h-\log \sum{\exp( \theta^c h )} \\
 \log p^o(w|w^c,h)&=\theta^o h -\log\sum\exp{(\theta^o h)}
@@ -59,10 +63,14 @@ $\Gamma'$ &路径查找表，给定单词元祖序列，可以获得对应的单
 \end{equation}
 这里我们需要注意的是$ p ^ c $和$ p ^o $是分别计算而不是并行计算的，因为主要的计算瓶颈是局部标准化的单词概率$ p ^ o $，所以就算这两个概率的并行计算也不会达到时间效率提升。所以我们需要把我们的主要工作集中在如何计算$p^o$ 对应的计算量而不是想方设法使得$p^c,p^o$能够并行计算。例如，假设我们将词表大小为10000的单词均匀划分，那么类别向量的维度是100，单词矩阵的维度是 $[100,100]$。如果两者能够并行计算，而不是顺序计算，它所带来的计算效率增益可以如下计算：
 \begin{equation}\label{equ:example}
+\setlength{\abovedisplayskip}{6pt}
+\setlength{\belowdisplayskip}{6pt}
   \frac{\frac{1}{100*100}}{\frac{1}{100*100+100}}-1=1\%
 \end{equation}
 从上面的计算结果来看，我们只能提升 $1/\%$ 的性能。那么如果我们每次只计算对应单词的单词矩阵的概率值那么我们的计算效率可以如下计算：
 \begin{equation}\label{equ:example2}
+\setlength{\abovedisplayskip}{6pt}
+\setlength{\belowdisplayskip}{6pt}
   \frac{\frac{1}{100+100}}{\frac{1}{100*100+100}}-1=49.5
 \end{equation}
 可以发现，只要我们能避免计算全局概率，那么我们就能实现 $49.5$倍的计算效率增益。尽管我们使用二叉树状概率分布模型能获得更好的加速比，但是需要注意的是使用分类概率模型能直接将模型的计算瓶颈给削弱到很少一部分计算时间。而且相对于二叉树状概率模型，分类概率模型的优点有以下两点：1）模型鲁棒性更高，单词的分组分布对模型的精确度影响比二叉树模型要小很多；2）模型实现容易，适应性强。我们只需要将所有单词划分几个分组即可，不需要做层次二叉聚类算法，更况层次二叉聚类算法计算时间复杂度非常高，不适合实际使用。
@@ -73,17 +81,23 @@ $\Gamma'$ &路径查找表，给定单词元祖序列，可以获得对应的单
 
  因此，该组中确切的后验词对数概率计算如下：
 \begin{equation}
+\setlength{\abovedisplayskip}{6pt}
+\setlength{\belowdisplayskip}{6pt}
   \log p^o(w|w^c,h)=\theta^o h -\log\sum\theta^m\exp(\theta^o h)
 \end{equation}
 
 那么，这个模型的损失函数可以形式化地定义成如下形式：
 \begin{equation}
+\setlength{\abovedisplayskip}{6pt}
+\setlength{\belowdisplayskip}{6pt}
 \ell(\theta|h) =\log p^c(w^c|h) +\log p^o(w^o|w^c,h)
 \end{equation}
 其中在类别层次损失等于负对数似然函数（代价函数），并且单词级别的损失需要在计算其损失时指定其类别 $ w ^ c $。在模型训练过程中，$ w^c$~是需要预先定义的，然而在测试过程中，$w^c$~需要预先计算最有可能的类别，即由公式$\tilde w^c=\arg\max_c p^c$计算获得获取。
 
 当我们定义完模型的代价函数之后，我们接下来将推导得出模型的参数的导数，以便于模型求解优化。我们的模型的所有的参数包括：$\{\theta^c,\theta^o,h\}$，对于模型的代价函数的导数计算公式如下：
 \begin{equation}
+\setlength{\abovedisplayskip}{6pt}
+\setlength{\belowdisplayskip}{6pt}
 \begin{split}
 \frac{\partial \ell}{\partial \theta^c}=& (\delta_{ij}-p(c|h))h \\
 \frac{\partial \ell}{\partial \theta^o}=&(\delta_{ij}-p(w|c,h))h \\
@@ -99,6 +113,8 @@ $\Gamma'$ &路径查找表，给定单词元祖序列，可以获得对应的单
 在推理阶段，对于cHSM模型来说，序列的概率评分这个任务要容易得多。
 类似于以前的方法，我们可以通过重新研究我们的训练模型来解决第一个问题：
 \begin{equation}\label{equ:class_inf}
+\setlength{\abovedisplayskip}{6pt}
+\setlength{\belowdisplayskip}{6pt}
 \log p(w_1,\cdots, w_T)=\sum_t^T\log p(w_t|h_t) =\sum_{t=1}^{T}\log p^c(w^c_t|h_t) +\log p^o(w^o_t|w^c_t,h_t)
 \end{equation}
 我们发现这种类型的操作比传统的softmax方法有效得多，该方法涉及$ \mathcal{O(|H|\sqrt{|\mathcal{V}|})}$计算复杂度。

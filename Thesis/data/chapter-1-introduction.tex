@@ -25,11 +25,15 @@
 
 接下来给出~N-gram~统计语言模型的形式化定义。假设给定一个长度为$m$ 的单词字符串，$w_1$ 到$w_m$ 依次表示这段文本中的各个单词，我们需要求解一个概率分布$p(w_1,\cdots,w_m)$，以表示该字符串存在或者出现的可能性。在求解过程中，我们通常使用链式法则（Chain Rules），将计算整个序列概率问题分解成如下形式：
 \begin{equation}
+\setlength{\abovedisplayskip}{6pt}
+\setlength{\belowdisplayskip}{6pt}
 \label{equ:lm}
 p(w_1,\cdots,w_m) =p(w_1)\prod_{t=1}^{m}p(w_t|w_1,\cdots,w_{t-1})
 \end{equation}
 在实际求解过程中，如果文本的长度较长，公式~(\ref{equ:lm})~中右部~$p(w_m | w_1,w_2,\cdots,w_{m-1}) $ 的估计误差会很大。因此，提出了~N~元模型（N-gram model），它能简化了实际问题的复杂度，最早被用来估算条件概率。需要注意的是，单词距离大于$n$单词会被直接忽略，该模型可以写成如下形式：
 \begin{equation}
+\setlength{\abovedisplayskip}{6pt}
+\setlength{\belowdisplayskip}{6pt}
 \label{equ:approx}
 p(w_i | w_1,w_2,\cdots,w_{t-1})  \approx p(w_i | w_{t-(n-1)},\cdots,w_{t-1})
 \end{equation}
@@ -56,6 +60,8 @@ p(w_i | w_1,w_2,\cdots,w_{t-1})  \approx p(w_i | w_{t-(n-1)},\cdots,w_{t-1})
 \end{equation}
 模型的隐藏层$h$ 和输出层$y$可以依照下面的公式计算获得：
 \begin{equation}\label{equ:nplm}
+\setlength{\abovedisplayskip}{6pt}
+\setlength{\belowdisplayskip}{6pt}
 \begin{split}
 h =& \tanh(Hx+b) \\
 y =&Wx + Uh +b'
@@ -66,6 +72,8 @@ y =&Wx + Uh +b'
 \subsection{对数双线性语言模型}
 2007 年，Mnih 和 Hinton 在神经网络语言模型（NNLM）的基础上提出了对数双线性语言模型（Log-Bilinear Language Model, LBL）~\upcite{DBLP:conf/icml/MnihH07}。LBL~模型与~NNLM~模型的区别正如它们的名字所示，其中~LBL~的模型结构是一个对数双线性结构；~NNLM~的结构不包含双线性结构，仅仅是简单的前馈网络。具体来讲，LBL 模型的代价函数为：
 \begin{equation}
+\setlength{\abovedisplayskip}{6pt}
+\setlength{\belowdisplayskip}{6pt}
 \label{equ:lbl}
 \begin{split}
    &\hat r=\sum_{i=1}^{n-1}{U_i e({w_i})}, \\
@@ -81,6 +89,8 @@ y =&Wx + Uh +b'
 \subsection{循环神经网络语言模型}
 对于循环神经网络来说，它能直接对序列概率~$p(w_t | w_1,w_2,\cdots,w_{t-1})$~进行建模，而不使用公式~(\ref{equ:approx})~对其进行简化~\upcite{mikolov2012statistical,DBLP:conf/interspeech/MikolovKBCK10} 。RNNLM 模型结构如图~\ref{fig:rnnlm}~所示，它的核心方法在于其隐藏层的计算公式:
 \begin{equation}
+\setlength{\abovedisplayskip}{6pt}
+\setlength{\belowdisplayskip}{6pt}
 \label{equ:rnn}
   h_t \leftarrow  \phi(e(w_t) + U h_{t-1} +b),
 \end{equation}
