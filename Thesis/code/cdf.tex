@@ -1,0 +1,17 @@
+\documentclass[master,openright,oneside,color]{../buaathesis}
+\usepackage{booktabs}
+\usepackage{courier}
+\usepackage{minted}
+\usemintedstyle{pastie}
+\setmonofont{Courier}
+\renewcommand{\theFancyVerbLine}{\sffamily
+\textcolor[rgb]{0.5,0.5,1.0}{\scriptsize
+\oldstylenums{\arabic{FancyVerbLine}}}}
+\begin{document}
+
+\begin{minted}[mathescape,linenos=False,gobble=1,frame=lines,baselinestretch=1.0,framesep=1mm]{matlab}
+cdf = cumsum(phi); // 计算累积分布函数
+samp_k = sum(cdf < rand()*cdf(end)) + 1;
+\end{minted}
+
+\end{document}

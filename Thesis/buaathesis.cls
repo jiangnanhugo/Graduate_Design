@@ -114,7 +114,7 @@ The LaTeX template for thesis of BUAA]
     \fancyfoot{}
     \ifbuaa@bachelor
         \fancyhead[C]{
-            \includegraphics[width=37bp]{figure/buaamark.eps}\hfill
+            \includegraphics[width=37bp]{figures/buaamark.eps}\hfill
             \raisebox{2ex}{\heiti\zihao{4}\buaa@university 毕业设计(论文)}\hfill
             \raisebox{2ex}{\songti\zihao{5}第\quad\thepage\quad 页}
         }
@@ -436,7 +436,7 @@ The LaTeX template for thesis of BUAA]
                         \end{flushleft}
                     }
                     \vskip 80bp
-                    \includegraphics[width=.5\textwidth]{figure/buaaname.jpg}
+                    \includegraphics[width=.5\textwidth]{figures/buaaname.jpg}
                     \vskip 30bp
                     \centerline{\zihao{0}\ziju{0.2}\hwxingkai\buaa@degree 论文}
                     ~~\\
