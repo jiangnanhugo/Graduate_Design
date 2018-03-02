@@ -48,6 +48,7 @@ The LaTeX template for thesis of BUAA]
 \RequirePackage{txfonts}
 %\RequirePackage{microtype}
 
+
 % 主要字体为Times New Roman和宋体
 % 模板某些标题需要华文行楷和32号字
 %\setmainfont{Times New Roman}
@@ -205,10 +206,10 @@ The LaTeX template for thesis of BUAA]
 \renewcommand{\thetable}{\arabic{table}}
 \DeclareCaptionFormat{tabfigformat}{\bfseries\songti\zihao{5}{#1~~#3}}
 \captionsetup[figure]{
-  position=bottom, margin=0mm, format=tabfigformat,
-  aboveskip=6pt, belowskip=-6pt, justification=centerlast}
+  position=bottom, margin=2mm, format=tabfigformat,
+  aboveskip=6pt, belowskip=-8pt, justification=centerlast}
 \captionsetup[table]{
-  position=top, margin=0mm, format=tabfigformat,
+  position=top, margin=2mm, format=tabfigformat,
   aboveskip=6pt, belowskip=0pt, justification=centerlast}
 
 %    \titlecontents{chapter}[0pt]{\vspace{-0.25\baselineskip}\heiti\zihao{4}}{\thecontentslabel\ }{}
