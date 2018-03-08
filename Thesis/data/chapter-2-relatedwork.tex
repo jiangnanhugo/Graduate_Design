@@ -42,19 +42,12 @@ N-gram~算法也是使用单词的顺序信息作为上下文信息建模策略�
 \subsection{长距离依赖}
 不同于前馈神经网络语言模型，循环神经网络语言模型使用隐藏层状态（Hidden State）来记录单词的顺序性信息（Sequence Order），它能够捕捉句子中存在的长距离依赖关系（Long-term Dependency）。这里的长距离依赖主要指语义对应关系（Semantic Correspondence）和选择限制（Selectional Preferences）\upcite{贾玉祥2014汉语语义选择限制知识的自动获取研究}。
 
-一方面，两个单词距离较远但是 在文本中会存在很强的相关性关系。这里的所指的相关性，包括两个单词具有语义对应关系，或者他们需要满足句子的语法结构（Grammatical Structure）。举例来说，下面两个句子节选自网络文本：
-\begin{verbatim}
-He doesn't have very much confidence in himself
-She doesn't have very much confidence in herself
-\end{verbatim}
-尽管句子中间的其他词可能会发生变化，``（He， himself）'' 与 ``（She， herself）'' 这两个词对之间的对应关系却是固定的，但是该词对的对应关系中间相隔很长的距离（6个单词）。这种单词的长距离依赖关系也不仅仅只出现在英语语言中，在汉语、法语等语言中，也都存在有此类型的单词之间的组合对应关系。如果采用传统的~N-gram~建模策略，我们必须要建模6-gram及以上的单词概率分布，才能保证模型能学习到这种对应关系。
+一方面，两个单词距离较远但是 在文本中会存在很强的相关性关系。这里的所指的相关性，包括两个单词具有语义对应关系，或者他们需要满足句子的语法结构（Grammatical Structure）。如果采用传统的~N-gram~建模策略，我们必须要建模N-gram（$N>3$）单词概率分布，才能保证模型能学习到这种对应关系。
 
 另一方面，文本中存在的依赖关系将会限制我们选择接下来的单词候选集，称其为选择限制关系。
-譬如：``我要用叉子吃沙拉''和``我要和我的朋友一起吃沙拉''这两句句子中，``叉子''所指代的是一种工具，但是``我的朋友''则表明是伴侣的意思。如果有人说：``我想要用`双肩背包'来吃`沙拉'''就会觉得非常奇怪，因为这里的``双肩背包''既不是一种工具更不是伴侣的含义。假若我们人为地破坏了这种选择限制，那就会生成大量无意义的文本。
-
 如图~\ref{fig:lm}~所示，模型在预测过程中，在每一步都需要对词表中所有单词做预测，我们需要将每一步都做选择限制，减少模型的预测分支，这样才能保证模型生成的结果尽可能的语义一致且连贯。每次开放式的对所有单词做预测所带来的后果可能是，那些高频单词会不断出现在预测序列里面，因为训练语聊里面这些单词出现频率就非常高，所以模型将这些高频词预测概率大也是合乎情理的。但问题出现在，一旦我们模型不断预测高频词，我们生成的句子很难传达有效的语义信息。
 
-\begin{figure}[!t]
+\begin{figure}[!b]
   \centering
   \includegraphics[width=.99\columnwidth]{./figures/lm.pdf}
   \caption{循环神经网络语言模型图例}
@@ -78,7 +71,7 @@ She doesn't have very much confidence in herself
 
 自Elman提出基本结构~\upcite{DBLP:journals/cogsci/Elman90}~以来，许多扩展模型能学习长距离依赖关系，解决梯度消失（Gradient Vanishing）和梯度爆炸（Gradient Exploding）等问题， 如长短期记忆网络（LSTM）\upcite{7508408}、门限记忆单元（GRU）\upcite{DBLP:conf/nips/ChungKDGCB15}和近似递归神经网络（Quasi-RNNs）\upcite{DBLP:journals/corr/BradburyMXS16}。
 
-\begin{figure}[!ht]
+\begin{figure}[!b]
   \centering
   \includegraphics[width=.8\linewidth]{./figures/lstm.pdf}
   \caption{LSTM 模型示意图}\label{fig:lstm}
@@ -187,8 +180,8 @@ p(w|h)=&\frac{\exp(h^\top v_{w})}{\sum_{w_j\in \mathcal{V}}{\exp(h^\top v_{w_j} 
 
 对于NCE噪声差分估计算法来说，模型需要学习将正确的单词 $w_0$ 与随机生成的单词 $\{w_1\cdots w_k\}$做一个二元分类。 其中 $w_0$ 指代的是训练样本中真正的下一个单词， $\{w_1\cdots w_k\}$ 是采用先验分布~$q(w)$~产生的随机噪声单词。实际实验中，我们常用的采样的概率分布模型 $q(w)$是单词词频分布（Word Frequency Distribution）。 正例归一化后的概率~$\tilde{p}(y=1|h)$~和所有负例联合概率~$\tilde{p}(y=0|h)$~的公式可以写成：
 \begin{equation}\label{equ:nce}
-\setlength{\abovedisplayskip}{6pt}
-\setlength{\belowdisplayskip}{6pt}
+\setlength{\abovedisplayskip}{8pt}
+\setlength{\belowdisplayskip}{8pt}
 \begin{split}
   \tilde{p}(y=1|h)=&\frac{\exp( \theta^w_0 h)}{ \exp( \theta^w_0 h)+k *q(w_0)}\\
   \tilde{p}(y=0|h)=&\prod_{i=1}^{k}\frac{k *q(w_i)}{\exp( \theta^w_i h)+k *q(w_i)}\\
@@ -246,69 +239,35 @@ p(w|h)=&p^c(\mathcal{C}(w)|h)\cdot p^w(w|\mathcal{C}(w),h) ,\\
 Mikolov~等人当年曾提出使用基于二叉树的层级softmax模型来加速的训练方案，加速比能达到理论的最大速度。但是需要注意的是，当时提出的背景是基于CPU计算方案构建的，如今随着应用领域的推广越来越多的算法应用到实际问题中，我们需要在并行吞吐量更高的GPGPU上进行计算，因此基于GPGPU进行建模的~tHSM~算法和历史上研究众多的cHSM算法尚未被研究提及，因此我们将会需要在本研究中详细研讨。
 
 \section{离散采样算法}
-前面我们提到在使用基于采样的模型时，我们不可避免地需要使用到离散采样函数，我们在这一个部分来讨论离散采样函数的构建策略。我们首先给出离散采样问题的定义：设一共有$|\mathcal{V}|$个单词，第$i$个单词出现的概率是$p(w_i)$， 如何高效地产生这样的随机变量序列$w_1,w_2,\cdots$?
+\begin{figure}[!b]
+  \centering
+\includegraphics[width=1\linewidth]{./figures/cdfreverse.pdf}
+\caption{由离散概率分布构造累积概率分布}\label{fig:cdf_reverse}
+\end{figure}
 
-这个问题在数学、工程领域中，称之为模拟离散取样（Simulated Discrete Sampling），其含义指的是根据有限类别的非均匀概率分布，来模拟有放回的采样，从而生成我们需要的采样序列。因为我们的计算机只能快速产生伪随机数（Psudo Random Number Generator），即对均匀分布（Uniform Distribution）做采样。其他的复杂采样函数均建立在均匀分布的变换之上。所以该问题的关键就是如何通过将均匀分布变换到我们实际变量的分布，生成指定概率分布的随机噪声。
 
-\subsection{随机采样函数}
-当我们使用概率模型实现推理和学习算法时，通常需要从离散分布进行抽样。 也就是说，从参数$ {\pi} \in \mathbb{R}^K$中的多项式分布，使得$\pi_k \geq 0$和$\sum_{\mathcal{V}} \pi_k=1$。 更常见的情况是,我们只知道：$ {\phi}\in \mathbb{R}^{\mathcal{V}}$ ，其中$\phi_k \geq 0$，但我们不知道规范化常量$\sum_{\mathcal{V}} \phi_{k}$。 也就是说，${\phi}$只与多项式参数$ {\pi}$成正比。
-然而给定$ {\pi}$分布，我们希望根据${\pi}$快速生成变量序列。我们可以使用Matlab代码，很容易地完成这个计算操作，如图~\ref{fig:sample}~所示。
+前面我们提到在使用基于采样的模型时，我们不可避免地需要使用到离散采样函数，我们在这一个部分来讨论离散采样函数的构建策略。我们首先给出离散采样问题的定义：设一共有$|\mathcal{V}|$个单词，第$i$个单词$w_i$出现的概率是$p(w_i)$， 如何高效地产生这样的随机变量序列$w_1,w_2,\cdots$?这个问题被称之为模拟离散取样（Simulated Discrete Sampling），其含义指的是根据有限类别的非均匀概率分布，来模拟有放回的采样，从而生成我们需要的采样序列。因为我们的计算机只能快速产生伪随机数（Psudo Random Number Generator），即对均匀分布（Uniform Distribution）做采样。其他的复杂采样函数均建立在均匀分布的变换之上。所以该问题的关键就是如何通过将均匀分布变换到我们实际变量的分布，生成指定概率分布的随机单词序列。
+
+如图~\ref{fig:cdf_reverse}~所示，我们首先将离散概率分布转换成累积分布函数表（Cumulative Distribution Function，CDF）。我们可以使用Matlab代码，很容易地完成这个计算操作。如图~\ref{fig:sample}~所示，所展示的代码使用了线性搜索算法(Linear Search)。该算法很简单，最容易实现。但是我们注意到该算法初始化需要消耗$\mathcal{O(\mathcal{V})}$时间复杂度。计算每个样本时候的时间复杂度也是$\mathcal{O(V)}$。
 \begin{figure}[!t]
   \centering
 \includegraphics[width=1\linewidth]{./figures/cdf.pdf}
 \caption{Matlab实现的离散采样函数}\label{fig:sample}
 \end{figure}
 
-其中 CDF指代的是累积分布函数（Cumulative Distribution Function，CDF）。该计算算法很简单，最容易实现。但是我们注意到该算法初始化需要消耗$\mathcal{O(\mathcal{V})}$时间复杂度。计算每个样本时候的时间复杂度也是$\mathcal{O(V)}$。假如我们能找到阈值的更好的数据结构来完成比较操作$<$，每个样本的复杂度将可能被降低到$\mathcal{O}(\log\mathcal{V})$。
 
-实际上除了二叉搜索算法外，我们发现还有更高效的算法，可以将每个样本产生的复杂度降低到$\mathcal {O}(1)$，并且保证总的采样复杂度是$\mathcal{O}(K)$（假设我们需要采样K个单词）。
-\subsection{基于线性搜索的逆变换方法}
-累积分布函数的取值范围是$[0,1]$，并且是一个单调递增的（Monotonic Increasing）函数。与累积分布函数息息相关的一个算法叫做，逆变换取样算法（Inverse Transform Sampling），其定义如下：给定一个累积分布函数，我们计算其逆函数（Inverse Function），就可以把均匀随机变量转换成该累积分布函数。逆函数定义如下：$X=F_X^{-1}(Y)$。
+考虑到该CDF表格是从小到大的顺序结构，我们就可以使用数据结构中的查找算法更快地找到结果。我们可以采用从左至右的方式线性搜索随机数所在的区间其时间复杂度是$\mathcal{O}(\mathcal{V})$，也可以使用更高效的二叉搜索(Binary Search)快速计算随机数所在的区间对应的时间复杂度是$\mathcal{O}(\log \mathcal{V})$。
 
-如图~\ref{fig:cdf}~所示，在Y轴上随机取样获得$y_i$，接下来向右和函数曲线取交点，求解交点的$X$轴位置$x_i$，$X$就是满足条件的概率分布。假若 X的取值不是连续的而是离散的，那么我们只需快速地搜索出超过均匀取样的元素的那个样本。
-\begin{figure}[!h]
+
+
+在$\mathcal{V}$很小的情况下，使用线性查找算法或者二分搜寻算法也足够得快；当$\mathcal{V}$足够的大，即所谓的大词表问题的时候，我们可以采用别名方法(Alias Method)\upcite{DBLP:reference/stat/LEcuyer11}、近似方法等~\upcite{DBLP:journals/cgf/ClineRW09}。本实验用到了别名算法，它利用两次随机采样来生成采样序列，具有恒定的~$O(1)$采样时间复杂度。该算法的精髓在于构造别名表，需要~$O(\log |\mathcal{V}|)$构造时间~\upcite{10.2307/2683739,DBLP:conf/emnlp/VaswaniZFC13}，具体构造方法可以参考\footnote{https://hips.seas.harvard.edu/blog/2013/03/03/the-alias-method-efficient-sampling-with-many-discrete-outcomes/}。
+
+\begin{figure}[!t]
   \centering
-\includegraphics[width=0.6\linewidth]{./figures/inverse.pdf}
-\caption{累积分布函数求解拟函数示意图}\label{fig:cdf}
+\includegraphics[width=1\linewidth]{./figures/alias.pdf}
+\caption{由离散概率分布构造别名表}\label{fig:alias}
 \end{figure}
 
-在离散概率分布的情况下，其时间复杂度是$O( |\mathcal{V}|)$。在图~\ref{fig:sample}中，所展示的代码使用了线性搜索算法(Linear Search)。如果目标概率分布的数组是有序的，那我们就可以使用数据结构中的查找算法更快地找到结果。例如，我们可以用二分法(Binary Search)搜索合适的样本结果，其对应的时间复杂度是~$O(\log |\mathcal{V}|)$。在$\mathcal{V}$很小的情况下，使用线性查找算法或者二分搜寻算法也足够得快；当$\mathcal{V}$足够的大，即所谓的大词表问题的时候，我们可以采用别名方法(Alias Method)、近似方法等~\upcite{DBLP:journals/cgf/ClineRW09}。本实验实际用到了别名算法，我们接下来稍作介绍。
-\subsection{别名方法}
-
-设$ Z $为离散的随机变量，它有$\mathcal{V}$个可能的结果$ z_0,z_1,\ldots,z_ {\mathcal{V}-1} $。 为了简化下面的讨论，我们研究另一个变量$ Y $，其中$ P \{Y = i \} = P \{Z = z_i \} $。 当$ Y $取值$ i $时，让$ Z $为$ z_i $。 所以$ Z $可以从$ Y $生成。随机变量$ X $被均匀分布在$(0,\mathcal{V})$中，这个概率密度函数是
-\begin{equation}\label{equ:alias}
-\setlength{\abovedisplayskip}{6pt}
-\setlength{\belowdisplayskip}{6pt}
- f(x) = 1/\mathcal{V}, 0 < x < \mathcal{V}
-\end{equation}
-那么我们现在生成的$Y'$是：
-\begin{equation}\label{equ:gen}
-\setlength{\abovedisplayskip}{6pt}
-\setlength{\belowdisplayskip}{6pt}
-  Y' =  \left\{
- \begin{array}{rl}
-  \lfloor x  \rfloor & \text{若 } (x - \lfloor x \rfloor) < F(\lfloor x \rfloor)\\
-  A(\lfloor x \rfloor)  & \text{否则}\\
- \end{array} \right.
-\end{equation}
-其中$ A(i)$是别名函数。 当$ x $落入范围$ [i,i + 1)$（$ i $是一个整数）时，$ y $的概率$ F(i)$为$ i $，概率$ 1 - F(i )$是$ A(i)$。 由于$ x $是均匀分布的，
-\begin{equation}
-\setlength{\abovedisplayskip}{6pt}
-\setlength{\belowdisplayskip}{6pt}
-  \begin{split}
-P\{x \in [i, i + F(i))\}     &= \int_i^{i+F(i)}\frac{1}{\mathcal{V}}dx= (i + F(i) - i) \times 1/\mathcal{V}= F(i)/\mathcal{V},\\
-P\{x \in [i + F(i), i + 1)\} &= \int_{i+F(i)}^{i+1}\frac{1}{\mathcal{V}}dx= (i + 1 - (i + F(i))) \times 1/\mathcal{V}= (1-F(i))/\mathcal{V}
-\end{split}
-\end{equation}
-我们将满足$ A(j)= i $的值集合$ j $表示为$A^{- 1}(i)$。 生成的变量~$Y'$~具有以下概率质量函数：
-\begin{equation}
-\setlength{\abovedisplayskip}{6pt}
-\setlength{\belowdisplayskip}{6pt}
-  P\{Y' = i\} = F(i)/n + \sum_{j \in A^{-1}(i)}\frac{1-F(j)}{\mathcal{V}}
-\end{equation}
-别名方法是构造$ A $和$ F $的算法，所以$ P \{Y'= i \} $等于$ P\{Y = i \} $。 由于$ A $和$ F $的域都是整数$ 0,1,\ldots, \mathcal{V}-1 $，所以它们可以存储在数组中，并且可以在$O(1)$中查找值，其中空间效率是 $\mathcal{O}(\mathcal{V})$。虽然别名方法可用于生成丰富的噪声字，但是它需要线性建立时间和恒定的采样时间~\upcite{10.2307/2683739,DBLP:conf/emnlp/VaswaniZFC13}。
-
-%大词表问题，主要是对softmax如何建模的问题。在本课题中，我们探讨 cHSM 和 tHSM 两种不同的方案所带来的影响和优劣。
 \section{本章小结}
 本章对国内外学者在语言模型的任务上相关工作进行了介绍。首先，我们介绍了语言模型的建模策略和对应的应用方案。其次详细讨论了循环神经网络的语言模型的建模方式，并讨论了其结构的优缺点。同时为了解决使用循环网络所带来的梯度爆炸问题，我们进而引入了长距离短期神经网络和门限记忆节点两种基于门限机制的循环网络；另一方面，我们还考虑了语言模型大规模应用所带来的大词表问题，并作了详细分析原因。
 具体来说，我们还讨论了历史上所提出的解决方案，并做了分类讨论。

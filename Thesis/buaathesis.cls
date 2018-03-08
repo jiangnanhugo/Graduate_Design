@@ -261,9 +261,6 @@ The LaTeX template for thesis of BUAA]
 %%%%%%%%%% table %%%%%%%%%%
 % 表格
 
-% 长表格
-\RequirePackage{longtable}
-
 % 表格中的行合并
 \RequirePackage{multirow}
 
@@ -525,7 +522,7 @@ The LaTeX template for thesis of BUAA]
     \begin{spacing}{1.7}
     \centerline{\bfseries\heiti\zihao{3} 摘~~~~要}
     \vspace{0ex}
-  
+
     \setlength{\parindent}{24bp}
     }{%
     \vskip 21bp
@@ -540,7 +537,7 @@ The LaTeX template for thesis of BUAA]
     \vspace*{2bp}
     \begin{spacing}{1.7}
     \centerline{\bf\zihao{3} Abstract}
-   
+
     \setlength{\parindent}{24bp}
     }{%
     \vskip 21bp
