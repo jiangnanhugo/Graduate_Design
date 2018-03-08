@@ -201,8 +201,8 @@ p(w|h)=&\frac{\exp(h^\top v_{w})}{\sum_{w_j\in \mathcal{V}}{\exp(h^\top v_{w_j} 
 \setlength{\abovedisplayskip}{6pt}
 \setlength{\belowdisplayskip}{6pt}
 \begin{split}
-  \ell=&-\log(p(w_0|h)) - \sum_{w_i \sim p(w)} \log(1 - p(w_i))\\
-p(w_i) =& \frac{\exp(\theta^w_i h)}{\sum_{w_i \sim p(w)} \exp(\theta^w_i h)}.
+  \ell=&-\log(p(w_0|h)) - \sum_{w_i \sim q(w)} \log(1 - p(w_i))\\
+p(w_i) =& \frac{\exp(\theta^w_i h)}{\sum_{w_i \sim q(w)} \exp(\theta^w_i h)}.
 \end{split}
 \end{equation}
 
@@ -213,7 +213,7 @@ p(w_i) =& \frac{\exp(\theta^w_i h)}{\sum_{w_i \sim p(w)} \exp(\theta^w_i h)}.
 
 \subsection{词表层次分解}
 介绍完单词拆分、采样估计算法之后，我们再从模型角度分解优化这个大词表问题。层次分解方法（Factorization）可以大大降低学习和推理过程中表示概率分布的所占用的计算内存，因为它只计算局部概率（Local Probability）并且选择每一层的分数最高的候选路径而不是保存全局计算结果。
-目前主要的分解策略可以分为： 基于类别的多元分类模型（Class-based Hierarchical Softmax, cHSM）和基于二叉树的二元分类模型（Tree-based Hierarchical Softmax, tHSM）。接下来我们将这两种算法的计算过程进行描述。
+目前主要的分解策略可以分为： 基于类别的多元分类模型（Class-based Hierarchical Softmax, cHSM）和基于二叉树的二元分类模型（Tree-based Hierarchical Softmax, tHSM）。接下来我们将介绍这两种算法的计算过程。
 
 首先我们考虑基于类别的分解策略。假设我们将文本所对应的词表中的每一个词划分成各个类簇，每个单词属于且只属于一个类（Class或者Group）。在此假设之上，我们进而来计算单词在在语料中的对数分布时，可以转化为：先计算类的概率分布，然后乘以在所属类上该词的概率分布\upcite{王龙2015基于循环神经网络的汉语语言模型并行优化算法}~，于是可将公式~(\ref{eq:softmax})~转化为如下形式：
 \begin{equation}
