@@ -37,7 +37,9 @@ N-gram~算法也是使用单词的顺序信息作为上下文信息建模策略�
 \end{equation}
 其中$p(x)$ 指的是文本数据的真实概率分布，$q(x)$ 是由模型从数据中计算得到的预测概率分布。由于$p(x)$ 和$q(x)$ 在公式中的地位不是相等的，所以$\texttt{KL} (p\parallel q)\not\equiv \texttt{KL}(q\parallel p)$。对于给定的文本语料训练数据集，第二项的计算值是常数，由此可知其导数是0，它不会对模型中的参数更新产生任何影响。所以在通常情况下，我们采用交叉熵函数$\ell$作为模型的代价函数而不是相对熵代价函数$\mathtt{KL}$，但其实我们希望模型优化的目标是$\mathtt{KL}$使得模型的分布拟合实际的分布。
 \subsection{语言模型的应用}
-语言模型的实际用途包括垃圾邮件分类、机器翻译或者自动写诗歌等，当我们对这些纷繁复杂的应用作一定抽象之后，可以将语言模型的主要作用分为以下三种情况：1） 为句子打分（Sentence Scoring）。给定一个未知的单词序列，我们需要计算其作为一个句子的流畅性和出现的可能性；2） 挑选最佳的候选词（Next-utterance Prediction）。给定上下文，选择概率最高的单词。这里所指的上下文的形式是广义的，它可能是：前面的句子给定，选择下一个最佳单词；前面和后面的句子给出，选择中间最适配的单词；后面的句子给定，选择上一个最佳单词（逆序文本建模也是有其独特应用地位的）；3） 训练词向量（Pretrained Word Embedding）。语言模型的输入，在经过大规模数据集训练之后，可以作为词向量输出，从而为其他文本任务提供有效的单词预训练特征。
+语言模型的实际用途包括分词（Word Segmentation或Word Breaker，WB）, 信息抽取（Information Extraction，IE）, 关系抽取（Relation Extraction，RE）, 命名实体识别（Named Entity Recognition，NER）, 词性标注（Part Of Speech Tagging，POS）, 指代消解（Coreference Resolution）, 句法分析（Parsing）, 词义消歧（Word Sense Disambiguation，WSD）, 语音识别（Speech Recognition）, 语音合成（Text To Speech，TTS）, 机器翻译（Machine Translation，MT）, 自动文摘（Automatic Summarization）, 问答系统（Question Answering）, 自然语言理解（Natural Language Understanding）, 光学字符识别（Optical Character Recognition，OCR）, 信息检索（Information Retrieval，IR）。
+
+当我们对这些纷繁复杂的应用作一定抽象之后，可以将语言模型的主要作用分为以下三种情况：1） 为句子打分（Sentence Scoring）。给定一个未知的单词序列，我们需要计算其作为一个句子的流畅性和出现的可能性；2） 挑选最佳的候选词（Next-utterance Prediction）。给定上下文，选择概率最高的单词。这里所指的上下文的形式是广义的，它可能是：前面的句子给定，选择下一个最佳单词；前面和后面的句子给出，选择中间最适配的单词；后面的句子给定，选择上一个最佳单词（逆序文本建模也是有其独特应用地位的）；3） 训练词向量（Pretrained Word Embedding）。语言模型的输入，在经过大规模数据集训练之后，可以作为词向量输出，从而为其他文本任务提供有效的单词预训练特征。
 
 \subsection{长距离依赖}
 不同于前馈神经网络语言模型，循环神经网络语言模型使用隐藏层状态（Hidden State）来记录单词的顺序性信息（Sequence Order），它能够捕捉句子中存在的长距离依赖关系（Long-term Dependency）。这里的长距离依赖主要指语义对应关系（Semantic Correspondence）和选择限制（Selectional Preferences）\upcite{贾玉祥2014汉语语义选择限制知识的自动获取研究}。
