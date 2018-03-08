@@ -1,0 +1,26 @@
+\documentclass[master,openright,oneside,color]{../buaathesis}
+\usepackage{booktabs}
+\usepackage{courier}
+\usepackage{minted}
+\usemintedstyle{pastie}
+\setmonofont{Courier}
+\renewcommand{\theFancyVerbLine}{\sffamily
+\textcolor[rgb]{0.5,0.5,1.0}{\scriptsize
+\oldstylenums{\arabic{FancyVerbLine}}}}
+\begin{document}
+
+\begin{minted}[mathescape,linenos=False,gobble=1,frame=lines,baselinestretch=1.0,framesep=1mm]{python}
+ def build_huffman(frequenties):
+     Q=Queue.PriorityQueue() #初始化优先队列 Q;
+     for v in frequenties:  #((freq,word),index)
+         Q.put(v)
+     idx=0
+     while Q.qsize()>1:#由底至顶合并节点
+         l,r=Q.get(),Q.get()
+         node=Node(l,r,idx)
+         idx+=1
+         freq=l[0]+r[0]
+         Q.put((freq,node))
+     return Q.get()[1] # 霍夫曼树
+\end{minted}
+\end{document}

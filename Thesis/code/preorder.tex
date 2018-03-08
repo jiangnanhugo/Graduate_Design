@@ -1,0 +1,34 @@
+
+\documentclass[master,openright,oneside,color]{../buaathesis}
+\usepackage{booktabs}
+\usepackage{courier}
+\usepackage{minted}
+\usemintedstyle{pastie}
+\setmonofont{Courier}
+\renewcommand{\theFancyVerbLine}{\sffamily
+\textcolor[rgb]{0.5,0.5,1.0}{\scriptsize
+\oldstylenums{\arabic{FancyVerbLine}}}}
+\begin{document}
+
+\begin{minted}[mathescape,linenos=False,gobble=1,frame=lines,baselinestretch=1.0,framesep=1mm]{python}
+ def pre(self,path=None,param=None,words=None):
+   # 初始化
+   if words is None: words=[]
+   if path is None:  path=[]
+   if param is None: param=[]
+
+   if self.left: # 左子树存在
+     if isinstance(self.left[1],Node):
+       self.left[1].pre(path+[-1],param+[self.index],words)
+     else: # 访问到左叶子节点
+       word=(self.left[1],param+[self.index],path+[-1])
+       words.append(word)
+   if self.right: # 右子树存在
+     if isinstance(self.right[1],Node):
+       self.right[1].pre(path+[1],param+[self.index],words)
+     else:  # 访问到右叶子节点
+       word=(self.right[1],param+[self.index],path+[1])
+       words.append(word)
+   return words #单词路径查找表 Γ
+\end{minted}
+\end{document}

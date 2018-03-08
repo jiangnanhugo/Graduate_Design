@@ -147,8 +147,8 @@ The LaTeX template for thesis of BUAA]
 %\linespread{1.5}
 % 汉化
 \renewcommand{\contentsname}{目\qquad 录}
-\renewcommand\listfigurename{图\quad 目}
-\renewcommand\listtablename{表\quad 目}
+\renewcommand\listfigurename{图\qquad 目}
+\renewcommand\listtablename{表\qquad 目}
 \renewcommand\bibname{参\ 考\ 文\ 献}
 \renewcommand{\figurename}{图}
 \renewcommand{\tablename}{表}
@@ -187,15 +187,15 @@ The LaTeX template for thesis of BUAA]
 
 \RequirePackage{titletoc}
 \titlecontents{chapter}[0pt]{\heiti\zihao{-4}}{\thecontentslabel\ }{}
-{\hspace{.5em}\titlerule*[4pt]{$\cdot$}\contentspage}
+{\hspace{.5em}\titlerule*[4pt]{.}\contentspage}
 \titlecontents{section}[2em]{\songti\zihao{-4}}{\thecontentslabel\ }{}
-{\hspace{.5em}\titlerule*[4pt]{$\cdot$}\contentspage}
+{\hspace{.5em}\titlerule*[4pt]{.}\contentspage}
 \titlecontents{subsection}[3em]{\songti\zihao{5}}{\thecontentslabel\ }{}
-{\hspace{.5em}\titlerule*[4pt]{$\cdot$}\contentspage}
+{\hspace{.5em}\titlerule*[4pt]{.}\contentspage}
 \titlecontents{figure}[0pt]{\songti\zihao{-4}}{图~\thecontentslabel\quad}{}
-{\hspace{.5em}\titlerule*[4pt]{$\cdot$}\contentspage}
+{\hspace{.5em}\titlerule*[4pt]{.}\contentspage}
 \titlecontents{table}[0pt]{\songti\zihao{-4}}{表~\thecontentslabel\quad}{}
-{\hspace{.5em}\titlerule*[4pt]{$\cdot$}\contentspage}
+{\hspace{.5em}\titlerule*[4pt]{.}\contentspage}
 
 % 图表环境设置
 \RequirePackage{remreset}     % 计数器设置

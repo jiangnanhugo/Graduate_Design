@@ -1,11 +1,11 @@
 
-\chapter{语言模型实验结果与分析}
-前面两章分别介绍了基于树状和类别层次概率计算模型的具体建模过程。在本章中，为了比较所提出的这两种分层概率模型与已有的算法（Baselines）在计算效率和精确性上的差异，我们将在三个标准文本数据集：Wikitext-2，Wikitext-103 和 One Billion Word数据集上，进行了循环语言建模任务的实验研究和结果分析。本章将讨论分析不同并行层次概率算法的实验结果，还会与其他大词表问题的优化加速算法相互对比。 接下来还将从效率分析、可扩展性、参数大小和性能等四个方面，对这些已有的方法进行实验研究并作讨论分析。
+\chapter{语言建模实验结果与分析}
+前面两章分别介绍了基于树状和类别的层次概率模型的具体建模过程。在本章中，为了比较所提出的这两种分层概率模型与已有的算法（Baselines）在计算效率和精确性上的差异，我们将在三个标准文本数据集上进行循环语言建模任务的实验研究和结果分析。本章将讨论分析不同并行层次概率算法的实验结果，还会与其他大词表问题的优化加速算法相互对比。 接下来还将从效率、可扩展性、参数大小等方面，对这些已有的方法进行实验研究并作讨论分析。
 
 \section{实验设置}
-这一小节将介绍实验所需要用到的文本数据集，还有语言模型实验的两种主要的评测指标和实验模型的实际参数配置和训练过程。
+这一小节将介绍实验所需要用到的文本数据集，还有语言建模实验的两种主要的评测指标和实验模型的实际参数配置和训练过程。
 \subsection{实验数据集}
-本次实验所采用的数据集主要是依照两个目的选取的：1）首先需要在小数据集上，反映出参数变化对模型的最后的效果产生的影响；2）同时还需要大数据集上，展示模型参数在最佳参数配置下，比较模型之间的最优结果。所以在本次实验中，我们选取了三个标准文本数据集：Wikitext-2，Wikitext-103 和 One Billion Word数据集。
+本实验所采用的数据集主要是依照两个目的选取的：1）首先为了便于实验复现和互相对比，需要在小数据集上反映出参数变化对模型的最后的效果产生的影响；2）同时还需要大数据集上，展示模型参数在最佳参数配置下，比较模型之间的最优结果。所以在本次实验中，我们选取了三个标准文本数据集：Wikitext-2，Wikitext-103 和 One Billion Word数据集。
 如表~\ref{tab:dataset}~所示，表中列举了这三个数据集的相关统计指标，包括：单词数量、句子数量、词表大小和词表外单词的比例（Out-of-Vocabulary）。需要注意的是，词表大小不能改变，因为不同词表大小的模型之前理论上是没有互相比较的意义的，其次是由于接下来要计算的一个重要的评测指标就是和词表大小成负相关关系的。
 所以表~\ref{tab:dataset}~中展示的数据已经预先固定了，不会再做任何的修改，例如：不能对数据集做单词大小写变化，数词转换操作或者分词操作。
 \begin{table}[!ht]
@@ -31,7 +31,7 @@
 
 其中，对于~Wikitext-2和Wikitext-103~数据集，训练、验证和测试集都是预先划分固定的，并且其词汇表大小也已经被定义\footnote{https://metamind.io/research/the-wikitext-long-term-dependency-language-modeling-dataset/}。
 这两个数据集拥有相同的验证和测试集，而Wikitext-103的训练集则比Wikitext-2的训练集大得多。所以我们还可以间接测算出增大训练集对测试集上的提升效果表现。对于第三个``One Billion Word''数据集\footnote{http://www.statmt.org/lm-benchmark/}，它是由之前机器翻译数据集里面的文本融合而成，文本数据也取自维基百科（Wikipedia）\footnote{英文维基百科主页：https://en.wikipedia.org/wiki/Main\_Page/}。
-为了评价的标准性和实验的可互相比较性，官方还提供了一套数据预处理脚本，同时指定了该脚本所需要的~Perl~语言版本，可见要求极为严苛。因为对于语言模型来说，Perl~内置函数版本不同，处理出来的文本也略有不同，语言模型之间的结果相互比较就会变得没有意义的。通常来说，词表小的模型更占优势。当用官方提供的脚本处理完数据后，我们将``./train/''目录中的所有数据视为训练集，选择``./holdout/''目录下面的第一和第二个数据集作为相应的验证和测试集。这些数据集的详细统计指标在表~\ref{tab:dataset}~中进行了说明。
+为了评价的标准性和实验的可互比性，官方还提供了一套数据预处理脚本，同时指定了该脚本所需要的~Perl~语言版本，可见要求极为严苛。因为对于语言模型来说，Perl~内置函数版本不同，处理出来的文本也略有不同，语言模型之间的结果相互比较就会变得没有意义的。通常来说，词表小的模型更占优势。当用官方提供的脚本处理完数据后，我们将``./train/''目录中的所有数据视为训练集，选择``./holdout/''目录下面的第一和第二个数据集作为相应的验证和测试集。这些数据集的详细统计指标在表~\ref{tab:dataset}~中进行了说明。
 
 \subsection{实验评价指标}
 在本次实验研究中，当各种实验模型在验证数据集上训练到收敛后，我们就需要评价不同模型的性能差异，针对语言模型的两个标准评估度量标准来揭示针对不同的优化方法的优劣：困惑度（Perplexity，$ \mathrm{PPL} $）和单词误差率（Word Error Rate，$\mathrm{WER} $）。
@@ -42,7 +42,7 @@
    \mathrm{PPL}(w_1,\cdots,w_T)=\sqrt[T]{\frac{1}{\prod_{t=1}^T p(w_t|w_{1:t-1})}}
 \end{equation}
 
-此外，$\mathrm{WER}$指代的是单词的萊文斯坦距离（Levenshtein Distance），用于衡量参考句子（Reference，记作r）和预测句子（Hypothesis，记作h）之间的相似度。他是编辑距离的一种衍生类型，被定义为错误识别的单词（删除，插入，替换）占单词总数的百分比\footnote{https://martin-thoma.com/word-error-rate-calculation}：
+此外，$\mathrm{WER}$表示单词的萊文斯坦距离（Levenshtein Distance），用于衡量参考句子（Reference，记作r）和预测句子（Hypothesis，记作h）之间的相似度。它是编辑距离的一种衍生类型，被定义为错误识别的单词（删除，插入，替换）占总单词的百分比\footnote{https://martin-thoma.com/word-error-rate-calculation}：
 \begin{equation}\label{equ:wer}
   \mathrm{WER} = \frac{\text{插入的单词数 + 删除的单词数 + 替换的单词数}}{\text{全部单词数量}}
 \end{equation}
@@ -79,7 +79,7 @@ d_{r,h}+d_{r,s}\ge d_{r,s}
   \caption{模型训练曲线图}
 \end{figure}
 
-另外在实验中，Adam优化器（Optimizer）配合两种不同的学习率（Learning Rate）作为模型的优化函数，即设置$ lr = 0.06$ 和 $0.001 $。两种词表层级分解方法需要采用较大的学习率，而传统的softmax和采样近似方则需要采用较小的学习率。因为我们实验中发现，词表层次分解算法收敛很慢，需要配合更大的学习率。除此以外，每隔一定步数（$step=100$），学习率还需要逐渐缩小：$lr \leftarrow lr *0.9$。
+另外在实验中，Adam优化器（Optimizer）配合两种不同的学习率（Learning Rate）作为模型的优化函数，即设置$ \texttt{lr}  = 0.06$ 和 $0.001 $。两种词表层级分解方法需要采用较大的学习率，而传统的softmax和采样近似方则需要采用较小的学习率。因为我们实验中发现，词表层次分解算法收敛很慢，需要配合更大的学习率。除此以外，每隔一定步数（$\texttt{step} =100$），学习率还需要逐渐缩小：$\texttt{lr} \leftarrow \texttt{lr}  *0.9$。
 
 对于在WikiText-2数据集上运行的实验，我们在批处理大小（batch size）为20的20个时期内运行，直到我们观察到验证集上的最小$ \mathrm{PPL} $。验证集上的损失数值约4.8，这是最好的验证上的损失值。而对于Wikitext-103数据集，在训练集上优化参数需要大约3-4个轮数（Epochs），因为训练集大约比较小的一个大50倍。此外，训练集损失数值大约在5.1左右，因为在 wikitext-2 数据集上更高的原因是我们预测的词汇量要大得多，所以混淆程度（即训练损失）应该更高。虽然我们发现模型可以很容易地收敛到局部最小点，验证误差在这个局部最小值的范围内振荡，但是Wikitext-2和Wikitext-103的唯一区别是训练数据的大小，表示收集很多训练数据不一定能保证模型在相同的验证和测试集上学得更好，而不是更普遍的结果。
 
@@ -89,22 +89,20 @@ d_{r,h}+d_{r,s}\ge d_{r,s}
 这部分将讨论语言模型的大词表问题在具体实验中瓶颈和各种不同优化策略对对该问题的计算效率和性能的提升和分析。
 \subsection{词表层次化比较}
 首先在wikitext-103数据集，我们统计了语言模型中每个模块的计算时间消耗，如图~\ref{fig:rnn_timing}~所示。 我们计算运行不同的RNN模型（即LSTM模型和GRU模型）及其梯度（即，RNN Grad）所需的时间，以及Wikitext-103数据集的大词汇表上的常规softmax，这词汇表大小与我们平时所采用的数据集的词表相当。 我们分别用Theano框架和CUDA实现了RNN单元，一个采用python语言实现，第二个使用并行C++语言实现。目前基于CuDNN实现的RNN模型计算时间最快，它里面的RNN的运行时间可以缩短到最短。 我们将代码重复了100遍，统计了每个模块的总时间占用，然后分别计算其平均时间占用。这样做的目的是通过多次实验来保证实验数据准确性。
-
-从图中可以看出，使用优化的CUDA，softmax模块的影响比RNN单元及其梯度更重要。Softmax计算时间占用总计算时间随着词表的增大占比越来越大，并且已经超过了$50\%$的计算时间，这就需要我们详细讨论softmax优化。
-
-
-\begin{figure}[!ht]
+\begin{figure}[!t]
   \centering
   \includegraphics[width=.9\columnwidth]{./figures/rnn_timing.pdf}
   \caption{wikitext-103数据集上测量语言模型三个部分的计算时间比较}\label{fig:rnn_timing}
 \end{figure}
 
 
-为了对用于训练相同批处理数据的经验时间复杂性和内存消耗进行基准测试，我们使用这些算法在表~\ref{tab:time}~中收集了GPGPU和CPU上的详细结果。我们尝试使用这些算法处理WikiText-103数据集，并计算处理一个批处理数据所需的平均时间。另外，输入句子的最大长度，隐藏层，输出词汇和批量大小分别设置为$\{50, 256, 267735, 20\}$。此外，“总时间”过程表示前向传播和后向梯度优化的过程，“前进时间”过程表示从输入数据到计算模型成本所需的时间消耗。此外，我们计算了上述算法训练期间加载所需的内存。 $ \mathcal{| V |} $表示词汇大小，$ \mathcal{| H |} $是目标嵌入维度。在训练期间，tHSM只消耗最小的存储器资源，而p-tHSM覆盖了更大的存储器集合，并且p-tHSM在考虑存储器消耗和速度时采用更大的存储器并且获得了更好的加速比。
+从图中可以看出，使用优化的CUDA，softmax模块的影响比RNN单元及其梯度更重要。Softmax计算时间占用总计算时间随着词表的增大占比越来越大，并且已经超过了$50\%$的计算时间，这就需要我们详细讨论softmax优化。
 
-\begin{table}[!ht]
+为了对用于训练相同批处理数据的经验时间复杂性和内存消耗进行基准测试，我们使用这些算法在表~\ref{tab:time}~中收集了GPGPU和CPU上的详细结果。我们尝试使用这些算法处理WikiText-103数据集，并计算处理一个批处理数据所需的平均时间。另外，输入句子的最大长度，隐藏层，输出词汇和批量大小分别设置为$\{50, 256, 267735, 20\}$。此外，“总时间”过程表示前向传播和后向梯度优化的过程，“前进时间”过程表示从输入数据到计算模型成本所需的时间消耗。此外，我们计算了上述算法训练期间加载所需的内存。 $\mathcal{|V|} $表示词汇大小，$\mathcal{|H|} $是隐藏层维度。在训练期间，tHSM只消耗最小的存储器资源，而p-tHSM算法覆盖了更大的存储器集合，并且p-tHSM在考虑存储器消耗和速度时采用更大的存储器并且获得了更好的加速比。
+
+\begin{table}[!t]
   \centering
-  \caption{Wikitext-103数据集上面GPGPU和CPU的运行时内存和计算时间比较\label{tab:time}}
+  \caption{Wikitext-103数据集上GPGPU和CPU的运行时内存和计算时间比较\label{tab:time}}
 \begin{tabular}{lccccc}
   \toprule
  \multirow{2}{*}{算法}  &\multirow{2}{*}{运行时内存占用} &\multicolumn{2}{c}{总计算时间 (ms)} & \multicolumn{2}{c}{前向计算时间 (ms)}   \\
@@ -118,46 +116,49 @@ p-tHSM  &$\mathcal{|H|\log{|V|}}$ &\textbf{383.5}&	86.4 &\textbf{7.0}&	\textbf{1
 \end{tabular}
 \end{table}
 
-
-
-为了验证与词汇大小相关的cHSM，tHSM和p-tHSM算法的可扩展性，结果展示在图~\ref{fig:hsm_benchmark}~中。 为了显示p-tHSM算法的影响，我们在这里不包含“Softmax”方法，因为与其他算法相比，它消耗了更多的计算时间，无法被放在这个图里面。 很显然，cHSM随着词汇大小的平方根（即，$ \mathcal{O(| H | \sqrt{| V |})} $）进行缩放，而p-tHSM随着词汇大小的增加呈现出稳定的表现。tHSM算法随着此表大小的对数进行变化 （即，$ \mathcal{O(| H | \log{| V |})} $）,我们的p-tHSM算法所需要的计算时间词表变大，与tHSM算法的差异越来越大。这一结果证明我们提出的计算模型更加优越。
-\begin{figure}[!ht]
+\begin{figure}[!t]
   \centering
   \includegraphics[width=.87\columnwidth]{./figures/all_time.pdf}
   \caption{cHSM, tHSM 和 p-tHSM 算法随着词表大小的计算时间影响}\label{fig:hsm_benchmark}
 \end{figure}
 
+
+为了验证与词汇大小相关的cHSM，tHSM和p-tHSM算法的可扩展性，结果展示在图~\ref{fig:hsm_benchmark}~中。 为了显示p-tHSM算法的影响，我们在这里不包含“Softmax”方法，因为与其他算法相比，它消耗了更多的计算时间，无法被放在这个图里面。 很显然，cHSM随着词汇大小的平方根（即，$ \mathcal{O(| H | \sqrt{| V |})} $）进行缩放，而p-tHSM随着词汇大小的增加呈现出稳定的表现。tHSM算法随着此表大小的对数进行变化 （即，$ \mathcal{O(| H | \log{| V |})} $）,我们的p-tHSM算法所需要的计算时间词表变大，与tHSM算法的差异越来越大。这一结果证明我们提出的计算模型更加优越。
+
 在这些实验的基础上，我们可以得出结论：所提出的p-tHSM方法胜过历史记录$ \mathcal{O(| H | \log| V |)})$，并且取得了令人满意的分层softmax方法的加速比。 这种性能归因于基于GPGPU并行性的加速，也是由于p-tHSM 方法的基本结构，能够将目标字树进行并行地计算。
 
 
 \subsection{搜索策略的影响}
-由于我们提出了三个关于推理阶段搜索策略的算法，其影响可以通过WER度量来观察。在这个结构化预测过程中，一个合适的搜索规则将帮助模型获得最小风险的最佳候选人，如表~\ref{tab:search}~所示。 “Global”方法表示我们计算所有单词的得分，单词的概率用整个词汇全局归一化。值得注意的是，对于cHSM方法算法~\ref{alog:greed_argmax}~比算法~\ref{alog:exact}~得到更好的WER，尽管后一种方法获得了词汇表上的确切顶级候选。由于类结构中存在标签偏差问题，排名最高的词容易出现算法模型无法建模的小组。最后但并非最不重要的是，算法~\ref{alog:exact}~和``global''获得相同的单词排序，唯一的区别是算法~\ref{alog:exact}~避免了冗余计算。所以他们达到了可比的WER得分，但算法~\ref{alog:exact}~需要更少的时间。
-\begin{table}[!ht]
-  \centering
-  \caption{Wikitext-2数据集上cHSM算法针对不同搜索算法的WER评测结果\label{tab:search}}
-\begin{tabular}{llccc}
-  \toprule
-   & 算法&计算时间 (ms)&验证集（WER）& 测试集（WER）\\ \midrule
-  \multirow{3}{*}{cHSM} &Global&102& 80.00\%& 80.02\%\\
-        &算法~\ref{alog:exact}&63& 80.00\%& 80.02\%\\
-        &算法~\ref{alog:greed_argmax}&\textbf{44}&\textbf{ 77.09\%}&\textbf{ 77.07\%}\\
-  \bottomrule
-\end{tabular}
-\end{table}
+由于我们提出了三个关于推理阶段搜索策略的算法，其影响可以通过WER度量来观察。在这个结构化预测过程中，一个合适的搜索规则将帮助模型获得最小风险的最佳候选人，如表~\ref{tab:search}~所示。 算法~\ref{alog:global}方法表示我们计算所有单词的得分，单词的概率用整个词汇全局归一化。
 
+对于p-tHSM系列算法，我们比较了所提出的算法~\ref{alog:greed_argmax}和传统的算法~\ref{alog:global}算法。算法~\ref{alog:greed_argmax}比算法~\ref{alog:global}方法获得本地最佳结果花费的时间更少。由于基于树的模型在以前的决策中更容易失败，所以“全局”方法的MER分数要比算法~\ref{alog:greed_argmax}~要好。
 \begin{table}[!ht]
   \centering
   \caption{Wikitext-2数据集上p-tHSM算法针对不同搜索算法的WER评测结果\label{tab:psearch2}}
 \begin{tabular}{llccc}
   \toprule
         & 算法&计算时间（ms）&验证集（WER）& 测试集（WER）\\ \midrule
-  \multirow{2}{*}{p-tHSM}  &Global&161& \textbf{76.67\%}&\textbf{75.35\%}\\
+  \multirow{2}{*}{p-tHSM}  &算法~\ref{alog:global}&161& \textbf{76.67\%}&\textbf{75.35\%}\\
         &算法~\ref{alog:greed_argmax}&\textbf{30} & 79.61\%&79.32\%\\
   \bottomrule
 \end{tabular}
 \end{table}
 
-对于p-tHSM系列算法，我们比较了所提出的算法~\ref{alog:greed_argmax}和传统的“全局”算法。算法~\ref{alog:greed_argmax}比“global”方法获得本地最佳结果花费的时间更少。由于基于树的模型在以前的决策中更容易失败，所以“全局”方法的MER分数要比算法~\ref{alog:greed_argmax}要好。
+值得注意的是，对于cHSM方法算法~\ref{alog:greed_argmax}~比算法~\ref{alog:exact}~得到更好的WER，尽管后一种方法获得了词汇表上的确切顶级候选。由于类结构中存在标签偏差问题，排名最高的词容易出现算法模型无法建模的小组。最后但并非最不重要的是，算法~\ref{alog:exact}~和~\ref{alog:global}获得相同的单词排序，唯一的区别是算法~\ref{alog:exact}~避免了冗余计算。所以他们达到了可比的WER得分，但算法~\ref{alog:exact}~需要更少的时间。
+
+\begin{table}[!ht]
+  \centering
+  \caption{Wikitext-2数据集上cHSM算法针对不同搜索算法的WER评测结果\label{tab:search}}
+\begin{tabular}{llccc}
+  \toprule
+   & 算法&计算时间 (ms)&验证集（WER）& 测试集（WER）\\ \midrule
+  \multirow{3}{*}{cHSM} &算法~\ref{algo:alls}&102& 80.00\%& 80.02\%\\
+        &算法~\ref{alog:exact}&63& 80.00\%& 80.02\%\\
+        &算法~\ref{alog:cargmax}&\textbf{44}&\textbf{ 77.09\%}&\textbf{ 77.07\%}\\
+  \bottomrule
+\end{tabular}
+\end{table}
+
 
 \subsection{循环网络模型的影响}
 
@@ -187,11 +188,11 @@ p-tHSM  &$\mathcal{|H|\log{|V|}}$ &\textbf{383.5}&	86.4 &\textbf{7.0}&	\textbf{1
   \caption{BPTT和截断BPTT算法示意图}\label{fig:minibatch}
 \end{figure}
 
-在训练过程中，如果在被截断的语句中看到某些依赖关系，那么模型可以学习它们的关系。 如果这些依赖关系总是跨越不同的语句块，其实已经打破了这些依赖关系，模型将永远不会学习这种关系。 因为模型的导数永远不会回溯到最初的跨语句块的单词，并告诉前一个段中的某些内容对下一个段是有用的。 但是如果你在一个语句段中看到这种关系的话，那么实际上还有希望学习到这种关系。在测试的时候，将能够在不同的语句段中预测它们， 因为我们总是能够向前传播。
+在训练过程中，如果在被截断的语句中存在某些依赖关系，则模型可以学习这种关系； 如果这些依赖关系总是跨越不同的语句块，那么截断的语句已经打破了这些依赖，模型将无法学习这种关系。 这是由于模型的参数导数无法回溯到最初的跨段的那个单词，并告诉前段中的某些内容对下一段是有用的。 如果你在一个语句段中看到这种关系的话，模型能学习到这种关系是由于模型的参数能求导到前面对应的单词。与之所区别的是，在测试时模型将能够在跨语句段中预测， 因为模型的计算步骤是不断向前传播，不存在模型反向求导的计算过程。
 \begin{figure}[!ht]
   \centering
   \includegraphics[width=.85\columnwidth]{./figures/tbptt.pdf}
-  \caption{Wikitext-2数据集上 BPTT和截断BPTT算法对RNN的影响.}\label{fig:tbptt}
+  \caption{Wikitext-2数据集上 BPTT和截断BPTT算法对RNN的影响}\label{fig:tbptt}
 \end{figure}
 \subsection{采样近似算法比较}
 
@@ -276,34 +277,34 @@ Chen~等人发现这个单词的层次聚类算法对cHSM算法的性能很敏�
 另一方面，我们采用了单词，字母和词汇聚类方法来生成单词在树上的分布，详细的结果在表~\ref{table:clustering}~中给出。与提供调整分支因子的自由度的~cHSM~方法不同，树聚类的实验是相当有限的。Uni-gram 聚类方法（即按照词频合并）在创建单词层次结构方面效率更高，而双字词和语义聚类花费更多时间来计算词汇表中单词之间的相似度矩阵。尽管如此，考虑到树合并的规则，Bi-gram 方法考虑了二元共现统计和语义方法来评估特征空间中的欧氏距离。在困惑度量下，二元语义聚类方法比一元方法有更好的效果。最后，与~cHSM~方法相比，更深层次的树模型更适合于词汇聚类，适当的聚类可以提高树层次的效率。
 
 \section{模型总体评价}
-如表~\ref{tab:summary_ppl}~所示，我们收集了上述三种标准语料库的验证和测试数据集的所有困惑和错误率结果。值得注意的是，我们采用了一层GRU单元作为所有这些算法的上下文表示，其维数设置为256.另外，对于NCE和Blackout近似，超参数$ k $是 对较小的Wikitext-2和Wikitext-103数据集设置为$\mathcal{|V|}/20 $，对于较大的One Billion Word数据集，设置为$ k=|\mathcal{V}|/200 $。 此外，对于~cHSM~方法，我们根据单词的单字分布来划分词汇。
+如表~\ref{tab:summary_ppl}~所示，我们收集了上述三种标准语料库的验证和测试数据集的所有困惑和错误率结果。值得注意的是，我们采用了一层GRU单元作为所有这些算法的上下文表示，其维数设置为256.另外，对于NCE和Blackout近似，超参数$ k $是 对较小的Wikitext-2和Wikitext-103数据集设置为$\mathcal{|V|}/20 $，对于较大的One Billion Words数据集，设置为$ k=|\mathcal{V}|/200 $。 此外，对于~cHSM~方法，我们根据单词的单字分布来划分词汇。
 
 考虑到Wikitext-2数据集上的结果，最初的softmax比其他算法获得了最好的分数，因为在Blackout和NCE近似中没有引入任何cHSM和p-tHSM算法的结构损失或基于抽样的变分损失。
 
 \begin{table}[!ht]
   \centering
-  \caption{所有模型在三个数据集上的困惑度和单词错误率的性能评测\label{tab:summary_ppl}}
+  \caption{所有模型在三个数据集上的PPL和WER的性能评测\label{tab:summary_ppl}}
 \begin{tabular}{llcc}
   \toprule
 数据集& 算法& 验证集（PPL/WER） & 测试集（PPL/WER） \\ \midrule
  \multirow{2}{*}{WikiText-2}&GRU + Softmax&172.64 / 77.49\%&162.09 / 77.07\% \\
   &GRU + NCE~\upcite{DBLP:journals/jmlr/GutmannH10}&217.84 / 78.26\%&199.54 / 78.02\%\\
   &GRU + Blackout~\upcite{DBLP:journals/iclr/JiVSAD15}&221.15 / 77.72\%&199.56 / 77.50\% \\
-  &GRU + cHSM + unigram~\upcite{DBLP:conf/acl/ChenGA16}&253.18 / 78.25\%&236.61 / 78.02\%\\
-  &GRU + p-tHSM + unigram~\upcite{DBLP:conf/nips/MikolovSCCD13}&218.42 / 78.15\%&216.05 / 78.15\%\\
-  &GRU + p-tHSM + bigram~\upcite{DBLP:journals/coling/BrownPdLM92}&186.23 / 78.15\%&189.58 / 78.15\%\\\midrule
+  &GRU + cHSM + Uni-gram~\upcite{DBLP:conf/acl/ChenGA16}&253.18 / 78.25\%&236.61 / 78.02\%\\
+  &GRU + p-tHSM + Uni-gram~\upcite{DBLP:conf/nips/MikolovSCCD13}&218.42 / 78.15\%&216.05 / 78.15\%\\
+  &GRU + p-tHSM + Bi-gram~\upcite{DBLP:journals/coling/BrownPdLM92}&186.23 / 78.15\%&189.58 / 78.15\%\\\midrule
    \multirow{2}{*}{WikiText-103} &GRU + Softmax&130.38 / 72.15\%&136.83 / 72.37\%\\
  &GRU + NCE~\upcite{DBLP:journals/jmlr/GutmannH10}&164.78 / 73.22\%&165.01 / 73.34\%\\
   &GRU + Blackout~\upcite{DBLP:journals/iclr/JiVSAD15}&163.99 / 73.18\%&162.76 / 74.22\%\\
-  &GRU + cHSM + unigram~\upcite{DBLP:conf/acl/ChenGA16}&171.81 / 73.42\%&166.74 / 73.18\%\\
-  &GRU + p-tHSM + unigram~\upcite{DBLP:conf/nips/MikolovSCCD13}&165.70 / 73.53\%&166.11 / 72.44\%\\
-  &GRU + p-tHSM + bigram~\upcite{DBLP:journals/coling/BrownPdLM92}&164.15 / 78.15\%&163.55 / 77.85\%\\\midrule
-  \multirow{2}{*}{One Billion Word} &GRU + Softmax&330.38 / 88.15\%&330.83 / 88.37\%\\
+  &GRU + cHSM + Uni-gram~\upcite{DBLP:conf/acl/ChenGA16}&171.81 / 73.42\%&166.74 / 73.18\%\\
+  &GRU + p-tHSM + Uni-gram~\upcite{DBLP:conf/nips/MikolovSCCD13}&165.70 / 73.53\%&166.11 / 72.44\%\\
+  &GRU + p-tHSM + Bi-gram~\upcite{DBLP:journals/coling/BrownPdLM92}&164.15 / 78.15\%&163.55 / 77.85\%\\\midrule
+  \multirow{2}{*}{One Billion Words} &GRU + Softmax&330.38 / 88.15\%&330.83 / 88.37\%\\
  & GRU + NCE~\upcite{DBLP:journals/jmlr/GutmannH10}&272.07 / 84.83\%&276.11 / 84.34\%\\
   &GRU + Blackout~\upcite{DBLP:journals/iclr/JiVSAD15}&268.67 / 84.23\%&266.11 / 84.18\%\\
- & GRU + cHSM + unigram~\upcite{DBLP:conf/acl/ChenGA16}&225.36 / 80.32\%&224.11 / 79.42\%\\
- & GRU + p-tHSM + unigram~\upcite{DBLP:conf/nips/MikolovSCCD13}&231.44 / 87.53\%&236.11 / 82.53\%\\
-  &GRU + p-tHSM + bigram~\upcite{DBLP:journals/coling/BrownPdLM92}& 221.55 / 81.15\%&218.70 / 83.15\%\\
+ & GRU + cHSM + Uni-gram~\upcite{DBLP:conf/acl/ChenGA16}&225.36 / 80.32\%&224.11 / 79.42\%\\
+ & GRU + p-tHSM + Uni-gram~\upcite{DBLP:conf/nips/MikolovSCCD13}&231.44 / 87.53\%&236.11 / 82.53\%\\
+  &GRU + p-tHSM + Bi-gram~\upcite{DBLP:journals/coling/BrownPdLM92}& 221.55 / 81.15\%&218.70 / 83.15\%\\
   \bottomrule
 \end{tabular}
 \end{table}
