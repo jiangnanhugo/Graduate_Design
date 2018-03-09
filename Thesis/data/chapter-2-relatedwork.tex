@@ -49,7 +49,7 @@ N-gram~算法也是使用单词的顺序信息作为上下文信息建模策略�
 另一方面，文本中存在的依赖关系将会限制我们选择接下来的单词候选集，称其为选择限制关系。
 如图~\ref{fig:lm}~所示，模型在预测过程中，在每一步都需要对词表中所有单词做预测，我们需要将每一步都做选择限制，减少模型的预测分支，这样才能保证模型生成的结果尽可能的语义一致且连贯。每次开放式的对所有单词做预测所带来的后果可能是，那些高频单词会不断出现在预测序列里面，因为训练语聊里面这些单词出现频率就非常高，所以模型将这些高频词预测概率大也是合乎情理的。但问题出现在，一旦我们模型不断预测高频词，我们生成的句子很难传达有效的语义信息。
 
-\begin{figure}[!b]
+\begin{figure}[!t]
   \centering
   \includegraphics[width=.99\columnwidth]{./figures/lm.pdf}
   \caption{循环神经网络语言模型图例}
@@ -107,7 +107,7 @@ N-gram~算法也是使用单词的顺序信息作为上下文信息建模策略�
 其中 $W$ 指的是8个小矩阵互相层叠起来，即 $[[W^i,W^f,W^g,W^o],[U^i,U^f,U^g,U^o]]$。
 
 
-\begin{figure}[!ht]
+\begin{figure}[!b]
   \centering
   \includegraphics[width=0.6\linewidth]{./figures/gru.pdf}
   \caption{GRU模型示意图}\label{fig:gru}
