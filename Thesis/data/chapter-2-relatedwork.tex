@@ -214,7 +214,7 @@ softmax~算法的计算瓶颈不能归因于方程~\ref{eq:softmax}~中的循环
 
 接下来分析基于类别的分层模型计算速度提升效果。假设每个类包含~$\sqrt{\mathcal{|V|}}$ 单词，表示词汇被划分为相同大小的组，这样的话级联概率（Cascaded Probability）只涉及~$2\sqrt{\mathcal{|V|}}$~单词 softmax计算，所以最优时间复杂度可以减少到~$\mathcal{O}(\mathcal{|H|}\sqrt{\mathcal{|V|}})$~\upcite{DBLP:conf/icassp/Goodman01}。虽然在更常见的情况下，词表划分算法会产生不同大小的分组，这需要其他结构来支撑这种非均匀划分操作，尚未被完全探索和实验分析。此外，我们还可以通过调整不同的类数目和词表划分算法来调整模型的精度和效率。
 
-另一方面，我们再介绍基于二叉树分解词表的建模策略。tHSM~方法将单步骤分类过程分解为多步骤二元分类步骤。正因为如此，词汇组织为二叉树，其中单词分布在二叉树的叶子节点上，二叉树的所有的中间节点的都是内部参数。在该二叉树是平衡树（Balanced Binary Tree）的结构情况下，每个词将会被赋予相等长度的0，1路径，最优时间复杂度可以减少到$\mathcal{O(|H|\log \mathcal{|V|})}$。图~\ref{fig:case_thsm} 展示了一颗平衡二叉树词表分解和访问路径的示例。关于如何构建这颗二叉树，最早的工作中单词在二叉树上的分布可以由WordNet与领域专家~\upcite{DBLP:conf/aistats/MorinB05}或由单词~Uni-gram~分布~\upcite{DBLP:conf/nips/MikolovSCCD13}推导的霍夫曼编码构建。然而，在大规模文本应用中，专家知识的构建是相当昂贵的。所以，一般不会采用这样的方案来构建单词的二叉树分布，霍夫曼编码方案只考虑单词词频信息，而单词的句法或语义信息尚未被利用和得到彻底的分析讨论。
+另一方面，我们再介绍基于二叉树分解词表的建模策略。tHSM~方法将单步骤分类过程分解为多步骤二元分类步骤。正因为如此，词汇组织为二叉树，其中单词分布在二叉树的叶子节点上，二叉树的所有的中间节点的都是内部参数。在该二叉树是平衡树（Balanced Binary Tree）的结构情况下，每个词将会被赋予相等长度的~0，1~路径，最优时间复杂度可以减少到$\mathcal{O(|H|\log \mathcal{|V|})}$。图~\ref{fig:case_thsm} 展示了一颗平衡二叉树词表分解和访问路径的示例。关于如何构建这颗二叉树，最早的工作中单词在二叉树上的分布可以由WordNet与领域专家~\upcite{DBLP:conf/aistats/MorinB05}或由单词~Uni-gram~分布~\upcite{DBLP:conf/nips/MikolovSCCD13}推导的霍夫曼编码构建。然而，在大规模文本应用中，专家知识的构建是相当昂贵的。所以，一般不会采用这样的方案来构建单词的二叉树分布，霍夫曼编码方案只考虑单词词频信息，而单词的句法或语义信息尚未被利用和得到彻底的分析讨论。
 
 \begin{figure}[!t]
   \centering
@@ -229,9 +229,10 @@ softmax~算法的计算瓶颈不能归因于方程~\ref{eq:softmax}~中的循环
 \caption{由离散概率分布构造累积概率分布}\label{fig:cdf_reverse}
 \end{figure}
 
-前文提到在使用基于采样估计模型时，不可避免地需要使用到离散采样函数，我们在这一个部分来讨论构建高效离散采样函数的策略。首先给出离散采样问题的定义：设一共有~$|\mathcal{V}|$~个单词，第~$i$个~单词~$w_i$~出现的概率是~$p(w_i)$， 如何高效地产生这样的随机变量序列~$w_1,w_2,\cdots$?该问题被称之为模拟离散取样（Simulated Discrete Sampling），其含义指的是根据有限类别的非均匀概率分布，来模拟有放回的采样，从而生成需要的采样序列。因为计算机只能快速产生伪随机数（Psudo Random Number Generator），即对均匀分布（Uniform Distribution）做采样，其他的复杂采样函数均建立在均匀分布的变换之上。所以该问题的关键就是如何将均匀分布变换到实际变量的分布，生成指定概率分布的随机单词序列。
+前文提到在使用基于采样估计模型时，不可避免地需要使用到离散采样函数，我们在这一个部分来讨论构建高效离散采样函数的策略。首先给出离散采样问题的定义：设一共有~$|\mathcal{V}|$~个单词，第~$i$个~单词~$w_i$~出现的概率是~$p(w_i)$， 如何高效地产生这样的随机变量序列~$w_1,w_2,\cdots$?该问题被称之为模拟离散取样（Simulated Discrete Sampling），其含义指的是根据有限类别的非均匀概率分布，来模拟有放回的采样，从而生成需要的采样序列。
+因为计算机只能快速产生伪随机数（Psudo Random Number Generator），即对均匀分布（Uniform Distribution）做采样，其他的复杂采样函数均建立在均匀分布的变换之上。所以该问题的关键就是如何将均匀分布变换到实际变量的分布，生成指定概率分布的随机单词序列。
 
-如图~\ref{fig:cdf_reverse}~所示，首先将离散概率分布转换成累积分布函数表（Cumulative Distribution Function，CDF）。我们可以使用Matlab代码，很容易地完成这个计算过程。如图~\ref{fig:sample}~所示，所展示的代码使用了线性搜索算法(Linear Search)。该算法很简单，最容易实现。但是注意到该算法初始化的时间复杂度是~$\mathcal{O(\mathcal{V})}$~。计算每个样本时的时间复杂度也是~$\mathcal{O(V)}$。
+如图~\ref{fig:cdf_reverse}~所示，首先将离散概率分布转换成累积分布函数表（Cumulative Distribution Function，CDF）。我们可以使用~Matlab~代码，很容易地完成这个计算过程。如图~\ref{fig:sample}~所示，所展示的代码使用了线性搜索算法（Linear Search）。该算法很简单，最容易实现。但是注意到该算法初始化的时间复杂度是~$\mathcal{O(\mathcal{V})}$~。计算每个样本时的时间复杂度也是~$\mathcal{O(V)}$。
 \begin{figure}[!t]
   \centering
 \includegraphics[width=1\linewidth]{./figures/cdf.pdf}
@@ -239,11 +240,11 @@ softmax~算法的计算瓶颈不能归因于方程~\ref{eq:softmax}~中的循环
 \end{figure}
 
 
-考虑到该累积分布是从小到大顺序组织的，可以使用数据结构中的查找算法更快地找到结果。我们可以采用从左至右的方式线性搜索随机数所在的区间，其时间复杂度是$\mathcal{O}(\mathcal{V})$；也可以使用更高效的二叉搜索(Binary Search)快速计算随机数所在的区间，对应的时间复杂度是$\mathcal{O}(\log \mathcal{V})$。
+考虑到该累积分布数组是从小到大顺序排序的，可以使用数据结构中的查找算法更快地找到结果。首先可以采用从左至右的方式线性搜索随机数所在的区间，其时间复杂度是~$\mathcal{O}(\mathcal{V})$。其次也可以使用更高效的二叉搜索（Binary Search）快速搜索随机数所在的区间，对应的时间复杂度是~$\mathcal{O}(\log \mathcal{V})$。
 
 
 
-在~$\mathcal{V}$~很小的情况下，使用线性查找算法或者二分搜寻算法也足够得快；当~$\mathcal{V}$足够的大，即所谓的大词表问题的时候，我们可以采用别名方法(Alias Method)\upcite{DBLP:reference/stat/LEcuyer11}、近似方法等~\upcite{DBLP:journals/cgf/ClineRW09}。本实验采用别名算法，该算法利用两次随机采样来生成采样序列，具有恒定的~$O(1)$采样时间复杂度。该算法的精髓在于构造别名表（Alias Table），需要~$O(\log |\mathcal{V}|)$~构造时间复杂度~\upcite{10.2307/2683739,DBLP:conf/emnlp/VaswaniZFC13}，具体构造方法可以参考\footnote{https://hips.seas.harvard.edu/blog/2013/03/03/the-alias-method-efficient-sampling-with-many-discrete-outcomes/}。
+在~$\mathcal{V}$~很小的情况下，使用线性查找算法或者二分搜寻算法也足够得快；当~$\mathcal{V}$足够的大，即所谓的大词表问题的时候，我们可以采用别名方法（Alias Method）upcite{DBLP:reference/stat/LEcuyer11}、近似方法等~\upcite{DBLP:journals/cgf/ClineRW09}。本实验采用别名算法，该算法利用两次随机采样来生成采样序列，具有恒定的~$O(1)$采样时间复杂度。该算法的精髓在于构造别名表（Alias Table），需要~$O(\log |\mathcal{V}|)$~构造时间复杂度~\upcite{10.2307/2683739,DBLP:conf/emnlp/VaswaniZFC13}，具体构造方法可以参考\footnote{https://hips.seas.harvard.edu/blog/2013/03/03/the-alias-method-efficient-sampling-with-many-discrete-outcomes/}。
 
 \begin{figure}[!t]
   \centering

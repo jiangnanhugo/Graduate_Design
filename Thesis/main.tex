@@ -2,6 +2,13 @@
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage[ruled]{algorithm2e} % For algorithms
+
+\usepackage{ perpage}
+\usepackage[ruled]{manyfoot}
+\MakePerPage{footnote}
+
+\DeclareNewFootnote{A}
+
 \renewcommand{\algorithmcfname}{算法}
 \makeatletter
 \renewcommand{\@algocf@capt@plain}{above}% formerly {bottom}
@@ -9,6 +16,28 @@
 \SetKwInput{KwData}{输入}
 \SetKwInput{KwResult}{输出}
 \setmainfont{Times New Roman}
+\def\resetfootnotemarks{%
+  \deffootnote[1em]{0em}{1em}{$^{\alph{footnote}}$}%
+  \deffootnotemark{\textsuperscript{\alph{footnote}}}%
+}
+\resetfootnotemarks
+
+\newcommand\footdef[3]{%
+  \deffootnotemark{\textsuperscript{\thefootnotemark}}%
+  \setcounter{footnoteA}{#1}%
+  \addtocounter{footnoteA}{-1}%
+  \setbox0=\hbox{#2$^{\thefootnotemark}$:\ }%
+  \deffootnote[\wd0]{0em}{1em}{#2$^{\thefootnotemark}$:\ }%
+  #2\footnoteA{#3}%
+  \resetfootnotemarks%
+}
+
+\newcommand\footdefmark[2]{%
+  \deffootnotemark{\textsuperscript{\thefootnotemark}}%
+  #2\footnotemark[#1]%
+  \deffootnotemark{\textsuperscript{\alph{footnote}}}%
+}
+
 \begin{document}
 
 % 用户信息
