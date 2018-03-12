@@ -3,12 +3,12 @@
 
 %%%%%%%%%% class clarification %%%%%%%%%%
 % 模板声明
-
+% updated by Nan Jiang (nanjiang@buaa.edu.cn, jiangnan.hugo@gmail.com)
 \NeedsTeXFormat{LaTeX2e}[2007/10/19]
 \ProvidesClass{buaathesis}
-              [2012/07/06 v0.8
+              [2018/03/10 v0.8.1
 The LaTeX template for thesis of BUAA]
-\typeout{Document Class `buaathesis' v0.8 by BHOSC (2012/07)}
+\typeout{Document Class `buaathesis' v0.8.1 by BHOSC (2018/03)}
 
 %%%%%%%%%% class options %%%%%%%%%%
 % 模板选项
@@ -97,7 +97,7 @@ The LaTeX template for thesis of BUAA]
 \setlength{\parindent}{2em}
 \setlength{\floatsep}{3pt plus 3pt minus 2pt}      % 图形之间或图形与正文之间的距离
 \setlength{\abovecaptionskip}{12pt plus 1pt minus 1pt} % 图形中的图与标题之间的距离
-\setlength{\belowcaptionskip}{12pt plus 1pt minus 2pt} % 表格中的表与标题之间的距离
+\setlength{\belowcaptionskip}{3pt plus 1pt minus 2pt} % 表格中的表与标题之间的距离
 
 %%%%%%%%%% header & footer %%%%%%%%%%
 % 页眉页脚
@@ -204,7 +204,7 @@ The LaTeX template for thesis of BUAA]
 \@removefromreset{figure}{chapter}
 \renewcommand{\thefigure}{\arabic{figure}}
 \renewcommand{\thetable}{\arabic{table}}
-\DeclareCaptionFormat{tabfigformat}{\bfseries\songti\zihao{5}{#1~~#3}}
+\DeclareCaptionFormat{tabfigformat}{\songti\zihao{5}{#1~~#3}} % \bfseries
 \captionsetup[figure]{
   position=bottom, margin=2mm, format=tabfigformat,
   aboveskip=6pt, belowskip=-8pt, justification=centerlast}
@@ -301,7 +301,7 @@ The LaTeX template for thesis of BUAA]
 \DeclareGraphicsExtensions{.eps,.ps,.jpg,.bmp}
 \graphicspath{{figure/}}
 \RequirePackage{pifont} % “秘级”后的五角星
-\RequirePackage{subfigure}
+
 
 %%%%%%%%%% list %%%%%%%%%%
 % 列表
@@ -433,7 +433,7 @@ The LaTeX template for thesis of BUAA]
                         \end{flushleft}
                     }
                     \vskip 80bp
-                    \includegraphics[width=.5\textwidth]{figures/buaaname.jpg}
+                    \includegraphics[width=.5\textwidth]{figures/buaaname.eps}
                     \vskip 30bp
                     \centerline{\zihao{0}\ziju{0.2}\hwxingkai\buaa@degree 论文}
                     ~~\\
@@ -490,25 +490,23 @@ The LaTeX template for thesis of BUAA]
         	\centering{\zihao{-2}\textbf{\buaa@thesistitleeng}}
         \end{spacing}
     \end{minipage}
-    \vskip 20bp
-    \begin{minipage}[h]{.75\textwidth}
-        \centering{\zihao{-3}\buaa@thesissubtitleeng}
-    \end{minipage}
-    \vspace*{\stretch{.8}}
-    \vskip 20bp
+    \vskip 10bp
+    \vspace*{\stretch{.4}}
         {\zihao{4}A Dissertation Submitted for the Degree of \buaa@degreeeng}\\
-        \vskip 110bp
+        \vskip 90bp
         \begin{center}
             \zihao{-3}
                 \begin{tabular}{rl}
-                    \textbf{Candidate:\ }&\textbf{\buaa@thesisauthoreng}\\[1.5ex]
+                    \textbf{Candidate:\ }&\textbf{\buaa@thesisauthoreng}\\[1.9ex]
                     \textbf{Supervisor:\ }&\textbf{\buaa@teacherdegreeeng ~~\buaa@teachereng}\\
                 \end{tabular}
         \end{center}
         \vskip 100bp
-        \zihao{3}{
-        \buaa@schooleng \\[1.5ex]
+        \begin{spacing}{1.5}
+        \zihao{-3}{\buaa@schooleng \\[0ex]
         \buaa@universityeng , Beijing, China}
+        \end{spacing}
+        \vskip 50bp
     \end{center}
 }
 
@@ -623,7 +621,7 @@ The LaTeX template for thesis of BUAA]
         \end{minipage}
         \end{spacing}
 
-        \vskip 170bp
+        \vspace{170pt}
 
         \begin{spacing}{2.2}
             {\zihao{-4}\songti
