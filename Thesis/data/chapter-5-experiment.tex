@@ -135,8 +135,6 @@ p-tHSM  &$\mathcal{|H|\log{|V|}}$ &\textbf{383.5}&	86.4 &\textbf{7.0}&	\textbf{1
 
 \subsection{搜索策略的影响}
 由于我们提出了三个关于推理阶段搜索策略的算法，其影响可以通过WER度量来观察。在这个结构化预测过程中，一个合理的搜索规则将帮助模型获得最小风险的最佳候选人，如表~\ref{tab:search}~所示。 算法~\ref{alog:global}表示我们计算所有单词的得分，单词的概率用整个词汇全局归一化。
-
-对于p-tHSM系列算法，我们比较了所提出的算法~\ref{alog:greed_argmax}和传统的算法~\ref{alog:global}。算法~\ref{alog:greed_argmax}比算法~\ref{alog:global}方法计算结果花费的时间更少。由于基于树的模型在逐层访问路径的过程中更容易出现错误情况，所以算法~\ref{alog:global}的WER分数要比算法~\ref{alog:greed_argmax}~要好。
 \begin{table}[!ht]
   \centering
   \caption{Wikitext-2数据集上p-tHSM算法针对不同搜索算法的WER评测结果\label{tab:psearch2}}
@@ -149,20 +147,22 @@ p-tHSM  &$\mathcal{|H|\log{|V|}}$ &\textbf{383.5}&	86.4 &\textbf{7.0}&	\textbf{1
 \end{tabular}
 \end{table}
 
-值得注意的是，对于cHSM方法算法~\ref{alog:greed_argmax}~比算法~\ref{alog:exact}~得到更好的WER，尽管后一种方法获得了词汇表上的确切顶级候选。由于类结构中存在标签偏差问题，排名最高的词容易出现算法模型无法建模的小组。最后但并非最不重要的是，算法~\ref{alog:exact}~和~\ref{alog:global}获得相同的单词排序，唯一的区别是算法~\ref{alog:exact}~避免了冗余计算。所以他们达到了可比的WER得分，但算法~\ref{alog:exact}~需要更少的时间。
-
+对于p-tHSM系列算法，我们比较了所提出的算法~\ref{alog:greed_argmax}和传统的算法~\ref{alog:global}。算法~\ref{alog:greed_argmax}比算法~\ref{alog:global}方法计算结果花费的时间更少。由于基于树的模型在逐层访问路径的过程中更容易出现错误情况，所以算法~\ref{alog:global}的WER分数要比算法~\ref{alog:greed_argmax}~要好。
 \begin{table}[!ht]
   \centering
   \caption{Wikitext-2数据集上cHSM算法针对不同搜索算法的WER评测结果\label{tab:search}}
 \begin{tabular}{llccc}
   \toprule
    & 算法类别&计算时间 (ms)&验证集（WER）& 测试集（WER）\\ \midrule
-  \multirow{3}{*}{cHSM} &算法~\ref{algo:alls}&102& 80.00\%& 80.02\%\\
-        &算法~\ref{alog:exact}&63& 80.00\%& 80.02\%\\
-        &算法~\ref{alog:cargmax}&\textbf{44}&\textbf{ 77.09\%}&\textbf{ 77.07\%}\\
+  \multirow{3}{*}{cHSM} &全局argmax（算法~\ref{algo:alls}）&102& 80.00\%& 80.02\%\\
+        &贪心argmax（算法~\ref{alog:exact}）&87& 80.00\%& 80.02\%\\
+        &伪贪心argmax（算法~\ref{alog:cargmax}）&\textbf{44}& 82.09\%&  82.07\%\\
   \bottomrule
 \end{tabular}
 \end{table}
+
+
+值得注意的是，对于cHSM方法算法~\ref{alog:greed_argmax}~比算法~\ref{alog:exact}~得到更好的WER，尽管后一种方法获得了词汇表上的确切顶级候选。由于类结构中存在标签偏差问题，排名最高的词容易出现算法模型无法建模的小组。最后但并非最不重要的是，算法~\ref{alog:exact}~和~\ref{alog:global}获得相同的单词排序，唯一的区别是算法~\ref{alog:exact}~避免了冗余计算。所以他们达到了可比的WER得分，但算法~\ref{alog:exact}~需要更少的时间。
 
 
 \subsection{循环网络模型的影响}
@@ -193,7 +193,7 @@ p-tHSM  &$\mathcal{|H|\log{|V|}}$ &\textbf{383.5}&	86.4 &\textbf{7.0}&	\textbf{1
   \caption{BPTT和截断BPTT算法示意图}\label{fig:minibatch}
 \end{figure}
 
-在训练过程中，如果某些依赖关系存在在被截断的语句中，则模型可以学习这种关系； 如果这些依赖关系总是跨越不同的语句块，那么截断的语句已经打破了这些依赖，模型将无法学习这种关系。 这是由于模型的参数导数无法回溯到最初的跨段的那个单词，并告诉前段中的某些内容对下一段是有用的。 
+在训练过程中，如果某些依赖关系存在在被截断的语句中，则模型可以学习这种关系； 如果这些依赖关系总是跨越不同的语句块，那么截断的语句已经打破了这些依赖，模型将无法学习这种关系。 这是由于模型的参数导数无法回溯到最初的跨段的那个单词，并告诉前段中的某些内容对下一段是有用的。
 如果在一个语句段中存在这种关系的话，模型能学习到这种关系是由于模型的参数能求导到前面对应的单词。
 与之相区别的是，在测试时模型将能够在跨语句段中预测， 因为模型的计算步骤是不断向前传播，不存在模型反向求导的计算过程。
 \begin{figure}[!ht]
@@ -297,13 +297,13 @@ Chen~等人发现cHSM和ptHSM算法的性能对单词的层次聚类算法很敏
  \multirow{2}{*}{WikiText-2}&GRU + Softmax&172.64 / 77.49\%&162.09 / 77.07\% \\
   &GRU + NCE~\upcite{DBLP:journals/jmlr/GutmannH10}&217.84 / 78.26\%&199.54 / 78.02\%\\
   &GRU + Blackout~\upcite{DBLP:journals/iclr/JiVSAD15}&221.15 / 77.72\%&199.56 / 77.50\% \\
-  &GRU + cHSM + Uni-gram~\upcite{DBLP:conf/acl/ChenGA16}&253.18 / 78.25\%&236.61 / 78.02\%\\
+  &GRU + cHSM + Uni-gram~\upcite{DBLP:conf/acl/ChenGA16}&203.18 / 78.25\%&206.61 / 78.02\%\\
   &GRU + p-tHSM + Uni-gram~\upcite{DBLP:conf/nips/MikolovSCCD13}&218.42 / 78.15\%&216.05 / 78.15\%\\
   &GRU + p-tHSM + Bi-gram~\upcite{DBLP:journals/coling/BrownPdLM92}&186.23 / 78.15\%&189.58 / 78.15\%\\\midrule
    \multirow{2}{*}{WikiText-103} &GRU + Softmax&130.38 / 72.15\%&136.83 / 72.37\%\\
  &GRU + NCE~\upcite{DBLP:journals/jmlr/GutmannH10}&164.78 / 73.22\%&165.01 / 73.34\%\\
   &GRU + Blackout~\upcite{DBLP:journals/iclr/JiVSAD15}&163.99 / 73.18\%&162.76 / 74.22\%\\
-  &GRU + cHSM + Uni-gram~\upcite{DBLP:conf/acl/ChenGA16}&171.81 / 73.42\%&166.74 / 73.18\%\\
+  &GRU + cHSM + Uni-gram~\upcite{DBLP:conf/acl/ChenGA16}&161.81 / 73.42\%&156.74 / 73.18\%\\
   &GRU + p-tHSM + Uni-gram~\upcite{DBLP:conf/nips/MikolovSCCD13}&165.70 / 73.53\%&166.11 / 72.44\%\\
   &GRU + p-tHSM + Bi-gram~\upcite{DBLP:journals/coling/BrownPdLM92}&164.15 / 78.15\%&163.55 / 77.85\%\\\midrule
   \multirow{2}{*}{One Billion Words} &GRU + Softmax&330.38 / 88.15\%&330.83 / 88.37\%\\
