@@ -2,6 +2,8 @@
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage[ruled]{algorithm2e} % For algorithms
+
+
 \renewcommand{\algorithmcfname}{算法}
 \makeatletter
 \renewcommand{\@algocf@capt@plain}{above}% formerly {bottom}
@@ -9,6 +11,8 @@
 \SetKwInput{KwData}{输入}
 \SetKwInput{KwResult}{输出}
 \setmainfont{Times New Roman}
+
+
 \begin{document}
 
 % 用户信息
@@ -26,18 +30,18 @@
 
 针对大词表问题，为了减少模型的计算时间并提高模型效率，本论文探讨了基于二叉树和基于类别的两种层次概率模型，并设计了相应的改进策略，其主要改进要点包括：1）提出了一种改进的层次模型的编码策略，引入基于树和基于类的并行度更高的损失函数；2）针对层次化模型对于聚类算法的敏感性问题，对基于N-gram、句法信息和语义信息的不同聚类算法对各种层次概率模型产生的影响进行了分析；3）对多种不同的结构化预测算法进行了分析，同时分析了语言模型在排序和打分两个任务中的选择策略。
 
-在实验验证环节，本文在语言建模任务上进行了评测，采用~WikiText-2, WikiText-103 和 One Billion Words 数据集作为实验的基准数据。在模型的评价指标方面，本文不仅考虑了传统的困惑度误差，还将文本比较中经常用到的编辑距离（单词错误率）作为一个重要的比较指标。除此之外，还比较了不同模型之间的训练和测试阶段内存占用量，以及相同数据量情况下模型的计算速度和模型的收敛速度等衡量指标。实验结果表明，与其他概率归一化方法相比，加速比提高，得到更高效的树聚类，与其他基于抽样的优化相比，性能相对较好。
+在实验验证环节，本文在语言建模任务上进行了评测，采用~WikiText-2， WikiText-103~和~One Billion Words~数据集作为实验的基准数据。在模型的评价指标方面，本文不仅考虑了传统的困惑度误差，还将文本比较中经常用到的编辑距离（单词错误率）作为一个重要的比较指标。除此之外，还比较了不同模型之间的训练和测试阶段内存占用量，以及相同数据量情况下模型的计算速度和模型的收敛速度等衡量指标。实验结果表明，与其他概率归一化方法相比，加速比提高，得到更高效的树聚类，与其他基于抽样的优化相比，性能相对较好。
 
 \end{cabstract}
 
 \begin{eabstract}
 ~\
 
-Recent decades has witnessed great progress and achievements, in the filed of natural language processing. Variants of neural networks based architecture have been proposed and successfully applied to the neural language models, neural acoustic models, neural translation model and etc. These neural models can leverage knowledge in texts by learning parameters from massive online corpora, and abundant cases are presented over various text tasks, like sentence classification and word vector learning. While they are extremely slow for the real-world challenge, as they try to predict candidates from a large vocabulary, in the process of training and inference. As an alternative to vocabulary truncation and sampling-based approximation methods, we explore the historical proposed tree-based and class-based hierarchical softmax methods.
+Recent decades has witnessed great progress and achievements, in the field of natural language processing. Variants of neural networks based architecture have been proposed and successfully applied to the neural language models, neural acoustic models, neural translation model and etc. These neural models can leverage knowledge in texts by learning parameters from massive corpora, and abundant cases are presented over various text tasks, like sentence classification and word vector learning. While they are extremely slow for the real-world challenge, as they try to predict candidates from a large vocabulary, in the process of training and inference. As an alternative to vocabulary truncation and sampling-based approximation methods, we explore historical proposed tree-based and class-based hierarchical softmax methods.
 
-In this research, aiming at reducing neural model's computational time as well as making them compatible with general purpose modern graphics processing units, we introduce a series of efficient and effective approaches and categorise our contributions as: a) Firstly, we reform their structural composition and introduce a compact tree-based loss function for the tree-based hierarchical softmax methods and class-based loss function for the corresponding class-based hierarchical softmax; b) Secondly, we discuss the impact of several ngram-based, syntactic and semantic clustering algorithms for the vanilla hierarchical softmax as these structural models are sensitive to the hierarchical clustering methods; c) Thirdly, we discuss possible inference algorithms for the hierarchical softmax variants, assuring the model can fetch presumable predictions under different circumstances.
+In this research, aiming at reducing neural model's computational time as well as making them compatible with modern devices, we introduce a series of efficient approaches and categorise our contributions as: a) Firstly, we reform their structural composition and introduce a compact tree-based loss function for the tree-based hierarchical softmax methods and class-based loss function for the corresponding class-based hierarchical softmax; b) Then, we discuss the impact of several ngram-based, syntactic and semantic clustering algorithms for the vanilla hierarchical softmax as these structural models are sensitive to the hierarchical clustering methods; c) Thirdly, we discuss possible inference algorithms for the hierarchical softmax variants, assuring the model can fetch presumable predictions under different circumstances.
 
-Finally, Our experiments were carried out on language modelling tasks with standard benchmarks datasets, i.e., WikiText-2, WikiText-103 and One Billion Word datasets. Except for the traditional perplexity metric, we also extended our comparison over the word error rate and memory footprint and etc. Consist improvement with several intrinsic evaluation criterions: word error rate and perplexity, were also achieved over other conventional optimisation methods.
+Finally, Our experiments were carried out on language modelling tasks with standard benchmarks datasets, i.e., WikiText-2, WikiText-103 and One Billion Words datasets. Except for the traditional perplexity metric, we also extended our comparison over the word error rate, memory footprint and etc. Consist improvement with several intrinsic evaluation criterions, were also achieved over other conventional optimisation methods.
 \end{eabstract}
 % 目录、插图目录、表格目录
 \tableofcontents
