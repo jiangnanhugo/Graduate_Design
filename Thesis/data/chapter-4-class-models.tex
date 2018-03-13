@@ -6,7 +6,7 @@
 \section{词表划分编码}
 \begin{table}[!ht]
   \centering
-  \caption{并行层次概率计算模型的符号助记表}
+  \caption{类别层次概率计算模型的符号助记表}
 \begin{tabular}{llc}
   \toprule
    符号&含义&取值范围\\ \midrule
@@ -111,7 +111,7 @@ $\Gamma'$ &路径查找表，给定单词元组序列，可以获得对应的单
  \KwResult{概率最大的候选单词$w$。}
 \end{algorithm}
 
-其次对于第二种词表排序的情况，首先可以计算词汇表中所有单词的概率，然后调用排序函数，从而选择概率最高的单词，如算法~\ref{algo:alls}~所示。 此外，我们仍然可以在算法~\ref{alog:exact}~中对上述方法进行少量修改，然后计算全局概率最佳的单词。两者的差异是，算法~\ref{alog:exact}~最后的$\arg\max$的计算量是~$\mathcal{|C|}$，算法~\ref{alog:exact}~最后的$\arg\max$的计算量是$\mathcal{|V|}$。
+其次对于第二种词表排序的情况，首先可以计算词汇表中所有单词的概率，然后调用排序函数，从而选择概率最高的单词，如算法~\ref{algo:alls}~所示。 此外，我们仍然可以在算法~\ref{alog:exact}~中对上述方法进行少量修改，然后计算全局概率最佳的单词。两者的差异是，算法~\ref{alog:exact}~最后的$\arg\max$的计算量是~$\mathcal{|C|}$，算法~\ref{algo:alls}~最后的$\arg\max$的计算量是~$\mathcal{|V|}$。
 \begin{algorithm}[!t]
 \caption{基于~cHSM~算法的贪心$\arg\max$ 算法}\label{alog:exact}
 \KwData{ 隐藏层输出 $h$}

@@ -10,7 +10,7 @@ N-gram~算法也是使用单词的顺序信息作为上下文信息建模策略�
 到目前为止，在语言模型的领域中，研究者提出的神经网络模型主要包括： 传统前向传递神经网络（Feed Forward Neural Network, FFNN）、循环神经网络（Recurrent Neural Network, RNN）三种基本的建模方案。当然基于这些基本组件，我们还可以构造更复杂的模型结构，但是我们无法保证复杂模型一定在效率和精确度上优于简洁的模型结构。复杂的模型可以表征更复杂的本文语义信息，例如句子的依存关系（Dependency）结构或者句子的句法分析树（Syntactic Structure）结构，但是这样的效果不一定能保证模型的泛化性能（Generalization）会很好，因为日常聊天文本的语序是存在较多混乱的数据，很难找到良好定义的句子关系，所以也无法让模型从混乱的文本分布中学习到有效的句子结构，以提升模型的精度。显然是假设越弱模型越好，因为针对复杂的网络文本数据，我们模型训练所需要的要求越弱，模型越容易收敛并获得我们想要的结果。模型假设越强，模型所需要的数据质量越高，实际稳定性就会降低，产生得不偿失的后果。
 
 
-除此以外，针对在本论文所讨论的语言模型的大规模应用过程中所遇到的大词表问题，历史文献中提出的解决方法主要可以划分为：单词拆分算法（Vocabulary Truncation）、采样估计模型（Sampling-based Approximation）和词表层次分解（Vocabulary Factorisation），我们会在接下来的章节陆续介绍。其中本论文重点是研究基于类别的多元分类模型（class-based hierarchical softmax， cHSM）和基于二叉树的二元分类模型（class-based hierarchical softmax，tHSM），这两种算法我们分别在下一章更详细讨论和介绍。
+除此以外，针对在本论文所讨论的语言模型的大规模应用过程中所遇到的大词表问题，历史文献中提出的解决方法主要可以划分为：单词拆分算法（Vocabulary Truncation）、采样估计模型（Sampling-based Approximation）和词表层次分解（Vocabulary Factorisation），我们会在接下来的章节陆续介绍。其中本论文重点是研究基于类别的多元分类模型（class-based hierarchical softmax， cHSM）和基于二叉树的二元分类模型（class-based hierarchical softmax，tHSM），这两种算法将在下一章更详细讨论和介绍。
 
 \section{语言模型}
 在这一节中，我们将首先从语言模型提出的实际背景的形式化定义开始，以阐述语言模型的训练目标和实际应用场景~\upcite{DBLP:journals/tnn/ChienK16}。一个好的语言模型应当考虑对文本的两种特征进行建模：语法特征（Syntactics）和语义特征（Semantics）。为了保证句子的语法正确，我们需要考虑的是所生成的单词的前面的上下文（Previous Context），这也就意味着语法特性往往只对局部特征（Local Representation）进行建模。而语义特征的一致性则复杂了许多，它意味着我们需要考虑更大、更完善的上下文信息乃至整个文档语料，来获取全局语义（Global Context）而不仅仅是局部语义信息（Local Context）。
@@ -18,21 +18,15 @@ N-gram~算法也是使用单词的顺序信息作为上下文信息建模策略�
 
 具体地来说，给定一个包含$T$个单词的序列：$w_1,w_2,\cdots,w_T$，这个序列的概率或者对数概率（Log-probability），即描述该序列作为一个合理且合法的句子的流畅性（Fluency）和出现该单词组合的句子的可能性（ Likelihood）。由于直接求解整个序列的概率比较复杂，所以我们将采用马尔可夫链规则（Markov Chain）~\footnote{https://en.wikipedia.org/wiki/Markov\_chain}，分解成一系列的条件概率（Conditional Probability）的联合分布（Joint Distribution）：
 \begin{equation}
-\setlength{\abovedisplayskip}{6pt}
-\setlength{\belowdisplayskip}{6pt}
 \label{laguage_model}
  \log p(w_1,\cdots, w_T ) = \sum_{t=1}^T \log p(w_t | w_{1:t-1}),
 \end{equation}
 其中前 $t-1$个单词在本论文中一律记作$w_ {1:t-1}$。进而，条件概率~$p(w_t | w_ {1:t-1})$表示给定其前面上下文$w_ {1:t-1} $作为预测的下一个单词的条件概率分布（Conditional Probability）。最早的传统方法可以由前馈网络来建模这个上下文信息， 同时用 softmax 函数来表示下一个单词的概率分布计算公式~\upcite{DBLP:journals/jmlr/BengioDVJ03}。 在训练的过程中，整个模型以最小化每个单词预测的交叉熵损失（Cross Entropy Loss）为目标：
 \begin{equation}\label{equ:losses2}
-\setlength{\abovedisplayskip}{6pt}
-\setlength{\belowdisplayskip}{6pt}
   \ell=\sum_{t=1}^{T}\ell_t=\sum_{t=1}^{T}\log p(w_t | w_{1:t-1})
 \end{equation}
 其中文本或者句子的交叉熵代价函数$\ell$ 的实际意义为：是当编码方案不一定完美时，平均编码长度是多少（最优的编码长度就是1）。这里的编码长度的概念可以理解为：如何用01字节对所有的单词进行最短的编码，保证单词之间两两不互相冲突。交叉熵代价函数是由$\texttt{KL}$散度（Kullback–Leibler Divergence），也叫做相对熵（Relative Entropy），推导而获得的。这里我们需要注意的是，$\mathtt{KL}$散度的计算公式是：
 \begin{equation}\label{equ:losses}
-\setlength{\abovedisplayskip}{6pt}
-\setlength{\belowdisplayskip}{6pt}
   \mathtt{KL}(p||q)=-\sum_{t=1}^{T}p(x)\log q(x) - (\sum_{t=1}^{T}p(x)\log p(x))
 \end{equation}
 其中$p(x)$ 指的是文本数据的真实概率分布，$q(x)$ 是由模型从数据中计算得到的预测概率分布。由于$p(x)$ 和$q(x)$ 在公式中的地位不是相等的，所以$\texttt{KL} (p\parallel q)\not\equiv \texttt{KL}(q\parallel p)$。对于给定的文本语料训练数据集，第二项的计算值是常数，由此可知其导数是0，它不会对模型中的参数更新产生任何影响。所以在通常情况下，我们采用交叉熵函数$\ell$作为模型的代价函数而不是相对熵代价函数$\mathtt{KL}$，但其实我们希望模型优化的目标是$\mathtt{KL}$使得模型的分布拟合实际的分布。
@@ -59,21 +53,17 @@ N-gram~算法也是使用单词的顺序信息作为上下文信息建模策略�
 \subsection{循环神经网络}
 考虑到上面描述长距离依赖问题，在本实验中，我们将采用的基准模型是循环神经网络语言模型。近年来，基于时间序列建模的循环神经网络已经非常流行。如图~\ref{fig:lm}~所示，由于在当前时间步 $t$的输出$w_{t+1}$正好是下一个时间步的输入$w_{t+1}$，所以将上一步的输出接到下一步的输入。当我们需要做文本生成时，才需要利用这样的自循环链接（Auto-associative Connection）。每个句子都需要用开始词（即，$\langle s\rangle$）和结束词（即$\langle / s\rangle$）标记进行封装。 在预测下一个单词 $\hat w_{t+1}$ 之前，需要用到前一时刻的隐藏状态$h_{t-1}$和当前读入的单词~$w_t$~来计算网络单元的输入$h_t$。
 \begin{equation}
-\setlength{\abovedisplayskip}{6pt}
-\setlength{\belowdisplayskip}{6pt}
   \hat w_{t+1}=\arg\max_{w\in\mathcal{V}} \mathtt{softmax}(Vh_t+d)
 \end{equation}
 从形式上讲，循环神经网络是一个参数化的非线性函数$\phi(w_t,h_{t-1})$，循环地将一系列向量映射到一系列隐藏状态。 将$\phi(w_t,h_{t-1})$函数应用于任何这样的序列，在每个时间步骤$t$产生隐藏状态$h_t$，如下所示：
 \begin{equation}
-\setlength{\abovedisplayskip}{6pt}
-\setlength{\belowdisplayskip}{6pt}
   h_t \leftarrow  \phi(W\theta^w_t + U h_{t-1} +c),
 \end{equation}
 其中$ W,U,V $是模型参数，向量~$\theta^w_t$~对应于源词~$w_t$~的词向量。参数~$U$~是随时间共享的，即：当我们需要计算 $h_t$，我们需要用到上一步的隐藏层的输出$h_{t-1}$。
 
 自Elman提出基本结构~\upcite{DBLP:journals/cogsci/Elman90}~以来，许多扩展模型能学习长距离依赖关系，解决梯度消失（Gradient Vanishing）和梯度爆炸（Gradient Exploding）等问题， 如长短期记忆网络（LSTM）\upcite{7508408}、门限记忆单元（GRU）\upcite{DBLP:conf/nips/ChungKDGCB15}和近似递归神经网络（Quasi-RNNs）\upcite{DBLP:journals/corr/BradburyMXS16}。
 
-\begin{figure}[!b]
+\begin{figure}[!t]
   \centering
   \includegraphics[width=.8\linewidth]{./figures/lstm.pdf}
   \caption{LSTM 模型示意图}\label{fig:lstm}
@@ -81,8 +71,6 @@ N-gram~算法也是使用单词的顺序信息作为上下文信息建模策略�
 
 长短记忆网络（LSTM）是根据RNN 所改进的最著名的模型之一，LSTM 模型的计算公式定义如下\upcite{DBLP:journals/neco/HochreiterS97}： 1）输入门$i_t$ 控制当前输入 $x_t$ 和前一步输出 $h_{t−1}$ 进入新的 Cell 的信息量；2） 遗忘门$f_t$ 决定是否清除或者保持单一部分的状态；3） 变换输出和前一状态到最新状态~$g_t$；4） 输出门$o_t$计算 Cell 的输出 ；5） cell 状态更新$s_t$。其计算步骤是，计算下一个时间戳的状态使用经过门处理的前一状态和输入；6） 最终 LSTM 的输出$h_t$ 使用一个对当前状态进行 $\tanh$ 变换。其计算公式如下：
 \begin{equation}\label{equ:lstm}
-\setlength{\abovedisplayskip}{6pt}
-\setlength{\belowdisplayskip}{6pt}
 \begin{split}
    i_t&=\sigma(W^i x_t+U^i h_{t-1}+b^i) \\
    f_t&=\sigma(W^f x_t+U^f h_{t-1}+b^f) \\
@@ -93,15 +81,11 @@ N-gram~算法也是使用单词的顺序信息作为上下文信息建模策略�
 \end{equation}
 其中$\odot$ 代表对应元素相乘（Element-wise Matrix Multiplication）， 函数 $\phi(x), \sigma(x)$ 的定义：
 \begin{equation}\label{equ:tanh}
-\setlength{\abovedisplayskip}{6pt}
-\setlength{\belowdisplayskip}{6pt}
   \phi(x)=\frac{e^x-e^{-x}}{e^x+e^{-x}},\sigma(x)=\frac{1}{1+e^{-x}}
 \end{equation}
 
 在具体算法实现过程中，LSTM模型由于参数之间相似性和独立性，我们可以并行计算实现该模型。具体来说，模型的输入门、遗忘门、输出门和状态更新门所涉及的矩阵乘法操作我们可以同时计算，从而提高LSTM模型的计算效率\upcite{陈凯2016深度学习模型的高效训练算法研究}。因为LSTM的计算模型更容易并行，所以他与GRU的计算时间相差无几，尽管LSTM的模型需要的参数量是GRU模型的1.5倍。
 \begin{equation}\label{equ:weight}
-\setlength{\abovedisplayskip}{6pt}
-\setlength{\belowdisplayskip}{6pt}
 [i^t,f^t,g^t,o^t ]=[\sigma, \sigma,\phi,\sigma]\times W\times[x_t,h_{t-1}]^\top
 \end{equation}
 其中 $W$ 指的是8个小矩阵互相层叠起来，即 $[[W^i,W^f,W^g,W^o],[U^i,U^f,U^g,U^o]]$。
@@ -115,8 +99,6 @@ N-gram~算法也是使用单词的顺序信息作为上下文信息建模策略�
 
 接下来我们介绍基于LSTM简化的模型，门限记忆单元（GRU）把 LSTM模型中的遗忘门$f_t$和输入门$o_t$用更新门$z_t$ 替代。同时，它把 cell的状态值和隐状态 $h_t$ 进行了合并。 图~\ref{fig:gru}~是GRU更新 $h_t$ 的过程\upcite{DBLP:journals/corr/Pezeshki15}, 主要包括：更新门 $z_t$、 重置门 $r_t$ 和节点内部更新值$\tilde h_t$和隐藏层输出值$h_t$， 这里与LSTM的区别是GRU中没有输出门，其计算公式如下：
 \begin{equation}\label{equ:gru}
-\setlength{\abovedisplayskip}{6pt}
-\setlength{\belowdisplayskip}{6pt}
 \begin{split}
    z_t &= \sigma ( W^z x_t+ U^z h_{t-1}) \\
    r_t &= \sigma(W^r x_t  + U^r h_{t-1}  )\\
@@ -132,8 +114,6 @@ N-gram~算法也是使用单词的顺序信息作为上下文信息建模策略�
 \section{大词表问题}
 softmax函数和log-softmax函数通常用于多标签分类（Multi-class Classification）问题中的标准概率归一化（Probability Normalization）。然而当我们需要分类的目标变多时，即对于语言模型的大词表问题中，softmax函数会占用绝大部分计算时间，需要我们对这个计算瓶颈做更详细分析。这里我们首先给出 softmax，log-softmax 函数和相应的梯度（Gradient）的定义：
 \begin{equation}\label{eq:softmax}
-\setlength{\abovedisplayskip}{6pt}
-\setlength{\belowdisplayskip}{6pt}
 \begin{split}
 p(w|h)=&\frac{\exp(h^\top v_{w})}{\sum_{w_j\in \mathcal{V}}{\exp(h^\top v_{w_j} )}} \\
 \frac{\partial p(w_i|h)}{\partial v_{w_j}}=&p(w_j|h)(\delta_{ij}-p(w_i|h))h^\top\\
@@ -141,8 +121,6 @@ p(w|h)=&\frac{\exp(h^\top v_{w})}{\sum_{w_j\in \mathcal{V}}{\exp(h^\top v_{w_j} 
 \end{equation}
 \begin{equation}
 \label{eq:log-softmax}
-\setlength{\abovedisplayskip}{6pt}
-\setlength{\belowdisplayskip}{6pt}
 \begin{split}
 \log p(w|h) &= \theta^w h-\log \sum_{u\in \mathcal{V}}{\exp(\theta^u h)}\\
 \nabla_{\theta^u}{\log p(w|h)}&= (\delta_{uw}-p(w|h))h
@@ -182,8 +160,6 @@ p(w|h)=&\frac{\exp(h^\top v_{w})}{\sum_{w_j\in \mathcal{V}}{\exp(h^\top v_{w_j} 
 
 对于NCE噪声差分估计算法来说，模型需要学习将正确的单词 $w_0$ 与随机生成的单词 $\{w_1\cdots w_k\}$做一个二元分类。 其中 $w_0$ 指代的是训练样本中真正的下一个单词， $\{w_1\cdots w_k\}$ 是采用先验分布~$q(w)$~产生的随机噪声单词。实际实验中，我们常用的采样的概率分布模型 $q(w)$是单词词频分布（Word Frequency Distribution）。 正例归一化后的概率~$\tilde{p}(y=1|h)$~和所有负例联合概率~$\tilde{p}(y=0|h)$~的公式可以写成：
 \begin{equation}\label{equ:nce}
-\setlength{\abovedisplayskip}{8pt}
-\setlength{\belowdisplayskip}{8pt}
 \begin{split}
   \tilde{p}(y=1|h)=&\frac{\exp( \theta^w_0 h)}{ \exp( \theta^w_0 h)+k *q(w_0)}\\
   \tilde{p}(y=0|h)=&\prod_{i=1}^{k}\frac{k *q(w_i)}{\exp( \theta^w_i h)+k *q(w_i)}\\
@@ -193,8 +169,6 @@ p(w|h)=&\frac{\exp(h^\top v_{w})}{\sum_{w_j\in \mathcal{V}}{\exp(h^\top v_{w_j} 
 
 除了上面这种最经典的算法之外，后续又衍生出了其他的从采样算法。最近才提出的~Blackout~采样算法针对噪声概率归一化的时候与当前上下文的相关，对上述的NCE算法进行了进一步优化和修正~\upcite{DBLP:journals/iclr/JiVSAD15}，同时也对模型引入了更多的计算量。其模型的代价函数计算公式定义为：
 \begin{equation}
-\setlength{\abovedisplayskip}{6pt}
-\setlength{\belowdisplayskip}{6pt}
 \begin{split}
   \ell=&-\log(p(w_0|h)) - \sum_{w_i \sim q(w)} \log(1 - p(w_i))\\
 p(w_i) =& \frac{\exp(\theta^w_i h)}{\sum_{w_i \sim q(w)} \exp(\theta^w_i h)}.
@@ -209,11 +183,13 @@ p(w_i) =& \frac{\exp(\theta^w_i h)}{\sum_{w_i \sim q(w)} \exp(\theta^w_i h)}.
 \subsection{词表层次分解}
 介绍完单词拆分、采样估计算法之后，我们再从模型角度分解优化这个大词表问题。层次分解方法（Factorization）可以大大降低学习和推理过程中表示概率分布的所占用的计算内存，因为它只计算局部概率（Local Probability）并且选择每一层的分数最高的候选路径而不是保存全局计算结果。
 目前主要的分解策略可以分为： 基于类别的多元分类模型（Class-based Hierarchical Softmax, cHSM）和基于二叉树的二元分类模型（Tree-based Hierarchical Softmax, tHSM）。接下来我们将介绍这两种算法的计算过程。
-
+\begin{figure}[!b]
+  \centering
+\includegraphics[width=.9\linewidth]{./figures/case_chsm.pdf}
+\caption{cHSM算法可视化模型}\label{fig:case_hsm}
+\end{figure}
 首先我们考虑基于类别的分解策略。假设我们将文本所对应的词表中的每一个词划分成各个类簇，每个单词属于且只属于一个类（Class或者Group）。在此假设之上，我们进而来计算单词在在语料中的对数分布时，可以转化为：先计算类的概率分布，然后乘以在所属类上该词的概率分布\upcite{王龙2015基于循环神经网络的汉语语言模型并行优化算法}~，于是可将公式~(\ref{eq:softmax})~转化为如下形式：
 \begin{equation}
-\setlength{\abovedisplayskip}{6pt}
-\setlength{\belowdisplayskip}{6pt}
 \begin{split}
 p(w|h)=&p^c(\mathcal{C}(w)|h)\cdot p^w(w|\mathcal{C}(w),h) ,\\
  & w\in \mathcal{C}(w),\mathcal{V}=\bigcup _{i = 1}^\mathcal{C}{c_i}, \quad  c_i \bigcap c_j=\phi, \text{若}\quad i\ne j, \\
@@ -222,11 +198,7 @@ p(w|h)=&p^c(\mathcal{C}(w)|h)\cdot p^w(w|\mathcal{C}(w),h) ,\\
 其中第一项概率~$p^c(\mathcal{C}(w)|h)$~表示每个类别的概率，第二项概率~$p^w(w|\mathcal{C}(w),h)$~表示在类别$\mathcal{C}(w)$中所有单词的局部概率。
 
 该模型计算一个词的概率分布所需要的计算复杂度正比于: $\mathcal{O =|H||C|}$。 在该计算公式中，$\mathcal{C}$~表示的是该语料中所有词的分类数目，我们可以按照不同策略划分词表，最简单的一种策略就是根据语料中词的词频进行均匀划分。 当$C$ 取$1$ 或取词典大小$|V|$ 时，此结构等同于标准的Softmax 结构，此时词表还是原来的结构，并没有任何优化效果。因此，对于绝大多数情况，我们取$\mathcal{C} \ll \mathcal{V}$并且 $|\mathcal{C}|\ll 1$，这样的结构才能保证有效降低 softmax 的计算复杂度。图~\ref{fig:case_hsm}~展示了类别划分和分步概率计算的示例。从图~\ref{fig:case_hsm}~中我们可以得知，词表 [duck,cat,mop,broom,the,am] 被划分成三个类别：$c_1\to$[duck,cat]，$c_2\to$[mop,broom]并且$c_3\to$[the,am]。
-\begin{figure}[!t]
-  \centering
-\includegraphics[width=.9\linewidth]{./figures/case_chsm.pdf}
-\caption{cHSM算法可视化模型}\label{fig:case_hsm}
-\end{figure}
+
 
 接下来我们来分析一下基于类别的分层模型计算速度提升效果。假设每个类包含 $\sqrt{\mathcal{|V|}}$ 单词，表示词汇被划分为相同大小的组，这样的话级联概率（Cascaded Probability）只涉及$2\sqrt{\mathcal{|V|}}$ 单词 softmax计算，所以最优时间复杂度可以减少到$\mathcal{O}(\mathcal{|H|}\sqrt{\mathcal{|V|}})$~\upcite{DBLP:conf/icassp/Goodman01}。虽然在更常见的情况下，词表划分算法会产生不同大小的分组，这需要外部的其他结构来建立高效的数据结构，并且这些稍微复杂的算法尚未被完全探索和分析。此外，我们还可以通过不同的类大小和分区算法来调整精度和效率之间的权衡关系。
 
