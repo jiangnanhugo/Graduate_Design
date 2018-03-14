@@ -1,14 +1,14 @@
 \chapter{绪论}
 \section{课题来源与意义}
 近几年来，随着互联网（Internet）的兴起和发展，互联网上积累的数据呈现急剧膨胀的态势。根据国际数据信息公司\footnote{https://www.idc.com/}（International Data Corporation，IDC）的统计和预测，2018~年全球网络累积的数据量已经达到~1.8~ZB，预计到~2025~年全球网站数据累积总量还将增长约~50~倍。
-随着这类无标注的文本和图像数据（Unlabeled Data）的大量涌现，如何利用现有的机器学习算法（Machine Learning），从这类无标注数据中学习内在规律并提取出有用的信息已经成了一个重要的挑战~\upcite{王建翔2017面向可读性评估的词向量技术研究及实现}。
-自从2006 年以~Geoffrey Hinton~为代表的学者们提出深度学习（Deep Learning，DL）~\upcite{hinton2006reducing}理念以来，这一新的思路为解决如何利用爆炸的数据量，以提取有效知识带来了新的前景。
+随着这类无标注的文本和图像数据（Unlabeled Data）的大量涌现，如何利用现有的机器学习算法（Machine Learning），从这类无标注数据中学习内在规律并提取出有用的信息（Distill Knowledge）已经成了一个重要的挑战~\upcite{王建翔2017面向可读性评估的词向量技术研究及实现}。
+自~2006~年以~Geoffrey Hinton~为代表的学者们提出深度学习（Deep Learning，DL）~\upcite{hinton2006reducing}理念以来，这一新的思路为解决如何利用爆炸的数据量，以提取有效知识带来了新的前景。
 在这之后的发展中，基于神经网络（Neural Network，NN）的表示学习技术（Representation Learning）开始快速发展并拓展到相关研究领域中。
-尤其在图像分类（Image Classification）、语音自动识别（Automatic Speech Recognition，ASR）~\upcite{DBLP:journals/taslp/WangW16}和神经机器翻译（Neural Machine Translation，NMT）~\upcite{bahdanau2014neural}等多个任务上，基于深度模型的方法在精确度和效率上远远超过了基于特征提取（Feature Extraction）的传统方法。
+尤其在图像分类（Image Classification）\footnote{https://www.kaggle.com/c/imagenet-object-detection-challenge}、语音自动识别（Automatic Speech Recognition，ASR）~\upcite{DBLP:journals/taslp/WangW16}和神经机器翻译（Neural Machine Translation，NMT）~\upcite{bahdanau2014neural}等多个任务上，基于深度模型的方法在精确度和效率上远远超过了基于特征提取（Feature Extraction）的传统方法。
 
 随着应用领域的拓展，深度学习技术逐渐在自然语言处理中（Natural Language Processing，NLP）得到广泛应用。 例如，蒙特利尔大学教授 Yousha Bengio 提出用神经网络来训练语言模型（Language Model，LM），并对模型中的各个结构细节进行了相关探索~\upcite{DBLP:conf/nips/BengioDV00}。因为模型的输入维度是固定的~N~个单词的词向量而不是动态长度的序列，所以该方法不能有效处理单词的长距离单词依赖问题（Long Term Dependency）。
 在后续的工作中，其学生~Tomas Mikolov~针对这个问题提出了采用循环神经网络（Recurrent Neural Network， RNN）~\upcite{DBLP:journals/cogsci/Elman90}对上下文信息作为建模策略的方法，并逐步将该理论进行了拓展和简化\upcite{DBLP:conf/interspeech/MikolovKBCK10}。
-循环神经网络主要特点是能够记忆该单词之前的所有单词的信息，即所谓的全局上下文信息（Global Context），用来预测下一个单词出现的对数概率分布。
+循环神经网络主要特点是能够记忆该单词之前的所有单词的信息，即所谓的全局上下文信息（Global Context），用来预测下一个单词出现的概率分布。
 因为RNN模型在训练过程中学习到了已经出现的单词信息，句子的长距离依赖关系可以被学习到，所以该方法在建模理论上克服了最初的神经网络语言模型的无法利用语句长距离上下文依赖的缺点。
 另外，在模型训练的过程中，语义相似的单词将被映射到的同一低维子空间中，满足了单词语义相似（Semantic Similarity）的要求。相比统计语言模型（Statistical Language Model）领域中的N-gram模型，他不需要平滑技术（Smoothing Technology）来对文本中出现次数少的单词做处理。
 到目前为止，RNN~模型已经演变出各种结构，应用在非常多的文本任务上面，并且都能取得了较为满意的结果。
@@ -17,8 +17,8 @@
 在文献~\cite{DBLP:conf/icassp/MikolovKBCK11}~中，Tomas Mikolov~提出了多种优化策略来消除该模型的缺点，例如：缩短模型求导步数、对词表（Vocabulary）做分解~\upcite{DBLP:journals/coling/BrownPdLM92}等策略，这些计算策略能保证模型的计算精度，同时有效提高~RNN~网络的运算效率。
 
 \section{国内外研究现状}
-语言模型可以用来估算一段序列组合的可能性，该模型在机器翻译（Machine Translation）、语音识别（Speech Recognition）等任务上都有着极为重要的作用。语言模型具有漫长发展历史~\upcite{宗成庆2013统计自然语言处理}，我们可以划分为两个主要阶段：统计语言模型（Statistical Language Model）和神经网络语言模型（Neural Language Model）。
-其中，统计模型指代的是~N-gram~语言模型，而随着深度学习的爆发，各种神经网络语言模型变体被提出并占据了主导地位。我们接下来会对这两个演化阶段所涉及的算法进行介绍。
+语言模型可以用来估算一段序列组合的可能性，该模型在机器翻译（Machine Translation）、语音识别（Speech Recognition）等任务上都有着极为重要的作用。语言模型具有漫长发展历史~\upcite{宗成庆2013统计自然语言处理}，可以划分为两个主要阶段：统计语言模型（Statistical Language Model）和神经网络语言模型（Neural Language Model）。
+其中，统计模型指代的是~N-gram~语言模型，而随着深度学习的爆发，各种神经网络语言模型变体被提出并占据了主导地位。我们接下来会对这两个演化阶段所涉及的算法进行概述。
 
 \subsection{N-gram 语言模型}
 首先介绍传统~N-gram~语言模型，该算法属于典型的基于稀疏表示（Sparse Representation）的语言模型，因为一个单词表示方式是独热表示（One-Hot Representation）。该传统模型的意义不仅是提供了一种文本建模策略，而且定义了如何评价语言模型的优劣，并且定义了语言模型所涉及的相关拓展方向。
@@ -80,12 +80,12 @@ y =&Wx + Uh +b'
 后续研究中，Mnih~等人以~LBL~模型为基础，并对其中存在缺点做了一系列改进工作，陆续提出了逆向量语言模型（inverse vector LBL，ivLBL）~\upcite{DBLP:conf/nips/MnihK13}和层次对数双线性语言模型（Hierarchical LBL，HLBL）~\upcite{DBLP:conf/icml/MnihT12}。
 
 \subsection{循环神经网络语言模型}
-对于循环神经网络来说，它能直接对公式~(\ref{equ:lm})~中的序列概率~$p(w_t | w_1,w_2,\cdots,w_{t-1})$~进行建模，而不需要使用公式~(\ref{equ:approx})~对其进行简化估计~\upcite{mikolov2012statistical,DBLP:conf/interspeech/MikolovKBCK10} 。RNNLM 模型结构如图~\ref{fig:rnnlm}~所示，它的核心方法在于其隐藏层的计算公式:
+循环神经网络能直接对公式~(\ref{equ:lm})~中的条件序列概率~$p(w_t| w_1,w_2,\cdots,w_{t-1})$~进行建模，而不需要使用公式~(\ref{equ:approx})~对其进行简化估计~\upcite{mikolov2012statistical,DBLP:conf/interspeech/MikolovKBCK10} 。RNNLM 模型结构如图~\ref{fig:rnnlm}~所示，它的核心方法在于其隐藏层的计算公式:
 \begin{equation}
 \label{equ:rnn}
   h_t \leftarrow  \phi(e(w_t) + U h_{t-1} +b),
 \end{equation}
-其中~$\phi$~为非线性激活函数。在上述公式中，$h_t$~表示文本中第~$t$~个词~$w_t$~所对应的隐藏层输出，由词向量 $e(w_t)$ 以及上一步的隐藏层输出~$h_{t -1}$~计算得到。隐藏层的初始状态为~$h_0$，随着模型逐个读入单词：$w_1,w_2,\cdots$， 根据公式~(\ref{equ:rnn})~逐步计算隐藏层并输出：$h_1,h_2,\cdots$ 。通过这种自身迭代更新方式，计算~$h_t$~时囊括了此前所有的信息~$w_1,w_2,\cdots,w_{t-1}$。最后，NPLM~模型和RNNLM 模型理论上能学习到更丰富、更长距离的知识，也有更大的潜力达到更好的效果。最后，RNNLM 模型的输出层与NPLM 模型的输出层都采用softmax算法，在该部分上两者是一致的。
+其中~$\phi$~为非线性激活函数。在上述公式中，$h_t$~表示文本中第~$t$~个词~$w_t$~所对应的隐藏层输出，由词向量~$e(w_t)$~以及上一步的隐藏层输出~$h_{t -1}$~计算得到。隐藏层的初始状态为~$h_0$，随着模型逐个读入单词：$w_1,w_2,\cdots$， 根据公式~(\ref{equ:rnn})~逐步计算隐藏层并输出：$h_1,h_2,\cdots$。通过这种自身迭代更新方式，计算~$h_t$~时囊括了此前所有的信息~$w_1,w_2,\cdots,w_{t-1}$。最后，NPLM~模型和~RNNLM~模型理论上能学习到更丰富、更长距离的知识，也有更大的潜力达到更好的效果。最后，RNNLM~模型的输出层与~NPLM~模型的输出层都采用~softmax~算法，在该部分上两者是一致的。
 
 \begin{figure}
   \centering
@@ -93,7 +93,7 @@ y =&Wx + Uh +b'
   \caption{循环神经网络结构图}\label{fig:rnnlm}
 \end{figure}
 
-除了上述两种经典的建模方法，近几年研究者提出可以使用带有门限机制（Gating）的循环网络来防止模型的求导过程中导数趋近于~0~所带来的问题，例如长短记忆网络（Long Short-Term Memory，LSTM）， 门限记忆节点（Gated Recurrent Unit，GRU）和其他网络。
+除了上述两种经典的建模方法，近几年研究者提出可以使用带有门限机制（Gating）的循环网络来防止模型的求导过程中导数趋近于零所带来的问题，例如长短记忆网络（Long Short-Term Memory，LSTM）， 门限记忆节点（Gated Recurrent Unit，GRU）和其他网络。
 
 
 \section{论文研究内容}
