@@ -53,10 +53,14 @@ p(w_t | w_1,w_2,\cdots,w_{t-1})  \approx p(w_t | w_{t-(n-1)},\cdots,w_{t-1})
 
 具体而言，NPLM通过一个多层感知网络（Multi-Layer Perceptron，MLP）来计算公式~(\ref{equ:approx})~中的概率。如图~\ref{fig:nplm}所示，输入层（Input Layer）用于表征前~$N$~个单词的高维分布；隐藏层（Hidden Layer）表征单词的上下文信息；最后的输出预测层（Output Layer）用于预测下一时刻的单词概率分布。为了解决~$N$~过大所带来的数据稀疏问题，Bengio~等人提出拼接（Concatenation）前~$N$~词的词向量作为输入，如下所示：
 \begin{equation}\label{equ:we}
+\setlength{\abovedisplayskip}{10pt}
+\setlength{\belowdisplayskip}{10pt}
   x = [e(w_{t-(n-1)}), \cdots , e(w_{t-2}), e{(w_{t-1})}]
 \end{equation}
 模型的隐藏层~$h$~和输出层~$y$~可以依照下面的公式计算获得：
 \begin{equation}\label{equ:nplm}
+\setlength{\abovedisplayskip}{10pt}
+\setlength{\belowdisplayskip}{10pt}
 \begin{split}
 h =& \tanh(Hx+b) \\
 y =&Wx + Uh +b'
@@ -67,6 +71,8 @@ y =&Wx + Uh +b'
 \subsection{对数双线性语言模型}
 2007 年，Mnih~和~Hinton~在神经网络语言模型（NPLM）的基础上提出了对数双线性语言模型（Log-Bilinear Language Model，LBL）~\upcite{DBLP:conf/icml/MnihH07}。其中~LBL~的模型结构是一个对数双线性网络结构，而~NPLM~的结构中不包含双线性结构，仅仅是简单的前馈网络。具体来讲，LBL~模型的代价函数为：
 \begin{equation}
+\setlength{\abovedisplayskip}{10pt}
+\setlength{\belowdisplayskip}{10pt}
 \label{equ:lbl}
 \begin{split}
    &c=\sum_{i=1}^{n-1}{U_i e({w_i})}, \\
@@ -83,6 +89,8 @@ y =&Wx + Uh +b'
 循环神经网络能直接对公式~(\ref{equ:lm})~中的条件序列概率~$p(w_t| w_1,w_2,\cdots,w_{t-1})$~进行建模，而不需要使用公式~(\ref{equ:approx})~对其进行简化估计~\upcite{mikolov2012statistical,DBLP:conf/interspeech/MikolovKBCK10} 。RNNLM 模型结构如图~\ref{fig:rnnlm}~所示，它的核心方法在于其隐藏层的计算公式:
 \begin{equation}
 \label{equ:rnn}
+\setlength{\abovedisplayskip}{10pt}
+\setlength{\belowdisplayskip}{10pt}
   h_t \leftarrow  \phi(e(w_t) + U h_{t-1} +b),
 \end{equation}
 其中~$\phi$~为非线性激活函数。在上述公式中，$h_t$~表示文本中第~$t$~个词~$w_t$~所对应的隐藏层输出，由词向量~$e(w_t)$~以及上一步的隐藏层输出~$h_{t -1}$~计算得到。隐藏层的初始状态为~$h_0$，随着模型逐个读入单词：$w_1,w_2,\cdots$， 根据公式~(\ref{equ:rnn})~逐步计算隐藏层并输出：$h_1,h_2,\cdots$。通过这种自身迭代更新方式，计算~$h_t$~时囊括了此前所有的信息~$w_1,w_2,\cdots,w_{t-1}$。最后，NPLM~模型和~RNNLM~模型理论上能学习到更丰富、更长距离的知识，也有更大的潜力达到更好的效果。最后，RNNLM~模型的输出层与~NPLM~模型的输出层都采用~softmax~算法，在该部分上两者是一致的。

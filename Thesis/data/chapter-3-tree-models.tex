@@ -43,6 +43,8 @@ $\Gamma$ &路径查找表，给定路径序列，可以获得对应的单词& --
 
 在实际运行环境中，需要通过维护一个路径查找表$\Gamma$（Path Looking-up Table），用来记住每个单词$ w $从根到叶的所有访问内部节点的索引。这样，就可以从$ \Gamma(w)$中选择对应行的所有节点，从参数矩阵${\Theta} $中检索$ \theta ^ w $。其中${\Theta} $的第一维的维度是：
 \begin{equation}\label{equ:sums}
+\setlength{\abovedisplayskip}{10pt}
+\setlength{\belowdisplayskip}{10pt}
 \sum_{i=0}^{\log \mathcal{|V|}}{2^i} =2^0+2^1+\cdots+2^{\log \mathcal{|V|}}= \mathcal{|V|} -1.
 \end{equation}
 因此，p-tHSM模型没有增加模型额外参数，除了预先给定的路径查找表$\Gamma$和预先定义的路径掩码矩阵$\mathtt{bitmask}$。
@@ -87,14 +89,20 @@ they & +1,+1,+1,+1&$\theta_0,\theta_1,\theta_5$\\
 
 在目标词树的每个步骤中，需要对每个非叶节点是左子树还是右子树进行逻辑预测。 所以当给定$ i^{th} $节点和隐藏层的输出向量$h$的时候，可以计算标签 $d^w_i\in \{-1,1\}$的概率为：
  \begin{equation}\label{equ:pp}
+\setlength{\abovedisplayskip}{10pt}
+\setlength{\belowdisplayskip}{10pt}
  p(d^w_i|\theta_{i}^w,h) =\sigma(\theta_{i}^w h)^{d_i^w}\times(1-\sigma(\theta_{i}^w h))^{1-{d_i^w}},d_i^w \in [0,1]
 \end{equation}
 其中$ \sigma(z)= 1 /(1 + \exp(-z))$表示 $\sigma$ 函数。根据 $\sigma$ 函数的对称性规则：$\sigma(z)+ \sigma(-z)=1$，可以进一步改造和优化该公式。以下是该公式的具体证明过程如下：
 \begin{equation}\label{equ:sig}
+\setlength{\abovedisplayskip}{10pt}
+\setlength{\belowdisplayskip}{10pt}
 \sigma(z)+ \sigma(-z)  =\frac{1}{1 + \exp(-z)}+\frac{1}{1 + \exp(z)}=\frac{1 + \exp(z)}{1 + \exp(z)}=1
 \end{equation}
 利用$\sigma$ 函数的对称性计算规则将公式~(\ref{equ:pp})~\upcite{minka2003algorithms}，缩写成：
  \begin{equation}\label{equ:upper}
+\setlength{\abovedisplayskip}{10pt}
+\setlength{\belowdisplayskip}{10pt}
 p(d^w_i|\theta_{i}^w,h) =\sigma(\theta_{i}^w h)^{d_i^w}, d_i^w \in [-1,+1]
 \end{equation}
 由于公式~(\ref{equ:upper})~中的其中某一项${d_i^w}$是在指数项上面，所以我们尽管做了这个基于~$\sigma$~函数的变换，我们的计算公式仍然不是最优化的计算形式，仍然还是有空间来提升公式的紧凑性，以保证实际计算过程中的高并行度。更进一步的讲，我们可以将上面的公式缩写成以下形式：
@@ -105,6 +113,8 @@ p(d^w_i=\pm 1|\theta_{i}^w,h) = \sigma({d_i^w}\theta_{i}^w h)
 
 因此，对于我们softmax函数计算的单词的条件概率，在这里指的是：单词~$w$~在二叉树上的路径搜寻的概率，即从根到相应叶节点的路径概率$(d^w,\theta^w)$的联合乘积。具体计算公式如下所示：
 \begin{equation}\label{equ:pw}
+\setlength{\abovedisplayskip}{10pt}
+\setlength{\belowdisplayskip}{10pt}
 \begin{split}
  \log p(w|h)=&\log\prod_{i=0}^{l^w-1} p(d^w_i|\theta_{i}^w,h) \\
  =& \sum_{i=0}^{l^w -1} \log\sigma(d_i^w \theta_{i}^w h)\\
@@ -114,6 +124,8 @@ p(d^w_i=\pm 1|\theta_{i}^w,h) = \sigma({d_i^w}\theta_{i}^w h)
 \end{equation}
 其中 $\zeta(z)$ 代表的是 softplus 函数: $\zeta(z)= \log (1+\exp(z))$。 该函数的导数是 $\sigma$ 函数~\upcite{DBLP:conf/nips/DugasBBNG00}, 其导数计算公式是:
 \begin{equation}\label{equ:zeta}
+\setlength{\abovedisplayskip}{10pt}
+\setlength{\belowdisplayskip}{10pt}
 \begin{split}
 \frac{\mathrm{d}\zeta(z)}{\mathrm{d} z}=\frac{\exp(z)}{1+\exp(z)} =\frac{1}{1+\exp(-z)} =\sigma(z)
 \end{split}
@@ -127,6 +139,8 @@ p(d^w_i=\pm 1|\theta_{i}^w,h) = \sigma({d_i^w}\theta_{i}^w h)
 
 前面我们已经介绍完模型的单词概率计算公式，接下来我们给出模型相应的损失函数$ \ell(\theta | h,w)$，它是定义在二叉树上面的负对数似然函数（Negative Log-Likelihood，NLL），也可以看作是所有单词概率对数误差的平均值：
 \begin{equation}\label{equ:cost}
+\setlength{\abovedisplayskip}{10pt}
+\setlength{\belowdisplayskip}{10pt}
 \begin{split}
    \ell(\theta|h,w) =&-\log\prod_{i=0}^{l^w -1} \sigma(d_i^w \theta_{i}^w h) \\
    =& -\log \sigma({d^w}^\top \theta^w h)\\
@@ -138,6 +152,8 @@ p(d^w_i=\pm 1|\theta_{i}^w,h) = \sigma({d_i^w}\theta_{i}^w h)
 
 接下来比较传统tHSM算法和我们推导获得的p-tHSM算法的异同点。在传统的tHSM算法中，该模型逐层计算每个节点的对数概率。 因此，这个词的整体联合对数概率通过各层线性相加。 从而，tHSM算法的时间复杂度为$\mathcal{O(|H|\log|V|})$，其计算公式为：
 \begin{equation}\label{equ:cost2}
+\setlength{\abovedisplayskip}{10pt}
+\setlength{\belowdisplayskip}{10pt}
 \ell(\theta|h,w) =\sum_{i=0}^{l^w-1} \{(1-d'^w_i)\log (\sigma(\theta_{i}^w h))  + {d'^w_i}\log (1-\sigma (\theta_{i}^w h))\}
 \end{equation}
 其中 $d'^w_i\in \{0,1\}$。我们可以更加形象化的理解这个函数的计算过程：这两个部分对数概率误差从二叉树的叶子底部到根节点，分别对每一层的内部节点的左右子树的联合概率进行合并，其实就是在模仿层次聚类函数从底到顶的合并节点过程。
@@ -146,6 +162,8 @@ p(d^w_i=\pm 1|\theta_{i}^w,h) = \sigma({d_i^w}\theta_{i}^w h)
 
 当计算完模型的代价函数后，我们就需要计算模型的参数的导数。接下来，模型的所有参数$\{\theta^w,h\}$针对模型的代价函数的导数是 ：
 \begin{equation}
+\setlength{\abovedisplayskip}{10pt}
+\setlength{\belowdisplayskip}{10pt}
 \begin{split}
 \frac{\partial \ell}{\partial \theta^w}=&(\sigma({d^w}^\top\theta^w h) -1){d^w}^\top h \\
 \frac{\partial \ell}{\partial h}=&(\sigma({d^w}^\top \theta^w h) -1){d^w}^\top \theta
@@ -165,6 +183,8 @@ p(d^w_i=\pm 1|\theta_{i}^w,h) = \sigma({d_i^w}\theta_{i}^w h)
 \subsection{语句打分任务}
 首先，考虑到本章开始提出的第一个问题，即给定序列$ [w_1,\cdots,w_T] $，求该序列出现的概率$   \log p(w_1,\cdots, w_T)$？ 直观地说，当给定相应的上下文$ h $时，我们可以通过获取一个特定单词$ w $的概率或对数概率来分解问题：
 \begin{equation}
+\setlength{\abovedisplayskip}{10pt}
+\setlength{\belowdisplayskip}{10pt}
 \begin{split}
     p(w|h) =&\sigma({d^w}^\top \theta^w h)\\
    \log p(w|h) =& -\zeta(- {d^{w}}^\top \theta^{w} h )
@@ -208,17 +228,14 @@ p(d^w_i=\pm 1|\theta_{i}^w,h) = \sigma({d_i^w}\theta_{i}^w h)
  {// 逐层贪心路径搜索}\;
 \While{$k \le \log \mathcal{V}$ }{
 \eIf{$p(d_{k} |\theta_{k},h) \ge 0.5$ }{
-{// 访问左分支}\;
- $k=  k*2$\;
+{ $k=  k*2$// 访问左分支}\;
 }{
 {// 访问右分支}\;
  $k = k*2+1$\;
 }
-{// 将 $k$ 添加到路径列表}\;
-{$\mathtt{route}$.add($k$)}\;
+{$\mathtt{route}$.add($k$)// 将 $k$ 添加到路径列表}\;
 }
-{// 通过查找$\Gamma$路径表，找出对应的单词}\;
-$w=\Gamma(\mathtt{route})$\;
+$w=\Gamma(\mathtt{route})$// 通过查找$\Gamma$路径表，找出对应的单词\;
 \KwResult{ 预测的单词 $w$. }
 \caption{逐层贪心搜索算法\label{alog:greed_argmax}}
 \end{algorithm}

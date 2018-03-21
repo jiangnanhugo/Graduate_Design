@@ -97,7 +97,7 @@ The LaTeX template for thesis of BUAA]
 \setlength{\parindent}{2em}
 \setlength{\floatsep}{3pt plus 3pt minus 2pt}      % 图形之间或图形与正文之间的距离
 \setlength{\abovecaptionskip}{12pt plus 1pt minus 1pt} % 图形中的图与标题之间的距离
-\setlength{\belowcaptionskip}{3pt plus 1pt minus 2pt} % 表格中的表与标题之间的距离
+\setlength{\belowcaptionskip}{12pt plus 1pt minus 2pt} % 表格中的表与标题之间的距离
 
 %%%%%%%%%% header & footer %%%%%%%%%%
 % 页眉页脚

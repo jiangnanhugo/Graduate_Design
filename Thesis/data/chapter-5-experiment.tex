@@ -42,15 +42,21 @@ Wikitext-2~和~Wikitext-103~数据的训练集（Training Dataset）、验证（
 其中，$\mathrm{PPL}$~是一种内在度量指标（Intrinsic Metric），代表了在不同语境中选择下一个候选单词时的困惑程度。语言模型困惑度较低，意味着在相同词表下模型拥有更好的可预测性。
 此外在整个测试集上，$\mathrm{PPL}$~数值是与模型的代价函数（$\ell$）呈指数相关关系，这表明训练过程中模型直接优化了~$ \mathrm{PPL} $~评测指标，其数学定义如下所示：
 \begin{equation}\label{equ:ppl}
+\setlength{\abovedisplayskip}{10pt}
+\setlength{\belowdisplayskip}{10pt}
    \mathrm{PPL}(w_1,\cdots,w_T)=\sqrt[T]{\frac{1}{\prod_{t=1}^T p(w_t|w_{1:t-1})}}
 \end{equation}
 
 此外，$\mathrm{WER}$~表示单词的萊文斯坦距离（Levenshtein Distance），用于衡量参考句子（Reference，记作r）和预测句子（Hypothesis，记作h）之间的相似度。它是编辑距离的一种衍生类型，被定义为错误识别的单词（删除，插入，替换）占总单词的百分比\footnote{https://martin-thoma.com/word-error-rate-calculation}：
 \begin{equation}\label{equ:wer}
+\setlength{\abovedisplayskip}{10pt}
+\setlength{\belowdisplayskip}{10pt}
   \mathrm{WER} = \frac{\text{插入的单词数 + 删除的单词数 + 替换的单词数}}{\text{全部单词数量}}
 \end{equation}
 计算错误识别的单词的方法如下所示：
 \begin{equation}\label{equ:distance}
+\setlength{\abovedisplayskip}{10pt}
+\setlength{\belowdisplayskip}{10pt}
 d_{r,h}(i,j)=\begin{cases}
 \max (i,j)& \text{如果}\min(i,j)=0\\
 \min  \begin{cases}
@@ -62,6 +68,8 @@ d_{r,h}(i-1,j-1)+1\{r_i\neq h_j\}.\text{//替换的单词}
 \end{equation}
 其中~$1\{r_i\neq h_j\}$~指代的是示性函数，当且仅当~$r_i= h_j$~的时候取值为~$0$，否则该函数取值为~$1$。 $d_{r,h}(i,j)$~表示参考句子~$r$的第~$i$~个字符与预测句子~$r$~第~$j$~个字符之间的距离，同时萊文斯坦距离满足度量的延展性关系（三角不等式），即： 两个字符串的距离不大于分别与第三个字符串的距离之和：
 \begin{equation}
+\setlength{\abovedisplayskip}{10pt}
+\setlength{\belowdisplayskip}{10pt}
 d_{r,h}+d_{r,s}\ge d_{r,s}
 \end{equation}
 公式中的~$s$~代表另外一个生成的句子，$d_{r,h}$~表示句子~r~和句子~h~之间的编辑距离。

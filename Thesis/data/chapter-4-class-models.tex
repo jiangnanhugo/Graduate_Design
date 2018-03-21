@@ -46,6 +46,8 @@ $\Gamma'$ &路径查找表，给定单词元组序列，可以获得对应的单
 在定义单词基于类别的二元编码后，本章接下来讨论基于这种编码的代价函数和导数计算公式。
 给定隐藏层输出向量~$h$，那么该分组中的每个组和和该分组中单词的局部概率可以被定义为:
 \begin{equation}
+\setlength{\abovedisplayskip}{10pt}
+\setlength{\belowdisplayskip}{10pt}
 \begin{split}
 \log p^c(c|h) &= \theta^c h-\log \sum{\exp( \theta^c h )} \\
 \log p^o(w|w^c,h)&=\theta^o h -\log\sum\exp{(\theta^o h)}
@@ -53,10 +55,14 @@ $\Gamma'$ &路径查找表，给定单词元组序列，可以获得对应的单
 \end{equation}
 其中~$p^c$~和~$p^o$~是分别计算而不是同时计算的。因为主要的计算瓶颈在单词局部概率~$p^o$~中，所以主要问题是减少第二项概率的计算量而不是同时计算这两项概率。因此本文的主要工作集中在如何高效计算~$p^o$。例如，假设我们将词表大小为~10000~的单词均匀划分，那么类别向量的维度是~100，单词矩阵的维度是~$[100,100]$。如果两者能够同时计算，而不是依次计算，它所带来的计算效率增益可以如下计算：
 \begin{equation}\label{equ:example}
+\setlength{\abovedisplayskip}{10pt}
+\setlength{\belowdisplayskip}{10pt}
   \frac{\frac{1}{100*100}}{\frac{1}{100*100+100}}-1=1\%
 \end{equation}
 从上面的计算结果来看，我们只能提升~$1/\%$~的速度方面性能。那么如果每次只计算对应单词的单词矩阵的概率值，计算效率可以如下计算：
 \begin{equation}\label{equ:example2}
+\setlength{\abovedisplayskip}{10pt}
+\setlength{\belowdisplayskip}{10pt}
   \frac{\frac{1}{100+100}}{\frac{1}{100*100+100}}-1=49.5
 \end{equation}
 可以发现，只要能避免计算全局概率就能实现~$49.5$~倍的计算效率增益。使用分类的层次概率模型能直接将模型的计算瓶颈削弱到很少计算时间，尽管相比于树状模型该模型的计算速度不是最快的。除此之外，基于类别的层次概率模型的优点包括：1）模型鲁棒性更强，单词的分组分布对模型的精确度影响比树状层次概率模型小；2）模型实现容易，通用性强。只需要将所有单词划分几个分组即可，不需要做层次二叉聚类算法，而且层次二叉聚类算法计算时间复杂度相当高，不适合实际使用。
@@ -65,12 +71,16 @@ $\Gamma'$ &路径查找表，给定单词元组序列，可以获得对应的单
 
 在介绍完模型的类别编码方式中提及的掩码向量并不是直接应用于这个分词矩阵，而是应用在对数概率归一化（log softmax）的计算步骤中。 举例来说，在~softmax~函数中：$p(x_i)={\exp({x_i}})/{\sum_j\exp(x_j)}$，如果~$x_k=0$，然而其概率值~$p(x_k)>0$~，这是因为~$\exp(x_k)>0$。即：在该类别中不存在的单词，仍然有概率数值和概率分布，这样对于那些实际存在的单词概率来说，至多有~$\mathcal{|V|/\mathcal{C}}-1$~的类别概率被稀释，这被称为概率稀释问题。因此，该组中正确的的局部单词的对数概率计算如下：
 \begin{equation}
+\setlength{\abovedisplayskip}{10pt}
+\setlength{\belowdisplayskip}{10pt}
   \log \tilde p^o(w|w^c,h)=\theta^o h -\log\sum\theta^m\exp(\theta^o h)
 \end{equation}
 其中~$\theta^m\exp(\theta^o h)$~保证了那些不存在的单词经过掩码向量之后数值是~0，从而不会对公示的第二项产生影响。
 
 接下来推导模型的代价函数，模型的预测损失主要来自两项：类别预测错误和分组中的单词预测错误，所以该层次模型的损失函数可以从这两项错误分类中算出，可以写成如下的形式：
 \begin{equation}
+\setlength{\abovedisplayskip}{10pt}
+\setlength{\belowdisplayskip}{10pt}
 \ell(\theta|h) =\log p^c(w^c|h) +\log \tilde  p^o(w^o|w^c,h)
 \end{equation}
 其中计算$\log \tilde  p^o(w^o|w^c,h)$，需要指定其类别~$w^c$。在模型训练过程中，$w^c$~是需要预先定义的，在测试过程中，需要同时考虑 ~$p^c$~和 ~$p^o$~两项概率，才能选择概率最大的单词，单独计算$\arg\max p^c$~和 ~$\arg\max p^o$~均无法获得概率最大的单词。
@@ -79,6 +89,7 @@ $\Gamma'$ &路径查找表，给定单词元组序列，可以获得对应的单
 
 当定义模型的代价函数之后，接下来推导得模型所涉及的参数的导数，以便于模型求解优化。模型的所有的参数包括：$\{\theta^c,\theta^o,h\}$，模型的代价函数对于这些参数的导数计算公式如下：
 \begin{equation}
+\setlength{\abovedisplayskip}{10pt}
 \begin{split}
 \frac{\partial \ell}{\partial \theta^c}=& (\delta_{ij}-p(c|h))h \\
 \frac{\partial \ell}{\partial \theta^o}=&(\delta_{ij}-p(w|c,h))h \\
@@ -90,6 +101,8 @@ $\Gamma'$ &路径查找表，给定单词元组序列，可以获得对应的单
 \section{基于类别的测试推理}
 在推理测试阶段，对于类别的层次概率模型来说，序列的概率直接运用模型的代价函数计算获得，如下所示：
 \begin{equation}\label{equ:class_inf}
+\setlength{\abovedisplayskip}{10pt}
+\setlength{\belowdisplayskip}{10pt}
 \log p(w_1,\cdots, w_T)=\sum_t^T\log p(w_t|h_t) =\sum_{t=1}^{T}\log p^c(w^c_t|h_t) +\log p^o(w^o_t|w^c_t,h_t)
 \end{equation}
 其计算复杂度是~$\mathcal{O(|H|\sqrt{|\mathcal{V}|})}$~，比softmax函数计算效率更高，两者的加速比是~$|\mathcal{V}|/\sqrt{|\mathcal{V}|}$。
